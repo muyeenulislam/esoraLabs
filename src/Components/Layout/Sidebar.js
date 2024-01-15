@@ -1,6 +1,21 @@
+"use client";
+
 import React from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 const Sidebar = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
+
+  const inactiveClass =
+    "flex items-center w-full p-2 text-[#CBCFDD] text-[16px] font-medium cursor-pointer";
+  const activeClass =
+    "flex items-center w-full p-2 text-gray-100 bg-[#222C4A] rounded-md text-[16px] font-bold cursor-pointer";
+
   const dummyData = {
     image: "/images/profileIcon.svg",
     name: "Admin",
@@ -8,14 +23,44 @@ const Sidebar = () => {
   };
 
   const navbarItemsTop = [
-    { text: "Dashboard", image: "/images/dashboardIcon.svg" },
-    { text: "Clients", image: "/images/clientIcon.svg" },
-    { text: "Messages", image: "/images/messageIcon.svg" },
+    {
+      text: "Dashboard",
+      image: "/images/dashboardIcon.svg",
+      activeImage: "/images/dashboardIconActive.svg",
+      link: "/dashboard",
+    },
+    {
+      text: "Clients",
+      image: "/images/clientIcon.svg",
+      activeImage: "/images/clientIconActive.svg",
+      link: "/clients",
+    },
+    {
+      text: "Messages",
+      image: "/images/messageIcon.svg",
+      activeImage: "/images/messageIconActive.svg",
+      link: "/messages",
+    },
   ];
   const navbarItemsBottom = [
-    { text: "Activity", image: "/images/activityIcon.svg" },
-    { text: "Team", image: "/images/teamIcon.svg" },
-    { text: "Settings", image: "/images/settingsIcon.svg" },
+    {
+      text: "Activity",
+      image: "/images/activityIcon.svg",
+      activeImage: "/images/activityIconActive.svg",
+      link: "/activity",
+    },
+    {
+      text: "Team",
+      image: "/images/teamIcon.svg",
+      activeImage: "/images/teamIconActive.svg",
+      link: "/team",
+    },
+    {
+      text: "Settings",
+      image: "/images/settingsIcon.svg",
+      activeImage: "/images/settingsIconActive.svg",
+      link: "/settings",
+    },
   ];
 
   return (
@@ -27,16 +72,32 @@ const Sidebar = () => {
       <div className="px-4 flex flex-col justify-between h-full">
         <div>
           {navbarItemsTop?.map((item, index) => (
-            <div className="flex items-center w-full p-2" key={index}>
-              <img src={item.image} alt="logo" className="mr-2" />
+            <div
+              className={pathname === item.link ? activeClass : inactiveClass}
+              key={index}
+              onClick={() => handleNavigation(item.link)}
+            >
+              <img
+                src={pathname === item.link ? item.activeImage : item.image}
+                alt="logo"
+                className="mr-2"
+              />
               <div>{item.text}</div>
             </div>
           ))}
         </div>
         <div className="pb-4 border-b-2 border-gray-600">
           {navbarItemsBottom?.map((item, index) => (
-            <div className="flex items-center w-full p-2" key={index}>
-              <img src={item.image} alt="logo" className="mr-2" />
+            <div
+              className={pathname === item.link ? activeClass : inactiveClass}
+              key={index}
+              onClick={() => handleNavigation(item.link)}
+            >
+              <img
+                src={pathname === item.link ? item.activeImage : item.image}
+                alt="logo"
+                className="mr-2"
+              />
               <div>{item.text}</div>
             </div>
           ))}
