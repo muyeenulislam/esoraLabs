@@ -2,16 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-family: var(--font-jakarta);
+}
+
 body {
   color: white;
   background: #0b132b;
-}
-
-@font-face {
-  font-family: "Magistral";
-  src: url("/src/utils/fonts/MagistralBold.otf") format("truetype");
+  font-family: var(--font-jakarta);
 }
 
 .headers {
-  font-family: "Magistral", sans-serif;
+  font-family: var(--font-magistral-bold);
 }
