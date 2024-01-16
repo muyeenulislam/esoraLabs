@@ -38,6 +38,7 @@ const Login = () => {
                   setEmail(e.target.value);
                 }}
                 required
+                placeholder="e. g. johndoe"
               />
             </div>
             {errorEmail && <div className={styles.errorText}>{errorEmail}</div>}
@@ -74,7 +75,7 @@ const Login = () => {
         </div>
         <div className={styles.loginContainer}>
           <button className={styles.loginButton} onClick={onSubmit}>
-            <div className={styles.loginText}>Login</div>
+            <div className={styles.loginText}>Log in</div>
             <img src="/images/arrowRight.svg" alt="logo" />
           </button>
         </div>

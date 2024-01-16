@@ -1,11 +1,9 @@
 import React from "react";
 
+import styles from "./styles";
+
 const Content = ({ children }) => {
-  return (
-    <div className="w-full my-[16px] p-[48px] rounded-l-3xl bg-[#FFF] text-[#0B132B]">
-      {children}
-    </div>
-  );
+  return <div className={styles.contentContainer}>{children}</div>;
 };
 
 export default Content;

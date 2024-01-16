@@ -3,6 +3,10 @@
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 
+import Colors from "@/utils/Colors";
+
+import styles from "./styles";
+
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
@@ -14,11 +18,6 @@ const Sidebar = () => {
   const handleLogout = () => {
     router.push("/login");
   };
-
-  const inactiveClass =
-    "flex items-center w-full p-2 text-[#CBCFDD] text-[16px] font-medium cursor-pointer";
-  const activeClass =
-    "flex items-center w-full p-2 text-gray-100 bg-[#222C4A] rounded-md text-[16px] font-bold cursor-pointer";
 
   const dummyData = {
     image: "/images/profileIcon.svg",
@@ -68,16 +67,20 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-[280px] flex flex-col">
-      <div className="flex justify-center py-8">
+    <div className={styles.navbarContainer}>
+      <div className={styles.navbarLogoDiv}>
         <img src="/images/esoraLogo.svg" alt="logo" className="mr-2" />
         <img src="/images/esoraTextLogo.svg" alt="logo" />
       </div>
-      <div className="px-4 flex flex-col justify-between h-full">
+      <div className={styles.navbarItemsContainer}>
         <div>
           {navbarItemsTop?.map((item, index) => (
             <div
-              className={pathname === item.link ? activeClass : inactiveClass}
+              className={
+                pathname === item.link
+                  ? styles.activeClass
+                  : styles.inactiveClass
+              }
               key={index}
               onClick={() => handleNavigation(item.link)}
             >
@@ -93,7 +96,11 @@ const Sidebar = () => {
         <div className="pb-4 border-b-2 border-gray-600">
           {navbarItemsBottom?.map((item, index) => (
             <div
-              className={pathname === item.link ? activeClass : inactiveClass}
+              className={
+                pathname === item.link
+                  ? styles.activeClass
+                  : styles.inactiveClass
+              }
               key={index}
               onClick={() => handleNavigation(item.link)}
             >
@@ -108,22 +115,21 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="flex px-4 py-6  items-center w-full">
-        <div className="mr-2 h-9 w-9  flex justify-center items-center rounded-full bg-[#222C4A]">
+      <div className={styles.navbarAccountInfoContainer}>
+        <div className={styles.navbarAccountImage}>
           <img src={dummyData.image} alt="logo" />
         </div>
-        <div className="flex flex-col">
-          <div className="text-[14px] font-semibold">{dummyData.name}</div>
-          <div className="text-[14px] font-normal text-[#CBCFDD]">
+        <div className={styles.flexColumn}>
+          <div className={styles.font14weight600}>{dummyData.name}</div>
+          <div
+            className={`${styles.font14weight400} text-[${Colors.GrayText}]`}
+          >
             {dummyData.email}
           </div>
         </div>
       </div>
-      <div
-        className="flex items-center justify-center w-full p-2 mb-6 cursor-pointer"
-        onClick={handleLogout}
-      >
-        <div className="mr-2 text-[#CBCFDD]">Logout</div>
+      <div className={styles.logoutContainer} onClick={handleLogout}>
+        <div className={styles.logoutText}>Logout</div>
         <img src="/images/logoutIcon.svg" alt="logo" />
       </div>
     </div>
