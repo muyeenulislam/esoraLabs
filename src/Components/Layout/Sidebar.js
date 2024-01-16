@@ -11,6 +11,10 @@ const Sidebar = () => {
     router.push(path);
   };
 
+  const handleLogout = () => {
+    router.push("/login");
+  };
+
   const inactiveClass =
     "flex items-center w-full p-2 text-[#CBCFDD] text-[16px] font-medium cursor-pointer";
   const activeClass =
@@ -115,7 +119,10 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center w-full p-2 mb-6">
+      <div
+        className="flex items-center justify-center w-full p-2 mb-6 cursor-pointer"
+        onClick={handleLogout}
+      >
         <div className="mr-2 text-[#CBCFDD]">Logout</div>
         <img src="/images/logoutIcon.svg" alt="logo" />
       </div>
