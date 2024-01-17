@@ -1,6 +1,8 @@
 import React from "react";
 import WhiteButton from "@/utils/Buttons/WhiteButton";
 import YellowButton from "@/utils/Buttons/YellowButton";
+import DateFormatter from "@/utils/DateFormatter/DateFormatter";
+import styles from "./styles";
 
 const Dashboard = () => {
   const boxData = [
@@ -64,7 +66,7 @@ const Dashboard = () => {
     },
     {
       title: "Website",
-      subTitle: "Project Marked as Completed",
+      subTitle: "Project Marked as Completed sdasd asd wa asdds",
       date: "2024-01-01T00:00:00.000+00:00",
     },
     {
@@ -143,7 +145,7 @@ const Dashboard = () => {
                     {item.text}
                   </div>
                   <div className="headers text-headerText text-[32px] font-bold">
-                    {parseFloat(item.value).toLocaleString()}
+                    {parseFloat(item.value).toLocaleString()}{" "}
                     {item.text === "New Clients" && (
                       <span className="headers text-headerText text-[14px] font-bold">
                         (Last Month)
@@ -154,6 +156,12 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
+          <div>
+            <div className="headers text-[20px] mb-6">Recent Projects</div>
+            {recentProjectsData?.map((item, index) => (
+              <div style={styles.recentContainer} key={index}></div>
+            ))}
+          </div>
         </div>
         <div className="col-span-1">
           <div className="flex flex-col">
@@ -163,6 +171,46 @@ const Dashboard = () => {
               </div>
               <div className="headers text-headerText text-[32px] font-bold">
                 ${parseFloat("200056.02").toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <div className="headers text-[20px] mb-6">Activity</div>
+              <div
+                style={{
+                  maxHeight: "648px",
+                  overflow: "auto",
+                  borderRadius: "16px",
+                  border: "1px solid #E4E7EC",
+                  boxShadow:
+                    "0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)",
+                }}
+              >
+                {activityData?.map((item, index) => (
+                  <div
+                    style={{
+                      padding: "16px",
+                      background: index % 2 === 0 ? "#F9FAFB" : "white",
+                    }}
+                    key={index}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div className="text-subtitleText text-[14px] font-normal overflow-hidden w-[70%]">
+                        {item.subTitle}
+                      </div>
+                      <div className="text-subtitleText text-[14px] font-normal w-[30%] text-right">
+                        {DateFormatter(item.date)}
+                      </div>
+                    </div>
+                    <div className="text-primary text-[16px] font-bold">
+                      {item.title}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

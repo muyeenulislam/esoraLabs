@@ -6,7 +6,7 @@ const styles = {
   font14weight400: "text-[14px] font-normal",
 
   //   content
-  contentContainer: `w-full my-[16px] p-[48px] rounded-l-3xl bg-white text-headerText`,
+  contentContainer: `w-full my-[16px] p-[48px] rounded-l-3xl bg-white text-headerText overflow-auto`,
 
   //  side navbar
   navbarContainer: "w-[280px] flex flex-col",

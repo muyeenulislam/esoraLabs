@@ -15,3 +15,29 @@ body {
 .headers {
   font-family: var(--font-magistral-bold);
 }
+.headersEB {
+  font-family: var(--font-magistral-extrabold);
+}
+
+/* scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  background: #e4e7ec;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #e4e7ec;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #d2d2d2;
+}

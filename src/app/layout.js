@@ -7,9 +7,13 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
 });
-const magistral = localFont({
-  src: "../utils/fonts/MagistralBold.otf",
+const magistralB = localFont({
+  src: "../utils/fonts/Magistral-Bold.ttf",
   variable: "--font-magistral-bold",
+});
+const magistralEB = localFont({
+  src: "../utils/fonts/Magistral-ExtraBold.ttf",
+  variable: "--font-magistral-extrabold",
 });
 
 export const metadata = {
@@ -28,7 +32,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${jakarta.variable} ${magistral.variable}`}>
+      <body
+        className={`${jakarta.variable} ${magistralB.variable} ${magistralEB.variable}`}
+      >
         {children}
       </body>
     </html>
