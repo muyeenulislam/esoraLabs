@@ -12,7 +12,7 @@ const Login = () => {
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
 
-  const onSubmit = (e) => {
+  const onSubmit = () => {
     if (!email) {
       setErrorEmail("Email is required");
     } else if (!password) {

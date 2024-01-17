@@ -9,13 +9,15 @@ module.exports = {
     extend: {
       colors: {
         white: "#FFF",
+        primary: "#0b132b",
         lighterPrimary: "#222C4A",
         grayText: "#CBCFDD",
         deepGrayText: "#434A60",
+        subtitleText: "#52596D",
         grayBorder: "#E1E2E5",
+        grayBorderDashboard: "#E4E7EC",
         headerText: "#0B132B",
         lightBlue: "#36C",
-        greyishBlue: "#0B132B",
         fadedYellow: "#F7D046",
       },
     },
