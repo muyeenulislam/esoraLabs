@@ -3,8 +3,6 @@
 import React from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-import Colors from "@/utils/Colors";
-
 import styles from "./styles";
 
 const Sidebar = () => {
@@ -121,9 +119,7 @@ const Sidebar = () => {
         </div>
         <div className={styles.flexColumn}>
           <div className={styles.font14weight600}>{dummyData.name}</div>
-          <div
-            className={`${styles.font14weight400} text-[${Colors.GrayText}]`}
-          >
+          <div className={`${styles.font14weight400} text-grayText`}>
             {dummyData.email}
           </div>
         </div>
