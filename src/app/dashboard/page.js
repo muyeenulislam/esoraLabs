@@ -3,6 +3,7 @@ import WhiteButton from "@/utils/Buttons/WhiteButton";
 import YellowButton from "@/utils/Buttons/YellowButton";
 import PrimaryButton from "@/utils/Buttons/PrimaryButton";
 import DateFormatter from "@/utils/DateFormatter/DateFormatter";
+import StatusIndicator from "@/utils/StatusIndicators/StatusIndicator";
 import styles from "./styles";
 
 const Dashboard = () => {
@@ -170,22 +171,26 @@ const Dashboard = () => {
                 >
                   <div className="text-[16px] headers">{item.title}</div>
                   <div className="text-[14px] text-subtitleText font-normal mb-4">
-                    {item.description}
+                    {item?.description?.length > 200
+                      ? `${item?.description?.slice(0, 200)}...`
+                      : item?.description}
                   </div>
                   <div style={{ display: "flex" }}>
-                    <div>
+                    <div className="mr-4">
                       <div className="text-[12px] font-normal text-subtitleText">
                         Priority
                       </div>
-                      <div></div>
+                      <div>
+                        <StatusIndicator text={item.priority} />
+                      </div>
                     </div>
-                    <div>
+                    <div className="mr-4">
                       <div className="text-[12px] font-normal text-subtitleText">
                         Status
                       </div>
                       <div></div>
                     </div>
-                    <div>
+                    <div className="mr-4">
                       <div className="text-[12px] font-normal text-subtitleText">
                         Assignee
                       </div>
