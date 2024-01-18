@@ -1,5 +1,7 @@
 const styles = {
   recentContainer: {
+    display: "flex",
+    justifyContent: "space-between",
     padding: "24px",
     borderRadius: "16px",
     border: "1px solid #E4E7EC",

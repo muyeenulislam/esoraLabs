@@ -1,6 +1,7 @@
 import React from "react";
 import WhiteButton from "@/utils/Buttons/WhiteButton";
 import YellowButton from "@/utils/Buttons/YellowButton";
+import PrimaryButton from "@/utils/Buttons/PrimaryButton";
 import DateFormatter from "@/utils/DateFormatter/DateFormatter";
 import styles from "./styles";
 
@@ -159,7 +160,59 @@ const Dashboard = () => {
           <div>
             <div className="headers text-[20px] mb-6">Recent Projects</div>
             {recentProjectsData?.map((item, index) => (
-              <div style={styles.recentContainer} key={index}></div>
+              <div style={styles.recentContainer} key={index}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "70%",
+                  }}
+                >
+                  <div className="text-[16px] headers">{item.title}</div>
+                  <div className="text-[14px] text-subtitleText font-normal mb-4">
+                    {item.description}
+                  </div>
+                  <div style={{ display: "flex" }}>
+                    <div>
+                      <div className="text-[12px] font-normal text-subtitleText">
+                        Priority
+                      </div>
+                      <div></div>
+                    </div>
+                    <div>
+                      <div className="text-[12px] font-normal text-subtitleText">
+                        Status
+                      </div>
+                      <div></div>
+                    </div>
+                    <div>
+                      <div className="text-[12px] font-normal text-subtitleText">
+                        Assignee
+                      </div>
+                      <div></div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "flex-end",
+                    width: "20%",
+                  }}
+                >
+                  <div className="text-right text-[14px] text-subtitleText font-normal">
+                    Created on {DateFormatter(item.createdOn)}
+                  </div>
+                  <div>
+                    <PrimaryButton
+                      text={"Start Briefing"}
+                      image={"/images/arrowRightWhite.svg"}
+                    />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>

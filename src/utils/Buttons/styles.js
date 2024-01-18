@@ -6,6 +6,14 @@ const styles = {
     padding: "14px 20px",
     borderRadius: "10px",
   },
+  primaryButtonStyle: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "6px 14px",
+    borderRadius: "6px",
+    background: "#0b132b",
+  },
   whiteButtonStyle: {
     display: "flex",
     justifyContent: "center",
