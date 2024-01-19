@@ -1,3 +1,4 @@
+import Colors from "../Colors";
 const styles = {
   yellowButtonStyle: {
     display: "flex",
@@ -12,7 +13,7 @@ const styles = {
     alignItems: "center",
     padding: "6px 14px",
     borderRadius: "6px",
-    background: "#0b132b",
+    background: Colors.primary,
   },
   whiteButtonStyle: {
     display: "flex",
