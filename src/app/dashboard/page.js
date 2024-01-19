@@ -4,6 +4,7 @@ import YellowButton from "@/utils/Buttons/YellowButton";
 import PrimaryButton from "@/utils/Buttons/PrimaryButton";
 import DateFormatter from "@/utils/DateFormatter/DateFormatter";
 import DateFormatterLong from "@/utils/DateFormatter/DateFormatterLong";
+import DateFormatterWithSlash from "@/utils/DateFormatter/DateFormatterWithSlash";
 import StatusIndicator from "@/utils/StatusIndicators/StatusIndicator";
 import styles from "./styles";
 
@@ -111,16 +112,14 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="flex justify-between">
+      <div className={styles.justifyBetween}>
         <div>
-          <div className="headers text-headerText text-[32px] font-bold">
-            Welcome back, Admin
-          </div>
-          <div className="text-subtitleText text-[16px] font-normal">
+          <div className={styles.welcomeText}>Welcome back, Admin</div>
+          <div className={styles.welcomeSubtext}>
             Track, manage and forecast your clients.
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3 max-h-[50px]">
+        <div className={styles.buttonContainer}>
           <WhiteButton
             image={"/images/uploadCloudIcon.svg"}
             text={"Import Brief"}
@@ -135,19 +134,14 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-[24px]">
+      <div className={styles.dataContainer}>
         <div className="col-span-2">
-          <div className="flex flex-col">
-            <div className="grid grid-cols-3 gap-[24px] my-8">
+          <div className={styles.flexColumn}>
+            <div className={styles.dataLeftSideContainer}>
               {boxData?.map((item, index) => (
-                <div
-                  key={index}
-                  className="px-6 py-5 border-2 border-grayBorderDashboard rounded-2xl shadow-sm"
-                >
-                  <div className="text-subtitleText text-[16px] font-normal">
-                    {item.text}
-                  </div>
-                  <div className="headers text-headerText text-[32px] font-bold">
+                <div key={index} className={styles.leftSideBoxes}>
+                  <div className={styles.boxUpperText}>{item.text}</div>
+                  <div className={styles.boxLowerText}>
                     {parseFloat(item.value).toLocaleString()}{" "}
                     {item.text === "New Clients" && (
                       <span className="headers text-headerText text-[14px] font-bold">
@@ -160,35 +154,25 @@ const Dashboard = () => {
             </div>
           </div>
           <div>
-            <div className="headers text-[20px] mb-6">Recent Projects</div>
+            <div className={styles.smallTitle}>Recent Projects</div>
             {recentProjectsData?.map((item, index) => (
               <div style={styles.recentContainer} key={index}>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "70%",
-                  }}
-                >
-                  <div className="text-[16px] headers">{item.title}</div>
-                  <div className="text-[14px] text-subtitleText font-normal mb-4">
+                <div style={styles.recentLeftSide}>
+                  <div className={styles.recentTitle}>{item.title}</div>
+                  <div className={styles.recentDescription}>
                     {item?.description?.length > 200
                       ? `${item?.description?.slice(0, 200)}...`
                       : item?.description}
                   </div>
-                  <div style={{ display: "flex" }} className="mb-3">
+                  <div className="flex mb-3">
                     <div className="mr-4">
-                      <div className="text-[12px] font-normal text-subtitleText mb-1">
-                        Priority
-                      </div>
+                      <div className={styles.smallHeadings}>Priority</div>
                       <div>
                         <StatusIndicator text={item.priority} />
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-[12px] font-normal text-subtitleText mb-1">
-                        Status
-                      </div>
+                      <div className={styles.smallHeadings}>Status</div>
                       <div>
                         <StatusIndicator text={item.status} />
                       </div>
@@ -196,23 +180,21 @@ const Dashboard = () => {
                     <div className="mr-4">
                       {item?.assignees?.length === 0 ? (
                         <>
-                          <div className="text-[12px] font-normal text-subtitleText mb-1">
-                            Assignee
-                          </div>
+                          <div className={styles.smallHeadings}>Assignee</div>
                           <StatusIndicator text={"Not Assigned"} />
                         </>
                       ) : (
                         <div>
                           {item?.assignees?.length === 1 ? (
                             <div>
-                              <div className="text-[12px] font-normal text-subtitleText mb-1">
+                              <div className={styles.smallHeadings}>
                                 Assignee
                               </div>
                               <div>
-                                <div className="text-primary text-[14px] font-semibold">
+                                <div className={styles.assigneeName}>
                                   {item.assignees[0].name}
                                 </div>
-                                <div className="text-subtitleText text-[12px] font-normal">
+                                <div className={styles.assigneeDesignation}>
                                   {item.assignees[0].designation}
                                 </div>
                               </div>
@@ -221,14 +203,14 @@ const Dashboard = () => {
                             <div className="flex">
                               {item?.assignees?.map((assignee, index) => (
                                 <div key={index} className="mr-6">
-                                  <div className="text-[12px] font-normal text-subtitleText mb-1">
+                                  <div className={styles.smallHeadings}>
                                     Assignee {index + 1}
                                   </div>
                                   <div>
-                                    <div className="text-primary text-[14px] font-semibold">
+                                    <div className={styles.assigneeName}>
                                       {assignee.name}
                                     </div>
-                                    <div className="text-subtitleText text-[12px] font-normal">
+                                    <div className={styles.assigneeDesignation}>
                                       {assignee.designation}
                                     </div>
                                   </div>
@@ -242,11 +224,9 @@ const Dashboard = () => {
                   </div>
                   {item?.dueDate && (
                     <div>
-                      <div className="text-[12px] font-normal text-subtitleText">
-                        Due by
-                      </div>
-                      <div className="flex items-center">
-                        <div className="text-[14px] font-semibold text-primary mr-1">
+                      <div className={styles.dueDateHeading}>Due by</div>
+                      <div className={styles.itemsCenter}>
+                        <div className={styles.dueDateValue}>
                           {DateFormatterLong(item.dueDate)}
                         </div>
 
@@ -260,17 +240,9 @@ const Dashboard = () => {
                     </div>
                   )}
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    alignItems: "flex-end",
-                    width: "20%",
-                  }}
-                >
-                  <div className="text-right text-[14px] text-subtitleText font-normal">
-                    Created on {DateFormatter(item.createdOn)}
+                <div style={styles.recentRightSide}>
+                  <div className={styles.recentCreatedDate}>
+                    Created on {DateFormatterWithSlash(item.createdOn)}
                   </div>
                   <div>
                     <PrimaryButton
@@ -284,27 +256,16 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-span-1">
-          <div className="flex flex-col">
-            <div className="px-6 py-5 border-2 border-grayBorderDashboard rounded-2xl shadow-sm my-8">
-              <div className="text-subtitleText text-[16px] font-normal">
-                Total Received (USD)
-              </div>
-              <div className="headers text-headerText text-[32px] font-bold">
+          <div className={styles.flexColumn}>
+            <div className={`${styles.leftSideBoxes} my-8`}>
+              <div className={styles.boxUpperText}>Total Received (USD)</div>
+              <div className={styles.boxLowerText}>
                 ${parseFloat("200056.02").toLocaleString()}
               </div>
             </div>
             <div>
-              <div className="headers text-[20px] mb-6">Activity</div>
-              <div
-                style={{
-                  maxHeight: "648px",
-                  overflow: "auto",
-                  borderRadius: "16px",
-                  border: "1px solid #E4E7EC",
-                  boxShadow:
-                    "0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)",
-                }}
-              >
+              <div className={styles.smallTitle}>Activity</div>
+              <div style={styles.activityContainer}>
                 {activityData?.map((item, index) => (
                   <div
                     style={{
@@ -313,20 +274,15 @@ const Dashboard = () => {
                     }}
                     key={index}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div className="text-subtitleText text-[14px] font-normal overflow-hidden w-[70%]">
+                    <div className={styles.justifyBetween}>
+                      <div className={styles.activityUpperText}>
                         {item.subTitle}
                       </div>
-                      <div className="text-subtitleText text-[14px] font-normal w-[30%] text-right">
+                      <div className={styles.activityDate}>
                         {DateFormatter(item.date)}
                       </div>
                     </div>
-                    <div className="text-primary text-[16px] font-bold">
+                    <div className={styles.activityBottomText}>
                       {item.title}
                     </div>
                   </div>

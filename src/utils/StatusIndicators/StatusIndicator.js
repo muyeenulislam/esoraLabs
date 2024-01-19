@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./styles";
+
 const StatusIndicator = ({ text, icon }) => {
-  console.log(text);
   let style = "";
   if (text.toLowerCase() === "high") {
     style = styles.statusHigh;
