@@ -13,7 +13,7 @@ const Colors = {
   high: "#B32318",
   medium: "#B54708",
   low: "#027948",
-  greyStatus: "#52596D",
+  greyStatus: "#F2F4F7",
   inProgress: "#EFF8FF",
   overdue: "#FFFAEB",
   overdueText: "#F79009",
@@ -23,6 +23,8 @@ const Colors = {
   statusLowText: "#ECFDF3",
   statusHighText: "#FEF3F2",
   statusMediumText: "#FFFAEB",
+  inProgress: "#EFF8FF",
+  inProgressText: "#175CD3",
 };
 
 export default Colors;

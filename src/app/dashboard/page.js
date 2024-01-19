@@ -3,6 +3,7 @@ import WhiteButton from "@/utils/Buttons/WhiteButton";
 import YellowButton from "@/utils/Buttons/YellowButton";
 import PrimaryButton from "@/utils/Buttons/PrimaryButton";
 import DateFormatter from "@/utils/DateFormatter/DateFormatter";
+import DateFormatterLong from "@/utils/DateFormatter/DateFormatterLong";
 import StatusIndicator from "@/utils/StatusIndicators/StatusIndicator";
 import styles from "./styles";
 
@@ -175,9 +176,9 @@ const Dashboard = () => {
                       ? `${item?.description?.slice(0, 200)}...`
                       : item?.description}
                   </div>
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex" }} className="mb-3">
                     <div className="mr-4">
-                      <div className="text-[12px] font-normal text-subtitleText">
+                      <div className="text-[12px] font-normal text-subtitleText mb-1">
                         Priority
                       </div>
                       <div>
@@ -185,18 +186,79 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-[12px] font-normal text-subtitleText">
+                      <div className="text-[12px] font-normal text-subtitleText mb-1">
                         Status
                       </div>
-                      <div></div>
+                      <div>
+                        <StatusIndicator text={item.status} />
+                      </div>
                     </div>
                     <div className="mr-4">
-                      <div className="text-[12px] font-normal text-subtitleText">
-                        Assignee
-                      </div>
-                      <div></div>
+                      {item?.assignees?.length === 0 ? (
+                        <>
+                          <div className="text-[12px] font-normal text-subtitleText mb-1">
+                            Assignee
+                          </div>
+                          <StatusIndicator text={"Not Assigned"} />
+                        </>
+                      ) : (
+                        <div>
+                          {item?.assignees?.length === 1 ? (
+                            <div>
+                              <div className="text-[12px] font-normal text-subtitleText mb-1">
+                                Assignee
+                              </div>
+                              <div>
+                                <div className="text-primary text-[14px] font-semibold">
+                                  {item.assignees[0].name}
+                                </div>
+                                <div className="text-subtitleText text-[12px] font-normal">
+                                  {item.assignees[0].designation}
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex">
+                              {item?.assignees?.map((assignee, index) => (
+                                <div key={index} className="mr-6">
+                                  <div className="text-[12px] font-normal text-subtitleText mb-1">
+                                    Assignee {index + 1}
+                                  </div>
+                                  <div>
+                                    <div className="text-primary text-[14px] font-semibold">
+                                      {assignee.name}
+                                    </div>
+                                    <div className="text-subtitleText text-[12px] font-normal">
+                                      {assignee.designation}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
+                  {item?.dueDate && (
+                    <div>
+                      <div className="text-[12px] font-normal text-subtitleText">
+                        Due by
+                      </div>
+                      <div className="flex items-center">
+                        <div className="text-[14px] font-semibold text-primary mr-1">
+                          {DateFormatterLong(item.dueDate)}
+                        </div>
+
+                        {new Date(item.dueDate) < new Date() && (
+                          <StatusIndicator
+                            text={"Overdue"}
+                            icon={"/images/overdueIcon.svg"}
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div
                   style={{
