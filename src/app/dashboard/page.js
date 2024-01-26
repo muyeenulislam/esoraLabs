@@ -1,11 +1,11 @@
 import React from "react";
-import WhiteButton from "@/utils/Buttons/WhiteButton";
-import YellowButton from "@/utils/Buttons/YellowButton";
-import PrimaryButton from "@/utils/Buttons/PrimaryButton";
+import WhiteButton from "@/Components/Buttons/WhiteButton";
+import YellowButton from "@/Components/Buttons/YellowButton";
+import PrimaryButton from "@/Components/Buttons/PrimaryButton";
 import DateFormatter from "@/utils/DateFormatter/DateFormatter";
 import DateFormatterLong from "@/utils/DateFormatter/DateFormatterLong";
 import DateFormatterWithSlash from "@/utils/DateFormatter/DateFormatterWithSlash";
-import StatusIndicator from "@/utils/StatusIndicators/StatusIndicator";
+import StatusIndicator from "@/Components/StatusIndicators/StatusIndicator";
 import styles from "./styles";
 
 const Dashboard = () => {

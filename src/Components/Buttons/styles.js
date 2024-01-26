@@ -1,4 +1,4 @@
-import Colors from "../Colors";
+import Colors from "../../utils/Colors";
 const styles = {
   yellowButtonStyle: {
     display: "flex",

@@ -41,3 +41,12 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #d2d2d2;
 }
+
+/* select */
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url("/images/dropdownIcon.svg") no-repeat right center;
+  outline: none;
+}
