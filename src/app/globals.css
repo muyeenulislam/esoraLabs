@@ -50,3 +50,27 @@ body {
   background: url("/images/dropdownIcon.svg") no-repeat right center;
   outline: none;
 }
+
+.clientCard:hover {
+  border: 2px solid #f7d046;
+  box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.04),
+    0px 20px 24px -4px rgba(16, 24, 40, 0.1);
+  transition: all 0.1s ease-in;
+}
+.clientCard:hover .userImg {
+  opacity: 1;
+  transition: all 0.1s ease-in;
+}
+.clientCard:hover .userInfoText {
+  color: #0b132b;
+  transition: all 0.1s ease-in;
+}
+.clientCard:hover .bottomIcon {
+  stroke: white;
+  background: #0b132b;
+  transition: all 0.1s ease-in;
+}
+.clientCard:hover .bottomSection {
+  background: #f7d046;
+  transition: all 0.1s ease-in;
+}

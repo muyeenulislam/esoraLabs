@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        clientCard:
+          "0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)",
+      },
       colors: {
         white: "#FFF",
         primary: "#0b132b",
@@ -19,6 +23,7 @@ module.exports = {
         headerText: "#0B132B",
         lightBlue: "#36C",
         fadedYellow: "#F7D046",
+        fadedYellow2: "#FBF0CB",
         high: "#B32318",
         medium: "#B54708",
         low: "#027948",
