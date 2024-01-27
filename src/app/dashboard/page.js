@@ -6,6 +6,8 @@ import DateFormatter from "@/utils/DateFormatter/DateFormatter";
 import DateFormatterLong from "@/utils/DateFormatter/DateFormatterLong";
 import DateFormatterWithSlash from "@/utils/DateFormatter/DateFormatterWithSlash";
 import StatusIndicator from "@/Components/StatusIndicators/StatusIndicator";
+import { ActivityData } from "@/utils/MockData/ActivityData";
+import { RecentProjectsData } from "@/utils/MockData/RecentProjectsData";
 import styles from "./styles";
 
 const Dashboard = () => {
@@ -13,101 +15,6 @@ const Dashboard = () => {
     { text: "Total Clients", value: "32" },
     { text: "New Clients", value: "2" },
     { text: "Projects Active", value: "12" },
-  ];
-
-  const recentProjectsData = [
-    {
-      title: "Websites",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentiumptio, eaque rerum! Provident similique accusantium nemo autem.",
-      createdOn: "2023-12-01T00:00:00.000+00:00",
-      priority: "Medium",
-      status: "Not Started",
-      assignees: [],
-      dueDate: "",
-    },
-    {
-      title: "Mobile App",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentiumptio, eaque rerum! Provident similique accusantium nemo autem.",
-      createdOn: "2023-12-01T00:00:00.000+00:00",
-      priority: "High",
-      status: "In Progress",
-      assignees: [
-        {
-          name: "Golam Rabbi",
-          designation: "Web Developer",
-        },
-      ],
-      dueDate: "2024-01-31T00:00:00.000+00:00",
-    },
-    {
-      title: "Mobile App",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentiumptio, eaque rerum! Provident similique accusantium nemo autem.",
-      createdOn: "2023-12-01T00:00:00.000+00:00",
-      priority: "Low",
-      status: "Completed",
-      assignees: [
-        {
-          name: "Golam Rabbi",
-          designation: "Web Developer",
-        },
-        {
-          name: "Sheebly Hayat",
-          designation: "Designer",
-        },
-      ],
-      dueDate: "2024-01-10T00:00:00.000+00:00",
-    },
-  ];
-
-  const activityData = [
-    {
-      title: "John Smith",
-      subTitle: "New Client",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed sdasd asd wa asdds",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
-    {
-      title: "Website",
-      subTitle: "Project Marked as Completed",
-      date: "2024-01-01T00:00:00.000+00:00",
-    },
   ];
 
   return (
@@ -155,7 +62,7 @@ const Dashboard = () => {
           </div>
           <div>
             <div className={styles.smallTitle}>Recent Projects</div>
-            {recentProjectsData?.map((item, index) => (
+            {RecentProjectsData?.map((item, index) => (
               <div style={styles.recentContainer} key={index}>
                 <div style={styles.recentLeftSide}>
                   <div className={styles.recentTitle}>{item.title}</div>
@@ -266,7 +173,7 @@ const Dashboard = () => {
             <div>
               <div className={styles.smallTitle}>Activity</div>
               <div style={styles.activityContainer}>
-                {activityData?.map((item, index) => (
+                {ActivityData?.map((item, index) => (
                   <div
                     style={{
                       padding: "16px",

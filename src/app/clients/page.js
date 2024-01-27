@@ -1,112 +1,25 @@
 import React from "react";
+import Link from "next/link";
 
 import WhiteButton from "@/Components/Buttons/WhiteButton";
 import YellowButton from "@/Components/Buttons/YellowButton";
-import PrimaryButton from "@/Components/Buttons/PrimaryButton";
+import PaginationButton from "@/Components/Buttons/PaginationButton";
+
 import SearchBar from "@/Components/SearchBar/Searchbar";
 import Dropdown from "@/Components/Dropdown/Dropdown";
 
+import { ClientData } from "@/utils/MockData/ClientData";
 import { FiPhone, FiMail } from "react-icons/fi";
 
 import styles from "./styles";
 
-const clientData = [
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Standard",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-  {
-    name: "Cody Fisher",
-    company: "McDonald's",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
-    project: "12",
-    spent: "$120k",
-    subscription: "Pro",
-  },
-];
 const Clients = () => {
   return (
     <div>
       <div className="flex mb-8">
-        <img src="/images/dashboardIcon.svg" className="p-1" />
+        <Link href={"/dashboard"}>
+          <img src="/images/dashboardIcon.svg" className="p-1" />
+        </Link>
         <img src="/images/graySlash.svg" className="p-1" />
         <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
           Clients
@@ -142,8 +55,8 @@ const Clients = () => {
           <Dropdown />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-6">
-        {clientData?.map((item, index) => (
+      <div className="grid grid-cols-3 gap-6 mb-8">
+        {ClientData?.map((item, index) => (
           <div
             className="border-2 border-grayBorderDashboard rounded-2xl bg-white shadow-clientCard flex flex-col clientCard"
             key={index}
@@ -212,6 +125,17 @@ const Clients = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className="pt-[11px] pb-4 flex items-center justify-between border-t border-t-grayBorder">
+        <div className="flex">
+          <PaginationButton text={"Previous"} />
+          <div className="w-3"></div>
+          <PaginationButton text={"Next"} />
+        </div>
+        <div className="text-subtitleText text-[14px] font-normal">
+          Page <span className="font-medium">1</span> of{" "}
+          <span className="font-medium">4</span>
+        </div>
       </div>
     </div>
   );

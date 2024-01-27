@@ -1,12 +1,12 @@
 import React from "react";
 import styles from "./styles";
-const PrimaryButton = ({ text, image }) => {
+const PrimaryButton = (props) => {
   return (
-    <button style={styles.primaryButtonStyle}>
+    <button style={styles.primaryButtonStyle} {...props}>
       <span className="text-white mr-2" style={styles.fontStyle}>
-        {text}
+        {props.text}
       </span>
-      {image && <img src={image} alt="upload" />}
+      {props.image && <img src={props.image} alt="upload" />}
     </button>
   );
 };

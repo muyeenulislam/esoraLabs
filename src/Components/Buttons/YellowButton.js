@@ -1,11 +1,15 @@
 import React from "react";
 import styles from "./styles";
-const YellowButton = ({ text, image }) => {
+const YellowButton = (props) => {
   return (
-    <button className="bg-fadedYellow" style={styles.yellowButtonStyle}>
-      {image && <img src={image} alt="upload" className="mr-2" />}
+    <button
+      className="bg-fadedYellow"
+      style={styles.yellowButtonStyle}
+      {...props}
+    >
+      {props.image && <img src={props.image} alt="upload" className="mr-2" />}
       <span className="text-primary" style={styles.fontStyle}>
-        {text}
+        {props.text}
       </span>
     </button>
   );

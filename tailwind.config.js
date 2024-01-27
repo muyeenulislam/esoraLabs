@@ -10,6 +10,7 @@ module.exports = {
       boxShadow: {
         clientCard:
           "0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)",
+        paginationShahow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
       },
       colors: {
         white: "#FFF",
