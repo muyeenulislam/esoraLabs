@@ -1,8 +1,8 @@
 import React from "react";
 
-import { ActivityData } from "@/utils/MockData/ActivityData";
-import DateFormatter from "@/utils/DateFormatter/DateFormatter";
-import PaginationButton from "@/Components/Buttons/PaginationButton";
+import { ActivityData } from "@/utils/mockdata/activitydata";
+import DateFormatter from "@/utils/dateformatter/dateformatter";
+import PaginationButton from "@/Components/buttons/paginationbutton";
 import styles from "./styles";
 import Link from "next/link";
 

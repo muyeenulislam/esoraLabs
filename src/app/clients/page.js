@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
 
-import WhiteButton from "@/Components/Buttons/WhiteButton";
-import YellowButton from "@/Components/Buttons/YellowButton";
-import PaginationButton from "@/Components/Buttons/PaginationButton";
+import WhiteButton from "@/Components/buttons/whitebutton";
+import YellowButton from "@/Components/buttons/yellowbutton";
+import PaginationButton from "@/Components/buttons/paginationbutton";
 
-import SearchBar from "@/Components/SearchBar/Searchbar";
-import Dropdown from "@/Components/Dropdown/Dropdown";
+import SearchBar from "@/Components/searchbar/searchbar";
+import Dropdown from "@/Components/dropdown/dropdown";
 
-import { ClientData } from "@/utils/MockData/ClientData";
+import { ClientData } from "@/utils/mockdata/clientdata";
 import { FiPhone, FiMail } from "react-icons/fi";
 
 import styles from "./styles";

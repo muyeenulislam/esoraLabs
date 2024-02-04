@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
 
-import YellowButton from "@/Components/Buttons/YellowButton";
-import PaginationButton from "@/Components/Buttons/PaginationButton";
-import SearchBar from "@/Components/SearchBar/Searchbar";
-import Dropdown from "@/Components/Dropdown/Dropdown";
+import YellowButton from "@/Components/buttons/yellowbutton";
+import PaginationButton from "@/Components/buttons/paginationbutton";
+import SearchBar from "@/Components/searchbar/searchbar";
+import Dropdown from "@/Components/dropdown/dropdown";
 
 import { FiPhone, FiMail } from "react-icons/fi";
 
-import { TeamData } from "@/utils/MockData/TeamData";
+import { TeamData } from "@/utils/mockdata/teamdata";
 
 import styles from "./styles";
 const Team = () => {

@@ -1,4 +1,4 @@
-import Colors from "@/utils/Colors";
+import Colors from "@/utils/colors";
 
 const styles = {
   justifyBetween: "flex justify-between",
