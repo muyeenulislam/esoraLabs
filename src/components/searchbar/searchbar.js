@@ -2,7 +2,7 @@ import React from "react";
 
 const SearchBar = (props) => {
   return (
-    <div className="realtive w-[460px] py-[10px] px-[14px] border border-gray300 shadow-sm bg-white rounded-lg flex">
+    <div className="realtive w-[460px] py-[10px] px-[14px] border border-gray300 shadow-sm bg-white rounded-lg flex text-[12px]">
       <img src="/images/search-icon.svg" className="mr-2" />
       <input
         type="text"

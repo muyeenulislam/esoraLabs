@@ -1,5 +1,8 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
+import { Select } from "antd";
 
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
@@ -14,6 +17,12 @@ import { FiPhone, FiMail } from "react-icons/fi";
 import styles from "./styles";
 
 const Clients = () => {
+  const [sortFilter, setSortFilter] = useState("newest");
+
+  const handleFilterChange = (e) => {
+    setSortFilter(e);
+  };
+
   return (
     <div>
       <div className="flex mb-8">
@@ -21,12 +30,12 @@ const Clients = () => {
           <img src="/images/dashboard-icon.svg" className="p-1" />
         </Link>
         <img src="/images/gray-slash.svg" className="p-1" />
-        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
+        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold flex justify-center items-center">
           Clients
         </div>
       </div>
       <div className={`${styles.justifyBetween} mb-8`}>
-        <div>
+        <div className="flex flex-col gap-2">
           <div className={styles.welcomeText}>Clients</div>
           <div className={styles.welcomeSubtext}>
             Track, manage and forecast your clients.
@@ -52,7 +61,10 @@ const Clients = () => {
           <SearchBar />
         </div>
         <div>
-          <Dropdown />
+          <Dropdown value={sortFilter} onChange={handleFilterChange}>
+            <Select.Option value={"newest"}>Newest First</Select.Option>
+            <Select.Option value={"oldest"}>Oldest First</Select.Option>
+          </Dropdown>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-6 mb-8">
@@ -62,7 +74,7 @@ const Clients = () => {
             key={index}
           >
             <div className="p-4 flex flex-col">
-              <div className="flex mb-6">
+              <div className="flex mb-6 items-center">
                 <img
                   src="/images/user.svg"
                   className="p-[10px] rounded-full bg-fadedYellow mr-3 userImg opacity-50"

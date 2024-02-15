@@ -1,7 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import Link from "next/link";
+import { Modal, Select } from "antd";
 
 import YellowButton from "@/components/buttons/yellowbutton";
+import WhiteButton from "@/components/buttons/whitebutton";
 import PaginationButton from "@/components/buttons/paginationbutton";
 import SearchBar from "@/components/searchbar/searchbar";
 import Dropdown from "@/components/dropdown/dropdown";
@@ -11,15 +15,22 @@ import { FiPhone, FiMail } from "react-icons/fi";
 import { TeamData } from "@/utils/mockdata/teamdata";
 
 import styles from "./styles";
+
 const Team = () => {
+  const [isOpen, setOpen] = useState(false);
+  const [sortFilter, setSortFilter] = useState("newest");
+
+  const handleFilterChange = (e) => {
+    setSortFilter(e);
+  };
   return (
     <div>
       <div className="flex mb-8">
         <Link href={"/dashboard"}>
-          <img src="/images/dashboard-icon.svg" className="p-1" />
+          <img src="/images/dashboard-icon.svg" className="p-1" alt="" />
         </Link>
-        <img src="/images/gray-slash.svg" className="p-1" />
-        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
+        <img src="/images/gray-slash.svg" className="p-1" alt="" />
+        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold flex items-center">
           Team
         </div>
       </div>
@@ -35,6 +46,7 @@ const Team = () => {
           <YellowButton
             image={"/images/new-client-icon.svg"}
             text={"Add Team Member"}
+            onClick={() => setOpen(true)}
           />
         </div>
       </div>
@@ -43,7 +55,10 @@ const Team = () => {
           <SearchBar />
         </div>
         <div>
-          <Dropdown />
+          <Dropdown value={sortFilter} onChange={handleFilterChange}>
+            <Select.Option value={"newest"}>Newest First</Select.Option>
+            <Select.Option value={"oldest"}>Oldest First</Select.Option>
+          </Dropdown>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-6 mb-8">
@@ -53,7 +68,7 @@ const Team = () => {
             key={index}
           >
             <div className="p-4 flex flex-col">
-              <div className="flex mb-6">
+              <div className="flex mb-6 items-center">
                 <img
                   src="/images/user.svg"
                   className="p-[10px] rounded-full bg-fadedYellow mr-3 userImg opacity-50"
@@ -122,6 +137,26 @@ const Team = () => {
           <span className="font-medium">4</span>
         </div>
       </div>
+      {isOpen && (
+        <Modal
+          open={isOpen}
+          centered={true}
+          onOk={() => setOpen(false)}
+          onCancel={() => setOpen(false)}
+          closeIcon={false}
+          footer={[
+            <div className="grid grid-cols-2 gap-3" key={1}>
+              <WhiteButton text={"Cancel"} onClick={() => setOpen(false)} />
+              <YellowButton text={"Add Member"} onClick={() => setOpen(true)} />
+            </div>,
+          ]}
+        >
+          <h1 className="headers text-headerText text-[20px] font-bold">
+            Add Team Member
+          </h1>
+          <div className="my-8"></div>
+        </Modal>
+      )}
     </div>
   );
 };

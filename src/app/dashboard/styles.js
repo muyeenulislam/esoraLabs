@@ -13,7 +13,7 @@ const styles = {
 
   dataLeftSideContainer: "grid grid-cols-3 gap-[24px] my-8",
   leftSideBoxes:
-    "px-6 py-5 border-2 border-grayBorderDashboard rounded-2xl shadow-sm",
+    "px-6 py-5 border-2 border-grayBorderDashboard rounded-2xl shadow-sm flex flex-col gap-2",
 
   boxUpperText: "text-subtitleText text-[16px] font-normal",
   boxLowerText: "headers text-headerText text-[32px] font-bold",

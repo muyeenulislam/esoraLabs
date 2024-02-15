@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 
 import styles from "./styles";
@@ -67,8 +68,19 @@ const Sidebar = () => {
   return (
     <div className={styles.navbarContainer}>
       <div className={styles.navbarLogoDiv}>
-        <img src="/images/esora-logo.svg" alt="logo" className="mr-2" />
-        <img src="/images/esora-text-logo.svg" alt="logo" />
+        <Image
+          src="/images/esora-logo.svg"
+          alt="logo"
+          className="mr-2"
+          width={36}
+          height={0}
+        />
+        <Image
+          src="/images/esora-text-logo.svg"
+          alt="logo"
+          width={139}
+          height={0}
+        />
       </div>
       <div className={styles.navbarItemsContainer}>
         <div>
@@ -82,10 +94,12 @@ const Sidebar = () => {
               key={index}
               onClick={() => handleNavigation(item.link)}
             >
-              <img
+              <Image
                 src={pathname === item.link ? item.activeImage : item.image}
                 alt="logo"
                 className="mr-2"
+                width={24}
+                height={24}
               />
               <div>{item.text}</div>
             </div>
@@ -102,10 +116,12 @@ const Sidebar = () => {
               key={index}
               onClick={() => handleNavigation(item.link)}
             >
-              <img
+              <Image
                 src={pathname === item.link ? item.activeImage : item.image}
                 alt="logo"
                 className="mr-2"
+                width={24}
+                height={24}
               />
               <div>{item.text}</div>
             </div>

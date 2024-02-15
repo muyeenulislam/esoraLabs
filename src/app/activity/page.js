@@ -9,12 +9,12 @@ import Link from "next/link";
 const Activity = () => {
   return (
     <div>
-      <div className="flex mb-8">
+      <div className="flex mb-8 ">
         <Link href={"/dashboard"}>
           <img src="/images/dashboard-icon.svg" className="p-1" />
         </Link>
         <img src="/images/gray-slash.svg" className="p-1" />
-        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
+        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold flex justify-center items-center">
           Activity
         </div>
       </div>
@@ -33,6 +33,7 @@ const Activity = () => {
                 background: index % 2 === 0 ? "#F9FAFB" : "white",
               }}
               key={index}
+              className="flex flex-col gap-2"
             >
               <div className={styles.justifyBetween}>
                 <div className={styles.activityUpperText}>{item.subTitle}</div>

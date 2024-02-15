@@ -65,11 +65,13 @@ const Dashboard = () => {
             {RecentProjectsData?.map((item, index) => (
               <div style={styles.recentContainer} key={index}>
                 <div style={styles.recentLeftSide}>
-                  <div className={styles.recentTitle}>{item.title}</div>
-                  <div className={styles.recentDescription}>
-                    {item?.description?.length > 200
-                      ? `${item?.description?.slice(0, 200)}...`
-                      : item?.description}
+                  <div className="flex flex-col gap-2">
+                    <div className={styles.recentTitle}>{item.title}</div>
+                    <div className={styles.recentDescription}>
+                      {item?.description?.length > 200
+                        ? `${item?.description?.slice(0, 200)}...`
+                        : item?.description}
+                    </div>
                   </div>
                   <div className="flex mb-3">
                     <div className="mr-4">
@@ -179,6 +181,7 @@ const Dashboard = () => {
                       padding: "16px",
                       background: index % 2 === 0 ? "#F9FAFB" : "white",
                     }}
+                    className="flex flex-col gap-2"
                     key={index}
                   >
                     <div className={styles.justifyBetween}>
