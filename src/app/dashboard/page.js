@@ -1,13 +1,18 @@
 import React from "react";
+
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import PrimaryButton from "@/components/buttons/primarybutton";
+import StatusIndicator from "@/components/statusindicator/statusindicator";
+import PageHeading from "@/components/pageheading/pageheading";
+import Spacer from "@/components/spacer/spacer";
+
 import DateFormatter from "@/utils/dateformatter/dateformatter";
 import DateFormatterLong from "@/utils/dateformatter/dateformatterlong";
 import DateFormatterWithSlash from "@/utils/dateformatter/dateformatterwithslash";
-import StatusIndicator from "@/components/statusindicator/statusindicator";
 import { ActivityData } from "@/utils/mockdata/activitydata";
 import { RecentProjectsData } from "@/utils/mockdata/recentprojectsdata";
+
 import styles from "./styles";
 
 const Dashboard = () => {
@@ -20,12 +25,10 @@ const Dashboard = () => {
   return (
     <div>
       <div className={styles.justifyBetween}>
-        <div>
-          <div className={styles.welcomeText}>Welcome back, Admin</div>
-          <div className={styles.welcomeSubtext}>
-            Track, manage and forecast your clients.
-          </div>
-        </div>
+        <PageHeading
+          heading="Welcome back, Admin"
+          subHeading="Track, manage and forecast your clients."
+        />
         <div className={styles.buttonContainer}>
           <WhiteButton
             image={"/images/upload-cloud-icon.svg"}

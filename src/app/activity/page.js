@@ -1,29 +1,27 @@
 import React from "react";
+import Link from "next/link";
 
 import { ActivityData } from "@/utils/mockdata/activitydata";
 import DateFormatter from "@/utils/dateformatter/dateformatter";
 import PaginationButton from "@/components/buttons/paginationbutton";
+import Breadcrumb from "@/components/breadcumb/breadcrumb";
+import PageHeading from "@/components/pageheading/pageheading";
+import Spacer from "@/components/spacer/spacer";
+
 import styles from "./styles";
-import Link from "next/link";
+
+const breadcumbData = [{ title: "Activity", link: "/activity" }];
 
 const Activity = () => {
   return (
     <div>
-      <div className="flex mb-8 ">
-        <Link href={"/dashboard"}>
-          <img src="/images/dashboard-icon.svg" className="p-1" />
-        </Link>
-        <img src="/images/gray-slash.svg" className="p-1" />
-        <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold flex justify-center items-center">
-          Activity
-        </div>
-      </div>
-      <div className="mb-8">
-        <div className={styles.welcomeText}>Activity</div>
-        <div className={styles.welcomeSubtext}>
-          Track, manage and forecast your all messages.
-        </div>
-      </div>
+      <Breadcrumb data={breadcumbData} />
+      <Spacer height="32px" />
+      <PageHeading
+        heading="Activity"
+        subHeading="Track, manage and forecast your all messages."
+      />
+      <Spacer height="32px" />
       <div className="shadow-clientCard border border-grayBorderDashboard rounded-2xl">
         <div style={styles.activityContainer}>
           {ActivityData?.map((item, index) => (
