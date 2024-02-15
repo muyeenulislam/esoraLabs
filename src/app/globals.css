@@ -47,7 +47,7 @@ body {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: url("/images/dropdownIcon.svg") no-repeat right center;
+  background: url("/images/dropdown-icon.svg") no-repeat right center;
   outline: none;
 }
 

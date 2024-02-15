@@ -76,7 +76,7 @@ const Login = () => {
         <div className={styles.loginContainer}>
           <button className={styles.loginButton} onClick={onSubmit}>
             <div className={styles.loginText}>Log in</div>
-            <img src="/images/arrowRight.svg" alt="logo" />
+            <img src="/images/arrow-right.svg" alt="logo" />
           </button>
         </div>
       </div>

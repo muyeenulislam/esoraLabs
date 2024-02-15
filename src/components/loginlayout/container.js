@@ -6,8 +6,8 @@ const Container = ({ children }) => {
   return (
     <div className={styles.container}>
       <div className={styles.logoContainer}>
-        <img src="/images/esoraLogo.svg" alt="logo" className="mr-2" />
-        <img src="/images/esoraTextLogo.svg" alt="logo" />
+        <img src="/images/esora-logo.svg" alt="logo" className="mr-2" />
+        <img src="/images/esora-text-logo.svg" alt="logo" />
       </div>
       <div className={styles.valueContainer}>{children}</div>
     </div>

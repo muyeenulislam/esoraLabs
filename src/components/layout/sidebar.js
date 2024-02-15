@@ -18,7 +18,7 @@ const Sidebar = () => {
   };
 
   const dummyData = {
-    image: "/images/profileIcon.svg",
+    image: "/images/profile-icon.svg",
     name: "Admin",
     email: "admin@example.com",
   };
@@ -26,40 +26,40 @@ const Sidebar = () => {
   const navbarItemsTop = [
     {
       text: "Dashboard",
-      image: "/images/dashboardIcon.svg",
-      activeImage: "/images/dashboardIconActive.svg",
+      image: "/images/dashboard-icon.svg",
+      activeImage: "/images/dashboard-icon-active.svg",
       link: "/dashboard",
     },
     {
       text: "Clients",
-      image: "/images/clientIcon.svg",
-      activeImage: "/images/clientIconActive.svg",
+      image: "/images/client-icon.svg",
+      activeImage: "/images/client-icon-active.svg",
       link: "/clients",
     },
     {
       text: "Messages",
-      image: "/images/messageIcon.svg",
-      activeImage: "/images/messageIconActive.svg",
+      image: "/images/message-icon.svg",
+      activeImage: "/images/message-icon-active.svg",
       link: "/messages",
     },
   ];
   const navbarItemsBottom = [
     {
       text: "Activity",
-      image: "/images/activityIcon.svg",
-      activeImage: "/images/activityIconActive.svg",
+      image: "/images/activity-icon.svg",
+      activeImage: "/images/activity-icon-active.svg",
       link: "/activity",
     },
     {
       text: "Team",
-      image: "/images/teamIcon.svg",
-      activeImage: "/images/teamIconActive.svg",
+      image: "/images/team-icon.svg",
+      activeImage: "/images/team-icon-active.svg",
       link: "/team",
     },
     {
       text: "Settings",
-      image: "/images/settingsIcon.svg",
-      activeImage: "/images/settingsIconActive.svg",
+      image: "/images/settings-icon.svg",
+      activeImage: "/images/settings-icon-active.svg",
       link: "/settings",
     },
   ];
@@ -67,8 +67,8 @@ const Sidebar = () => {
   return (
     <div className={styles.navbarContainer}>
       <div className={styles.navbarLogoDiv}>
-        <img src="/images/esoraLogo.svg" alt="logo" className="mr-2" />
-        <img src="/images/esoraTextLogo.svg" alt="logo" />
+        <img src="/images/esora-logo.svg" alt="logo" className="mr-2" />
+        <img src="/images/esora-text-logo.svg" alt="logo" />
       </div>
       <div className={styles.navbarItemsContainer}>
         <div>
@@ -126,7 +126,7 @@ const Sidebar = () => {
       </div>
       <div className={styles.logoutContainer} onClick={handleLogout}>
         <div className={styles.logoutText}>Logout</div>
-        <img src="/images/logoutIcon.svg" alt="logo" />
+        <img src="/images/logout-icon.svg" alt="logo" />
       </div>
     </div>
   );

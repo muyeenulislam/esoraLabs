@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
 
-import WhiteButton from "@/Components/buttons/whitebutton";
-import YellowButton from "@/Components/buttons/yellowbutton";
-import PaginationButton from "@/Components/buttons/paginationbutton";
+import WhiteButton from "@/components/buttons/whitebutton";
+import YellowButton from "@/components/buttons/yellowbutton";
+import PaginationButton from "@/components/buttons/paginationbutton";
 
-import SearchBar from "@/Components/searchbar/searchbar";
-import Dropdown from "@/Components/dropdown/dropdown";
+import SearchBar from "@/components/searchbar/searchbar";
+import Dropdown from "@/components/dropdown/dropdown";
 
 import { ClientData } from "@/utils/mockdata/clientdata";
 import { FiPhone, FiMail } from "react-icons/fi";
@@ -18,9 +18,9 @@ const Clients = () => {
     <div>
       <div className="flex mb-8">
         <Link href={"/dashboard"}>
-          <img src="/images/dashboardIcon.svg" className="p-1" />
+          <img src="/images/dashboard-icon.svg" className="p-1" />
         </Link>
-        <img src="/images/graySlash.svg" className="p-1" />
+        <img src="/images/gray-slash.svg" className="p-1" />
         <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
           Clients
         </div>
@@ -34,15 +34,15 @@ const Clients = () => {
         </div>
         <div className={styles.buttonContainer}>
           <WhiteButton
-            image={"/images/uploadCloudIcon.svg"}
+            image={"/images/upload-cloud-icon.svg"}
             text={"Import Brief"}
           />
           <WhiteButton
-            image={"/images/plusIcon.svg"}
+            image={"/images/plus-icon.svg"}
             text={"Create a New Project"}
           />
           <YellowButton
-            image={"/images/newClientIcon.svg"}
+            image={"/images/new-client-icon.svg"}
             text={"Create a New Client"}
           />
         </div>

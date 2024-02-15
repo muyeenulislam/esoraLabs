@@ -22,8 +22,8 @@ export const metadata = {
   icons: {
     icon: [
       {
-        url: "/images/esoraLogo.png",
-        href: "/images/esoraLogo.png",
+        url: "/images/esora-logo.png",
+        href: "/images/esora-logo.png",
       },
     ],
   },

@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
 
-import YellowButton from "@/Components/buttons/yellowbutton";
-import PaginationButton from "@/Components/buttons/paginationbutton";
-import SearchBar from "@/Components/searchbar/searchbar";
-import Dropdown from "@/Components/dropdown/dropdown";
+import YellowButton from "@/components/buttons/yellowbutton";
+import PaginationButton from "@/components/buttons/paginationbutton";
+import SearchBar from "@/components/searchbar/searchbar";
+import Dropdown from "@/components/dropdown/dropdown";
 
 import { FiPhone, FiMail } from "react-icons/fi";
 
@@ -16,9 +16,9 @@ const Team = () => {
     <div>
       <div className="flex mb-8">
         <Link href={"/dashboard"}>
-          <img src="/images/dashboardIcon.svg" className="p-1" />
+          <img src="/images/dashboard-icon.svg" className="p-1" />
         </Link>
-        <img src="/images/graySlash.svg" className="p-1" />
+        <img src="/images/gray-slash.svg" className="p-1" />
         <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
           Team
         </div>
@@ -33,7 +33,7 @@ const Team = () => {
 
         <div className="max-h-6">
           <YellowButton
-            image={"/images/newClientIcon.svg"}
+            image={"/images/new-client-icon.svg"}
             text={"Add Team Member"}
           />
         </div>

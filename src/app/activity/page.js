@@ -2,7 +2,7 @@ import React from "react";
 
 import { ActivityData } from "@/utils/mockdata/activitydata";
 import DateFormatter from "@/utils/dateformatter/dateformatter";
-import PaginationButton from "@/Components/buttons/paginationbutton";
+import PaginationButton from "@/components/buttons/paginationbutton";
 import styles from "./styles";
 import Link from "next/link";
 
@@ -11,9 +11,9 @@ const Activity = () => {
     <div>
       <div className="flex mb-8">
         <Link href={"/dashboard"}>
-          <img src="/images/dashboardIcon.svg" className="p-1" />
+          <img src="/images/dashboard-icon.svg" className="p-1" />
         </Link>
-        <img src="/images/graySlash.svg" className="p-1" />
+        <img src="/images/gray-slash.svg" className="p-1" />
         <div className="py-1 px-2 text-primary bg-gray50 rounded-md text-[14px] font-bold">
           Activity
         </div>

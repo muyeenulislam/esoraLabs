@@ -1,6 +1,6 @@
 import React from "react";
 
-import Container from "@/Components/loginlayout/container";
+import Container from "@/components/loginlayout/container";
 
 const Layout = ({ children }) => {
   return (

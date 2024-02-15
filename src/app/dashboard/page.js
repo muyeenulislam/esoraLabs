@@ -1,11 +1,11 @@
 import React from "react";
-import WhiteButton from "@/Components/buttons/whitebutton";
-import YellowButton from "@/Components/buttons/yellowbutton";
-import PrimaryButton from "@/Components/buttons/primarybutton";
+import WhiteButton from "@/components/buttons/whitebutton";
+import YellowButton from "@/components/buttons/yellowbutton";
+import PrimaryButton from "@/components/buttons/primarybutton";
 import DateFormatter from "@/utils/dateformatter/dateformatter";
 import DateFormatterLong from "@/utils/dateformatter/dateformatterlong";
 import DateFormatterWithSlash from "@/utils/dateformatter/dateformatterwithslash";
-import StatusIndicator from "@/Components/statusindicator/statusindicator";
+import StatusIndicator from "@/components/statusindicator/statusindicator";
 import { ActivityData } from "@/utils/mockdata/activitydata";
 import { RecentProjectsData } from "@/utils/mockdata/recentprojectsdata";
 import styles from "./styles";
@@ -28,15 +28,15 @@ const Dashboard = () => {
         </div>
         <div className={styles.buttonContainer}>
           <WhiteButton
-            image={"/images/uploadCloudIcon.svg"}
+            image={"/images/upload-cloud-icon.svg"}
             text={"Import Brief"}
           />
           <WhiteButton
-            image={"/images/plusIcon.svg"}
+            image={"/images/plus-icon.svg"}
             text={"Create a New Project"}
           />
           <YellowButton
-            image={"/images/newClientIcon.svg"}
+            image={"/images/new-client-icon.svg"}
             text={"Create a New Client"}
           />
         </div>
@@ -140,7 +140,7 @@ const Dashboard = () => {
                         {new Date(item.dueDate) < new Date() && (
                           <StatusIndicator
                             text={"Overdue"}
-                            icon={"/images/overdueIcon.svg"}
+                            icon={"/images/overdue-icon.svg"}
                           />
                         )}
                       </div>
@@ -154,7 +154,7 @@ const Dashboard = () => {
                   <div>
                     <PrimaryButton
                       text={"Start Briefing"}
-                      image={"/images/arrowRightWhite.svg"}
+                      image={"/images/arrow-right-white.svg"}
                     />
                   </div>
                 </div>
