@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Modal, Select } from "antd";
 
@@ -21,6 +22,7 @@ import roleData from "@/utils/mockdata/roledata";
 const breadcumbData = [{ title: "Team", link: "/team" }];
 
 const Team = () => {
+  const router = useRouter();
   const [isOpen, setOpen] = useState(false);
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
@@ -74,7 +76,7 @@ const Team = () => {
         {TeamData?.map((item, index) => (
           <TeamCard data={item} key={index}>
             <div>Assign</div>
-            <div>View Details</div>
+            <Link href={`/team/${item.name}`}>View Details</Link>
           </TeamCard>
         ))}
       </div>
