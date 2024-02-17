@@ -92,3 +92,14 @@ body {
   padding-top: 24px !important;
   border-top: 1px solid #52596d;
 }
+
+/* tabs */
+.ant-tabs .ant-tabs-tab {
+  color: #525252 !important;
+}
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: black !important;
+}
+.ant-tabs-ink-bar {
+  background: #000000 !important;
+}

@@ -19,7 +19,7 @@ import DefaultInput from "@/components/inputs/defaultinput";
 import { TeamData } from "@/utils/mockdata/teamdata";
 import roleData from "@/utils/mockdata/roledata";
 
-const breadcumbData = [{ title: "Team", link: "/team" }];
+const breadcumbData = [{ title: "Team", link: "/team", active: true }];
 
 const Team = () => {
   const router = useRouter();
@@ -55,6 +55,7 @@ const Team = () => {
             image={"/images/new-client-icon.svg"}
             text={"Add Team Member"}
             onClick={() => setOpen(true)}
+            imagealign="left"
           />
         </div>
       </div>

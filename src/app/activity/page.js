@@ -10,7 +10,7 @@ import Spacer from "@/components/spacer/spacer";
 
 import styles from "./styles";
 
-const breadcumbData = [{ title: "Activity", link: "/activity" }];
+const breadcumbData = [{ title: "Activity", link: "/activity", active: true }];
 
 const Activity = () => {
   return (

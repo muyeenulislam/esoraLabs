@@ -33,12 +33,15 @@ const Dashboard = () => {
           <WhiteButton
             image={"/images/upload-cloud-icon.svg"}
             text={"Import Brief"}
+            imagealign="left"
           />
           <WhiteButton
             image={"/images/plus-icon.svg"}
             text={"Create a New Project"}
+            imagealign="left"
           />
           <YellowButton
+            imagealign="left"
             image={"/images/new-client-icon.svg"}
             text={"Create a New Client"}
           />

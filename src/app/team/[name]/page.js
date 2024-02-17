@@ -1,21 +1,111 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useSearchParams, usePathname } from "next/navigation";
+import { Tabs } from "antd";
+import { useRouter, usePathname } from "next/navigation";
+
+import Breadcrumb from "@/components/breadcumb/breadcrumb";
+import PageHeading from "@/components/pageheading/pageheading";
+import WhiteButton from "@/components/buttons/whitebutton";
+import YellowButton from "@/components/buttons/yellowbutton";
+import Spacer from "@/components/spacer/spacer";
+
 import { TeamData } from "@/utils/mockdata/teamdata";
+
+import ProfileDetailsMessages from "./messages";
+import ProfileDetailsOverview from "./overview";
+import ProfileDetailsProjects from "./projects";
 
 const ProfileDetails = () => {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [data, setData] = useState({});
+  const [activeKey, setActivekey] = useState("1");
 
   useEffect(() => {
-    const name = pathname?.split("/")[2].replace("%20", " ");
+    const name = pathname?.split("/")[2].replace(/%20/g, " ");
     const memberData = TeamData.filter((item) => item.name === name);
-
     setData(memberData[0]);
   }, []);
 
-  return <div>ProfileDetails</div>;
+  const breadcumbData = [
+    { title: "Team", link: "/team", active: false },
+    { title: `${data?.name}`, link: "#", active: true },
+  ];
+
+  const items = [
+    {
+      key: "1",
+      label: "Overview",
+      children: <ProfileDetailsOverview data={data} />,
+    },
+    {
+      key: "2",
+      label: "Assigned Projects",
+      children: <ProfileDetailsProjects data={data} />,
+    },
+    {
+      key: "3",
+      label: (
+        <div>
+          Messages{" "}
+          <span className="bg-fadedYellow px-2 rounded-xl text-[12px] font-medium">
+            2
+          </span>
+        </div>
+      ),
+      children: <ProfileDetailsMessages data={data} />,
+    },
+  ];
+  const changeTab = (e) => {
+    setActivekey(e);
+  };
+  const handleNextTab = () => {
+    if (activeKey === "1") setActivekey("2");
+    else if (activeKey === "2") setActivekey("3");
+    else return;
+  };
+
+  const handlePrevTab = () => {
+    if (activeKey === "3") setActivekey("2");
+    else if (activeKey === "2") setActivekey("1");
+    else return;
+  };
+
+  return (
+    <div>
+      <Breadcrumb data={breadcumbData} />
+      <Spacer height="32px" />
+      <div className="flex justify-between">
+        <PageHeading
+          heading={data?.name}
+          subHeading="Manage your team members right from here."
+        />
+        <div className="flex justify-between items-center gap-2">
+          <WhiteButton
+            imagealign="left"
+            image={"/images/arrow-right.svg"}
+            text={"Previous"}
+            onClick={handlePrevTab}
+          />
+          <YellowButton
+            imagealign="right"
+            image={"/images/arrow-right.svg"}
+            text={"Next"}
+            onClick={handleNextTab}
+          />
+        </div>
+      </div>
+      <Spacer height="32px" />
+      <Tabs
+        defaultActiveKey={"1"}
+        activeKey={activeKey}
+        items={items}
+        onChange={changeTab}
+      />
+    </div>
+  );
 };
 
 export default ProfileDetails;

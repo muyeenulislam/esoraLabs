@@ -17,7 +17,7 @@ import ClientCard from "@/components/cards/clientcard";
 
 import { ClientData } from "@/utils/mockdata/clientdata";
 
-const breadcumbData = [{ title: "Clients", link: "/clients" }];
+const breadcumbData = [{ title: "Clients", link: "/clients", active: true }];
 
 const Clients = () => {
   const [sortFilter, setSortFilter] = useState("newest");
@@ -39,13 +39,16 @@ const Clients = () => {
         <div className="grid grid-cols-3 gap-3 max-h-[50px]">
           <WhiteButton
             image={"/images/upload-cloud-icon.svg"}
+            imagealign="left"
             text={"Import Brief"}
           />
           <WhiteButton
             image={"/images/plus-icon.svg"}
             text={"Create a New Project"}
+            imagealign="left"
           />
           <YellowButton
+            imagealign="left"
             image={"/images/new-client-icon.svg"}
             text={"Create a New Client"}
           />
@@ -56,7 +59,7 @@ const Clients = () => {
         <div>
           <SearchBar onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <div>
+        <div className="w-[240px]">
           <Dropdown value={sortFilter} onChange={handleFilterChange}>
             <Select.Option value={"newest"}>Newest First</Select.Option>
             <Select.Option value={"oldest"}>Oldest First</Select.Option>

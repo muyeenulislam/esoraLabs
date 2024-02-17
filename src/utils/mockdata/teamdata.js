@@ -6,6 +6,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Md Golam Rabbi",
@@ -14,6 +15,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Web Developer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Md Mohiuddin",
@@ -22,6 +24,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Aman Ullah",
@@ -30,6 +33,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Aman Ullah",
@@ -38,6 +42,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Aman Ullah",
@@ -46,6 +51,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Aman Ullah",
@@ -54,6 +60,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Aman Ullah",
@@ -62,6 +69,7 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
   {
     name: "Aman Ullah",
@@ -70,5 +78,6 @@ export const TeamData = [
     email: "quasiah@gmail.com",
     projectAssigned: "12",
     role: "Designer",
+    address: "123,A,fdsf,asdqwer",
   },
 ];
