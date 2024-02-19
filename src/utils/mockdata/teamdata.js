@@ -2,11 +2,11 @@ export const TeamData = [
   {
     name: "Aman Ullah",
     designation: "Sr. Integrated Design Specialist",
-    number: "(704) 555-0127",
-    email: "quasiah@gmail.com",
+    number: "+1 (250) 555-0199",
+    email: "aman@esoralabs.com",
     projectAssigned: "12",
     role: "Designer",
-    address: "123,A,fdsf,asdqwer",
+    address: "1301 Trans-Canada Hwy, Golden, BC V0A 1H2, Canada",
   },
   {
     name: "Md Golam Rabbi",

@@ -70,7 +70,7 @@ const Clients = () => {
       <div className="grid grid-cols-3 gap-6">
         {ClientData?.map((item, index) => (
           <ClientCard data={item} key={index}>
-            <div>View Details</div>
+            <Link href={`/clients/${item.name}`}>View Details</Link>
           </ClientCard>
         ))}
       </div>

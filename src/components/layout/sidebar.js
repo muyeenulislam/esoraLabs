@@ -66,7 +66,13 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className={styles.navbarContainer}>
+    <div
+      className={` ${styles.navbarContainer} ${
+        pathname.includes("/clients/") || pathname.includes("/team/")
+          ? "hidden"
+          : ""
+      } `}
+    >
       <div className={styles.navbarLogoDiv}>
         <Image
           src="/images/esora-logo.svg"

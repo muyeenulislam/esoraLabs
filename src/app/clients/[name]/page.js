@@ -12,7 +12,7 @@ import YellowButton from "@/components/buttons/yellowbutton";
 import Spacer from "@/components/spacer/spacer";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-import { TeamData } from "@/utils/mockdata/teamdata";
+import { ClientData } from "@/utils/mockdata/clientdata";
 
 import ProfileDetailsMessages from "./messages";
 import ProfileDetailsOverview from "./overview";
@@ -27,12 +27,12 @@ const ProfileDetails = () => {
 
   useEffect(() => {
     const name = pathname?.split("/")[2].replace(/%20/g, " ");
-    const memberData = TeamData.filter((item) => item.name === name);
+    const memberData = ClientData.filter((item) => item.name === name);
     setData(memberData[0]);
   }, []);
 
   const breadcumbData = [
-    { title: "Team", link: "/team", active: false },
+    { title: "Clients", link: "/clients", active: false },
     { title: `${data?.name}`, link: "#", active: true },
   ];
 
@@ -44,7 +44,7 @@ const ProfileDetails = () => {
     },
     {
       key: "2",
-      label: "Assigned Projects",
+      label: "Projects",
       children: <ProfileDetailsProjects data={data} />,
     },
     {
@@ -82,14 +82,14 @@ const ProfileDetails = () => {
       <div className="flex justify-between">
         <div className="flex items-center">
           <Link
-            href={"/team"}
+            href={"/clients"}
             className="border border-gray300 rounded-[10px] p-[14px] mr-[16px] shadow"
           >
             <img src="/images/arrow-left.svg" />
           </Link>
           <PageHeading
             heading={data?.name}
-            subHeading="Manage your team members right from here."
+            subHeading="Mange your clients right from here."
           />
         </div>
         <div className="flex justify-between items-center gap-2">

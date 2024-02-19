@@ -24,9 +24,12 @@ const Breadcrumb = (props) => {
             width={20}
           />
           <Link
-            className={`py-1 px-2 ${
-              item?.active ? "text-primary" : "text-gray-400"
-            } bg-gray50 rounded-md text-[14px] font-bold flex items-center`}
+            className={`py-1 px-2
+            ${
+              item?.active
+                ? "bg-gray50 text-primary font-bold"
+                : "bg-transparent text-gray-400 font-normal"
+            }  rounded-md text-[14px]  flex items-center`}
             href={item.link}
           >
             {item.title}
