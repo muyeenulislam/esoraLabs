@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Button, Tabs } from "antd";
+import { Tabs } from "antd";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 

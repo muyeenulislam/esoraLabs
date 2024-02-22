@@ -6,7 +6,6 @@ import { Select } from "antd";
 
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
-import PaginationButton from "@/components/buttons/paginationbutton";
 
 import SearchBar from "@/components/searchbar/searchbar";
 import Dropdown from "@/components/dropdown/dropdown";
@@ -14,6 +13,7 @@ import Breadcrumb from "@/components/breadcumb/breadcrumb";
 import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
 import ClientCard from "@/components/cards/clientcard";
+import Pagination from "@/components/pagination/pagination";
 
 import { ClientData } from "@/utils/mockdata/clientdata";
 
@@ -22,6 +22,7 @@ const breadcumbData = [{ title: "Clients", link: "/clients", active: true }];
 const Clients = () => {
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleFilterChange = (e) => {
     setSortFilter(e);
@@ -75,16 +76,12 @@ const Clients = () => {
         ))}
       </div>
       <Spacer height="32px" />
-      <div className="pt-[11px] pb-4 flex items-center justify-between border-t border-t-grayBorder">
-        <div className="flex">
-          <PaginationButton text={"Previous"} />
-          <div className="w-3"></div>
-          <PaginationButton text={"Next"} />
-        </div>
-        <div className="text-subtitleText text-[14px] font-normal">
-          Page <span className="font-medium">1</span> of{" "}
-          <span className="font-medium">4</span>
-        </div>
+      <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
+        <Pagination
+          totalPages={10}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </div>
   );
