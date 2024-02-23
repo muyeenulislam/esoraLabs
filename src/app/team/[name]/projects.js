@@ -1,27 +1,41 @@
 import React, { useState } from "react";
-import { Table } from "antd";
 import PrimaryButtonTable from "@/components/buttons/primarybuttontable";
 import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 import Pagination from "@/components/pagination/pagination";
+import PrimaryTable from "@/components/table/primarytable";
+
 const columns = [
   {
     title: "Project Name",
     dataIndex: "projectName",
+    render: (text, record) => <div>{record?.projectName}</div>,
   },
   {
     title: "Last message",
     dataIndex: "lastMessage",
+    render: (text, record) => <div>{record?.lastMessage}</div>,
   },
   {
     title: "Assigned On",
     dataIndex: "assignedOn",
+    render: (text, record) => <div>{record?.assignedOn}</div>,
   },
   {
     title: "",
     dataIndex: "action",
     width: 350,
+    render: (text, record) => (
+      <div className="flex items-center justify-end gap-3">
+        <WhiteButtonTable text={"Remove"} />
+        <PrimaryButtonTable
+          text={"View Project"}
+          image={"/images/arrow-right-white.svg"}
+        />
+      </div>
+    ),
   },
 ];
+
 const data = [];
 for (let i = 0; i < 10; i++) {
   data.push({
@@ -40,30 +54,24 @@ for (let i = 0; i < 10; i++) {
     ),
   });
 }
+
 const ProfileDetailsProjects = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(data?.length / 10);
 
-  const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-    setSelectedRows(selectedRows);
-  };
-
-  const rowSelection = {
-    selectedRows,
-    onChange: onSelectChange,
-  };
-
+  console.log(selectedRows);
   return (
     <div className="border border-gray-200 shadow-clientCard rounded-2xl">
-      <Table
-        rowSelection={rowSelection}
+      <PrimaryTable
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
         columns={columns}
-        dataSource={data}
-        pagination={false}
+        data={data}
       />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
         <Pagination
-          totalPages={10}
+          totalPages={totalPage}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
