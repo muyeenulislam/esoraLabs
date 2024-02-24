@@ -1,12 +1,23 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import TopTitle from "./toptitle";
 import Spacer from "@/components/spacer/spacer";
 
 import ClientPage from "./clientpage";
 import Services from "./services";
+import Description from "./description";
+import Goals from "./goals";
+import TargetAudience from "./targetaudience";
+import GeographicalScope from "./geographicalscope";
+import Maturity from "./maturity";
+import StartDate from "./startdate";
+import EndDate from "./enddate";
+import OtherInfo from "./otherinfo";
+import Documents from "./documents";
+import Review from "./review";
 
 import styles from "./styles";
 
@@ -26,7 +37,7 @@ const Login = () => {
   const [otherInfo, setOtherInfo] = useState("");
   const [documents, setDocuments] = useState(null);
 
-  console.log(page);
+  console.log(geographicalScope, targetAudience);
   const onSubmit = () => {
     if (!email) {
       setErrorEmail("Email is required");
@@ -52,6 +63,85 @@ const Login = () => {
           <Services
             services={services}
             setServices={setServices}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "description" ? (
+          <Description
+            description={description}
+            setDescription={setDescription}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "goals" ? (
+          <Goals
+            goals={goals}
+            setGoals={setGoals}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "targetAudience" ? (
+          <TargetAudience
+            targetAudience={targetAudience}
+            setTargetAudience={setTargetAudience}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "geographicalScope" ? (
+          <GeographicalScope
+            geographicalScope={geographicalScope}
+            setGeographicalScope={setGeographicalScope}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "maturity" ? (
+          <Maturity
+            maturity={maturity}
+            setMaturity={setMaturity}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "startDate" ? (
+          <StartDate
+            startTime={startTime}
+            setStartTime={setStartTime}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "endDate" ? (
+          <EndDate
+            deadline={deadline}
+            setDeadline={setDeadline}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "otherInfo" ? (
+          <OtherInfo
+            otherInfo={otherInfo}
+            setOtherInfo={setOtherInfo}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "documents" ? (
+          <Documents
+            documents={documents}
+            setDocuments={setDocuments}
+            page={page}
+            setPage={setPage}
+          />
+        ) : page === "review" ? (
+          <Review
+            clientName={clientName}
+            services={services}
+            description={description}
+            goals={goals}
+            targetAudience={targetAudience}
+            geographicalScope={geographicalScope}
+            maturity={maturity}
+            startTime={startTime}
+            deadline={deadline}
+            otherInfo={otherInfo}
+            documents={documents}
             page={page}
             setPage={setPage}
           />

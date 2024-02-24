@@ -1,39 +1,38 @@
 import React from "react";
-import Image from "next/image";
-import { Select } from "antd";
 
-import Dropdown from "@/components/dropdown/dropdown";
-import Spacer from "@/components/spacer/spacer";
-import SearchBar from "@/components/searchbar/searchbar";
+import TextBox from "@/components/textbox/textbox";
 import YellowButton from "@/components/buttons/yellowbutton";
 import WhiteButton from "@/components/buttons/whitebutton";
 
 import styles from "./styles";
 
-const Services = (props) => {
+const Description = (props) => {
   return (
     <>
       <div>
-        <SearchBar />
-        <div className="h-[1px] my-4 bg-[#D9D9D9]"></div>
+        <TextBox
+          onChange={(e) => props?.setDescription(e.target.value)}
+          placeholder="Enter Info Here..."
+          value={props?.description}
+        />
       </div>
       <div className={styles.loginContainer}>
         <WhiteButton
           text={"Previous"}
           imagealign="left"
           image={"/images/arrow-left.svg"}
-          onClick={() => props?.setPage("clientSelect")}
+          onClick={() => props?.setPage("services")}
         />
         <YellowButton
           text={"Next"}
           imagealign="right"
           image={"/images/arrow-right.svg"}
-          // disabled={props?.services?.length === 0 ? true : false}
-          onClick={() => props?.setPage("description")}
+          disabled={!props?.description ? true : false}
+          onClick={() => props?.setPage("goals")}
         />
       </div>
     </>
   );
 };
 
-export default Services;
+export default Description;

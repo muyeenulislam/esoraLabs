@@ -57,7 +57,7 @@ const Clients = () => {
       </div>
       <Spacer height="32px" />
       <div className="flex justify-between">
-        <div>
+        <div style={{ width: "460px" }}>
           <SearchBar onChange={(e) => setSearch(e.target.value)} />
         </div>
         <div className="w-[240px]">
