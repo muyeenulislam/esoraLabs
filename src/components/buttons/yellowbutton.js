@@ -4,7 +4,10 @@ const YellowButton = (props) => {
   return (
     <button
       className="bg-fadedYellow"
-      style={styles.yellowButtonStyle}
+      style={{
+        ...styles.yellowButtonStyle,
+        opacity: props?.disabled ? "0.5" : "1",
+      }}
       {...props}
     >
       {props.image && props.imagealign === "left" && (
