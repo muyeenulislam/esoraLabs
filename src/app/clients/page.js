@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Select } from "antd";
 
 import WhiteButton from "@/components/buttons/whitebutton";
@@ -20,6 +21,8 @@ import { ClientData } from "@/utils/mockdata/clientdata";
 const breadcumbData = [{ title: "Clients", link: "/clients", active: true }];
 
 const Clients = () => {
+  const router = useRouter();
+
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,6 +50,7 @@ const Clients = () => {
             image={"/images/plus-icon.svg"}
             text={"Create a New Project"}
             imagealign="left"
+            onClick={() => router.push("/createproject")}
           />
           <YellowButton
             imagealign="left"

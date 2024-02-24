@@ -1,5 +1,4 @@
 import React from "react";
-import Spacer from "@/components/spacer/spacer";
 import styles from "./styles";
 
 const TopTitle = (props) => {
@@ -46,7 +45,6 @@ const TopTitle = (props) => {
   return (
     <div className="max-w-[660px]">
       <h1 className={styles.header}>{title}</h1>
-      <Spacer height="16px" />
       <h4 className={styles.subHeader}>{subTitle}</h4>
     </div>
   );

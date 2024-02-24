@@ -26,7 +26,7 @@ const Login = () => {
 
   const [page, setPage] = useState("clientSelect");
   const [clientName, setClientName] = useState("");
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState("");
   const [description, setDescription] = useState("");
   const [goals, setGoals] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
@@ -37,7 +37,7 @@ const Login = () => {
   const [otherInfo, setOtherInfo] = useState("");
   const [documents, setDocuments] = useState(null);
 
-  console.log(geographicalScope, targetAudience);
+  console.log(services);
   const onSubmit = () => {
     if (!email) {
       setErrorEmail("Email is required");

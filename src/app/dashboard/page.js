@@ -1,11 +1,13 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import PrimaryButton from "@/components/buttons/primarybutton";
 import StatusIndicator from "@/components/statusindicator/statusindicator";
 import PageHeading from "@/components/pageheading/pageheading";
-import Spacer from "@/components/spacer/spacer";
 
 import DateFormatter from "@/utils/dateformatter/dateformatter";
 import DateFormatterLong from "@/utils/dateformatter/dateformatterlong";
@@ -15,12 +17,13 @@ import { RecentProjectsData } from "@/utils/mockdata/recentprojectsdata";
 
 import styles from "./styles";
 
+const boxData = [
+  { text: "Total Clients", value: "32" },
+  { text: "New Clients", value: "2" },
+  { text: "Projects Active", value: "12" },
+];
 const Dashboard = () => {
-  const boxData = [
-    { text: "Total Clients", value: "32" },
-    { text: "New Clients", value: "2" },
-    { text: "Projects Active", value: "12" },
-  ];
+  const router = useRouter();
 
   return (
     <div>
@@ -39,6 +42,7 @@ const Dashboard = () => {
             image={"/images/plus-icon.svg"}
             text={"Create a New Project"}
             imagealign="left"
+            onClick={() => router.push("/createproject")}
           />
           <YellowButton
             imagealign="left"
