@@ -8,7 +8,7 @@ import Spacer from "@/components/spacer/spacer";
 import styles from "./styles";
 
 const TargetAudience = (props) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(null);
 
   return (
     <>

@@ -105,6 +105,7 @@ const Team = () => {
               <YellowButton text={"Add Member"} onClick={handleAdd} />
             </div>,
           ]}
+          className="add-team-member"
         >
           <div>
             <h1 className="headers text-headerText text-[20px] font-bold m-0">

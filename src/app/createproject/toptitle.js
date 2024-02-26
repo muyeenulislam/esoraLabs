@@ -26,10 +26,10 @@ const TopTitle = (props) => {
   } else if (props?.pageName === "maturity") {
     title = "What is the maturity of your project?";
     subTitle = "Select the geographical scope of your project";
-  } else if (props?.pageName === "startTime") {
+  } else if (props?.pageName === "startDate") {
     title = "When should the project start?";
     subTitle = "Select the time when do you want to start your project";
-  } else if (props?.pageName === "deadline") {
+  } else if (props?.pageName === "endDate") {
     title = "When does your project need to be completed?";
     subTitle = "Select the time when do you need your project completed";
   } else if (props?.pageName === "otherInfo") {
@@ -38,12 +38,12 @@ const TopTitle = (props) => {
   } else if (props?.pageName === "documents") {
     title = "Do you have any briefing or relevant documents to share?";
     subTitle = "Please upload relevant files you may have";
-  } else if (props?.pageName === "overview") {
+  } else if (props?.pageName === "review") {
     title = "Review and Submit";
     subTitle = "Please review carefully and if you’re satisfied then submit.";
   }
   return (
-    <div className="max-w-[660px]">
+    <div className="max-w-[720px]">
       <h1 className={styles.header}>{title}</h1>
       <h4 className={styles.subHeader}>{subTitle}</h4>
     </div>

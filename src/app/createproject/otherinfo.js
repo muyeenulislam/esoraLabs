@@ -1,24 +1,21 @@
 import React from "react";
-import Image from "next/image";
-import { Select } from "antd";
 
-import Dropdown from "@/components/dropdown/dropdown";
-import Spacer from "@/components/spacer/spacer";
+import TextBox from "@/components/textbox/textbox";
 import YellowButton from "@/components/buttons/yellowbutton";
 import WhiteButton from "@/components/buttons/whitebutton";
 
 import styles from "./styles";
 
-const clients = [
-  { id: 1, name: "client 1" },
-  { id: 2, name: "client 2" },
-  { id: 3, name: "client 3" },
-  { id: 4, name: "client 4" },
-];
 const OtherInfo = (props) => {
   return (
     <>
-      <div></div>
+      <div>
+        <TextBox
+          onChange={(e) => props?.setOtherInfo(e.target.value)}
+          placeholder="Enter Info Here..."
+          value={props?.otherInfo}
+        />
+      </div>
       <div className={styles.loginContainer}>
         <WhiteButton
           text={"Previous"}

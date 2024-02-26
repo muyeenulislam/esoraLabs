@@ -95,7 +95,7 @@ body {
 .ant-modal .ant-modal-content {
   padding: 32px !important;
 }
-.ant-modal .ant-modal-footer {
+.add-team-member.ant-modal .ant-modal-footer {
   margin-top: 0px !important;
   padding-top: 24px !important;
   border-top: 1px solid #52596d;
