@@ -33,6 +33,7 @@ const styles = {
     padding: "14px 20px",
     borderRadius: "10px",
     border: "1px solid #D0D5DD",
+    background: Colors.white,
     boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
   },
   whiteButtonTableStyle: {
