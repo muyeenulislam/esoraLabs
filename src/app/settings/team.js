@@ -39,7 +39,6 @@ const Team = () => {
   };
 
   const handleAddRole = () => {
-    console.log(roles);
     setIsOpen(false);
     setRoles([{ label: "", value: "" }]);
   };
