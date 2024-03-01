@@ -6,7 +6,7 @@ const SearchBar = (props) => {
       <img src="/images/search-icon.svg" className="mr-2" />
       <input
         type="text"
-        placeholder="Search"
+        placeholder={props?.placeholder || "Search"}
         className="text-[16px] w-full outline-none"
         {...props}
       />
