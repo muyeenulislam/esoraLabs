@@ -43,7 +43,7 @@ const columns = [
             >
               Send a Message <FaArrowRight className="ml-1" />
             </button>
-            <span className="bg-fadedYellow px-2 rounded-xl text-[16px] font-medium">
+            <span className="bg-fadedYellow px-2 rounded-2xl text-[16px] font-medium">
             2
           </span>
       </Space>
