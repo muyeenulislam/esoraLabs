@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { TeamData } from "@/utils/mockdata/teamdata";
 import {  Divider, Radio, Space, Table, Tag } from "antd";
 import { FaArrowRight } from "react-icons/fa";
+import PrimaryTable from "@/components/table/primarytable";
+import Pagination from "@/components/pagination/pagination";
 const dataSource = [
   {
     key: '1',
@@ -63,7 +65,9 @@ const rowSelection = {
     name: record.name,
   }),
 };
-const [selectionType, setSelectionType] = useState('checkbox');
+const [selectedRows, setSelectedRows] = useState([]);
+const [currentPage, setCurrentPage] = useState(1);
+const [totalPage, setTotalPage] = useState(data?.length / 10);
   return (
     <div>
       <div className="rounded-md shadow border my-auto border-gray-300 p-4">
@@ -89,13 +93,21 @@ const [selectionType, setSelectionType] = useState('checkbox');
         </div>
       </div>
       <div>
-      <div className="border mt-9 shadow border-gray-200 rounded-md p-4">
-
-      <Table rowSelection={{
-          type: selectionType,
-          ...rowSelection,
-        }} dataSource={dataSource} columns={columns} />
-  </div>
+      <div className="border mt-8 border-gray-200 shadow-clientCard rounded-2xl">
+      <PrimaryTable
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
+        columns={columns}
+        data={dataSource}
+      />
+      <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
+        <Pagination
+          totalPages={totalPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      </div>
+    </div>
 
       </div>
     </div>
