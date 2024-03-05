@@ -5,7 +5,7 @@ import WhiteButton from '@/components/buttons/whitebutton'
 import YellowButton from '@/components/buttons/yellowbutton'
 import PageHeading from '@/components/pageheading/pageheading'
 import Spacer from '@/components/spacer/spacer'
-import { Divider, Tabs } from 'antd'
+import { Button, Divider, Dropdown, Modal, Select, Tabs } from 'antd'
 import Link from 'next/link'
 import { FaArrowRight, FaRegTrashAlt } from 'react-icons/fa'
 import ProfileDetailsMessages from '../../messages'
@@ -14,6 +14,8 @@ import ProfileDetailsProjects from '../../projects'
 import { usePathname } from 'next/navigation'
 
 import { ClientData } from "@/utils/mockdata/clientdata";
+import Website_overview from './website_overview'
+import DefaultInput from '@/components/inputs/defaultinput'
 
 
 
@@ -25,6 +27,9 @@ const website = () => {
     const [data, setData] = useState({});
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [activeKey, setActivekey] = useState("1");
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [isOpen, setOpen] = useState(false);
   
     const breadcumbData = [
       { title: "Clients", link: "/clients", active: false },
@@ -43,7 +48,7 @@ const website = () => {
       {
         key: "1",
         label: "Overview",
-        children: <ProfileDetailsOverview data={data} />,
+        children: <Website_overview data={data} />,
       },
       {
         key: "2",
@@ -83,7 +88,35 @@ const website = () => {
       else return;
     };
 
+// 
+// eslint-disable-next-line react-hooks/rules-of-hooks
+const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [state, setState] = useState({
+    role: "",
+    name: "",
+    designation: "",
+    email: "",
+  });
+
+
+  const handleFilterChange = (e) => {
+    setSortFilter(e);
+  };
+
+  const handleAdd = () => {
+    console.log(state);
+  };
 
 
   return (
@@ -117,9 +150,48 @@ const website = () => {
             text={"Next"}
             onClick={handleNextTab}
           />
+
+{/* <Button type="primary"  onClick={showModal}>
+        Open Modal
+     
           <button className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow">
             <FaRegTrashAlt />
           </button>
+          </Button> */}
+           {isOpen && (
+        <Modal
+          open={isOpen}
+          centered={true}
+          onCancel={() => setOpen(false)}
+          closeIcon={false}
+          footer={[
+            <div className="grid grid-cols-2 gap-3" key={1}>
+              <WhiteButton text={"Cancel"} onClick={() => setOpen(false)} />
+              <YellowButton text={"Mark as Under Review"} onClick={handleAdd} />
+            </div>,
+          ]}
+         
+        >
+          <div>
+          <div className='rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center'>
+
+          <img src='/images/eye.svg' className='h-[24px] w-[24px] rounded-full'/>
+
+          </div>
+
+            <h1 className="  text-[20px] pb-3 mt-4 font-bold m-0">
+            Mark as Under Review
+            </h1>
+           
+            <div>
+              <p className="text-[14px] font-semibold text-[#0B132B]">
+              You’re marking this project as Under Review, so clients will be notified about this update.
+              </p>
+              
+            </div>
+          </div>
+        </Modal>
+      )}
         </div>
       </div>
     <div>
@@ -157,8 +229,15 @@ Mark as Delivered<img src='/images/check.svg' />
             imagealign="right"
             image={"/images/user-check.svg"}
             text={"Assign"}
-            onClick={handleNextTab}
+            onClick={() => setOpen(true)}
           />
+
+  <Modal title="Basic Modal" centered open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
+
           </div>
         </div>
       </div>
