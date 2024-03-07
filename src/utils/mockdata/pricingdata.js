@@ -1,0 +1,61 @@
+const pricingData = [
+  {
+    id: "1",
+    badge: "Most popular",
+    name: "Standard",
+    subtitle: "One request at a time. Pause or cancel anytime.",
+    pricing: "$4,999",
+    paymentMethod: "monthly",
+    subHeading: "Pause or cancel anytime.",
+    status: "active",
+    features: [
+      { id: "1", label: "One request at a time" },
+      { id: "2", label: "Three brands" },
+      { id: "3", label: "Unlimited users" },
+      { id: "4", label: "Unlimited stock photos via Shutterstock or Freepik" },
+      { id: "5", label: "Easy credit-card payments" },
+      { id: "6", label: "Pause or cancel anytime" },
+    ],
+  },
+
+  {
+    id: "2",
+    badge: "",
+    name: "Pro",
+    subtitle: "Double the requests. Pause or cancel anytime.",
+    pricing: "$9,999",
+    paymentMethod: "monthly",
+    subHeading: "Pause or cancel anytime.",
+    status: "inactive",
+    features: [
+      { id: "1", label: "Two requests at a time" },
+      { id: "2", label: "Average 48 hour delivery" },
+      { id: "3", label: "Unlimited brands" },
+      { id: "4", label: "Unlimited users" },
+      { id: "5", label: "Unlimited stock photos via Shutterstock or Freepik" },
+      { id: "6", label: "Easy credit-card payments" },
+      { id: "7", label: "Pause or cancel anytime" },
+    ],
+  },
+  {
+    id: "3",
+    badge: "",
+    name: "Platinum",
+    subtitle: "Double the requests. Pause or cancel anytime.",
+    pricing: "$14,999",
+    paymentMethod: "monthly",
+    subHeading: "Pause or cancel anytime.",
+    status: "inactive",
+    features: [
+      { id: "1", label: "Two requests at a time" },
+      { id: "2", label: "Average 48 hour delivery" },
+      { id: "3", label: "Unlimited brands" },
+      { id: "4", label: "Unlimited users" },
+      { id: "5", label: "Unlimited stock photos via Shutterstock or Freepik" },
+      { id: "6", label: "Easy credit-card payments" },
+      { id: "7", label: "Pause or cancel anytime" },
+    ],
+  },
+];
+
+export default pricingData;
