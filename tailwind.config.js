@@ -11,6 +11,8 @@ module.exports = {
         clientCard:
           "0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)",
         paginationShahow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        pricingBox:
+          "0px 2px 4px -2px rgba(16, 24, 40, 0.06), 0px 4px 8px -2px rgba(16, 24, 40, 0.10)",
       },
       colors: {
         white: "#FFF",

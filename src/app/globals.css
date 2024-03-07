@@ -196,3 +196,10 @@ body {
 .highlight-row {
   background-color: #f9fafb !important;
 }
+
+.ant-switch.ant-switch-checked .ant-switch-inner {
+  background: #36c !important;
+}
+.ant-switch .ant-switch-inner {
+  background: #f2f4f7 !important;
+}
