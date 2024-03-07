@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import Image from "next/image";
 
@@ -34,8 +32,14 @@ const servicesArray = [
 
 const Services = (props) => {
   const [servicesData, setServicesData] = useState(servicesArray);
-  const [isOpen, setIsOpen] = useState(false);
-  const [serviceName, setServiceName] = useState("");
+  const [selectedServices, setSelectedServices] = useState([]);
+  // const { selectedMultiServices, onSelectedServicesChange } = props;
+
+  useEffect(()=>{
+    props?.setServices(selectedServices)
+  },[selectedServices])
+
+
 
   const handleSearch = (search) => {
     const filteredData = servicesArray.filter((item) =>
@@ -43,6 +47,18 @@ const Services = (props) => {
     );
     setServicesData(filteredData);
   };
+
+  const handleServiceClick = (label) => {
+    const index = selectedServices.indexOf(label);
+    if (index === -1) {
+      setSelectedServices([...selectedServices, label]);
+    } else {
+      const updatedServices = [...selectedServices];
+      updatedServices.splice(index, 1);
+     setSelectedServices(updatedServices);
+    }
+  };
+  
 
   return (
     <>
@@ -54,22 +70,15 @@ const Services = (props) => {
             <div
               key={item?.label}
               className={`flex gap-3 py-3 pl-5 pr-3 rounded-[48px] cursor-pointer ${
-                props?.services === item?.label
+                selectedServices.includes(item.label)
                   ? "bg-primary text-white"
                   : "border border-gray300"
               } `}
-              onClick={() => {
-                if (item?.status === "unavailable") {
-                  setServiceName(item?.label);
-                  setIsOpen(true);
-                } else {
-                  props?.setServices(item?.label);
-                }
-              }}
+              onClick={() => handleServiceClick(item.label)}
             >
               <span>{item?.label}</span>
               <span>
-                {props?.services === item?.label ? (
+                {selectedServices.includes(item.label) ? (
                   <FaCheckCircle />
                 ) : (
                   <FaRegCheckCircle />
@@ -90,48 +99,10 @@ const Services = (props) => {
           text={"Next"}
           imagealign="right"
           image={"/images/arrow-right.svg"}
-          disabled={!props?.services ? true : false}
+          disabled={selectedServices.length === 0}
           onClick={() => props?.setPage("description")}
         />
       </div>
-      {isOpen && (
-        <Modal
-          open={isOpen}
-          centered={true}
-          onCancel={() => setIsOpen(false)}
-          closeIcon={false}
-          footer={false}
-        >
-          <div>
-            <div className="h-12 w-12 rounded-full bg-warning100 flex justify-center items-center border-8 border-warning50 ">
-              <Image
-                src="/images/alert-triangle.svg"
-                height={24}
-                width={24}
-                alt=""
-              />
-            </div>
-            <Spacer height="20px" />
-            <h1 className="headers text-primary text-[20px]">
-              Sorry, the service is unavailable!
-            </h1>
-            <Spacer height="12px" />
-            <p className="font-normal text-[14px] text-subtitleText">
-              You’re unable to take this{" "}
-              <span className="font-bold">“{serviceName}”</span> service, due to
-              your subscription about to expire in 2 days.
-            </p>
-            <p className="font-normal text-[14px] text-subtitleText">
-              If you want to take this service, you may need to extend your
-              subscription to the next month.
-            </p>
-            <div className="grid grid-cols-2 gap-3" key={1}>
-              <WhiteButton text={"Cancel"} onClick={() => setIsOpen(false)} />
-              <YellowButton text={"Extend Subscription"} />
-            </div>
-          </div>
-        </Modal>
-      )}
     </>
   );
 };

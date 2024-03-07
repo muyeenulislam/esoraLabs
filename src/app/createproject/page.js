@@ -26,7 +26,7 @@ const Login = () => {
 
   const [page, setPage] = useState("clientSelect");
   const [clientName, setClientName] = useState("");
-  const [services, setServices] = useState("");
+  const [services, setServices] = useState([]);
   const [description, setDescription] = useState("");
   const [goals, setGoals] = useState("");
   const [targetAudience, setTargetAudience] = useState("");
@@ -35,9 +35,10 @@ const Login = () => {
   const [startTime, setStartTime] = useState("");
   const [deadline, setDeadline] = useState("");
   const [otherInfo, setOtherInfo] = useState("");
-  const [documents, setDocuments] = useState(null);
+  const [fileList, setFileList] = useState([]);
+  const [reviewData, setReviewData] = useState(null);
+  const [documents, setDocuments] = useState([]);
 
-  console.log(services);
   const onSubmit = () => {
     if (!email) {
       setErrorEmail("Email is required");
@@ -47,6 +48,18 @@ const Login = () => {
       router.push("/dashboard");
     }
   };
+
+  const handleFileListChange = (fileList) => {
+    setFileList(fileList);
+  };
+
+ // Function to receive review data and handle submission
+ const handleSubmit = (review) => {
+  setReviewData(review);
+  // Perform any action with the review data, such as submitting to an API
+  console.log("Review data:", review);
+};
+
   return (
     <div className={styles.container}>
       <TopTitle pageName={page} />
@@ -124,13 +137,13 @@ const Login = () => {
           />
         ) : page === "documents" ? (
           <Documents
-            documents={documents}
-            setDocuments={setDocuments}
+          fileList={fileList} // Pass fileList state to the Documents component
+          onFileListChange={handleFileListChange} 
             page={page}
             setPage={setPage}
           />
         ) : page === "review" ? (
-          <Review
+          <Review 
             clientName={clientName}
             services={services}
             description={description}
@@ -141,9 +154,11 @@ const Login = () => {
             startTime={startTime}
             deadline={deadline}
             otherInfo={otherInfo}
+            fileList={fileList}
             documents={documents}
             page={page}
             setPage={setPage}
+            onSubmit={handleSubmit}
           />
         ) : (
           <ClientPage

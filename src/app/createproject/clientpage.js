@@ -12,17 +12,20 @@ import styles from "./styles";
 const clients = [
   { id: 1, name: "client 1" },
   { id: 2, name: "client 2" },
-  { id: 3, name: "client 3" },
+  { id: 3, name: "client 8" }, 
   { id: 4, name: "client 4" },
 ];
 const ClientPage = (props) => {
+  const handleClientSelect = (selectedValue) => {
+    props?.setClientName(selectedValue);
+  };
   return (
     <>
       <div>
         <div>
           <p className={styles.labelStyle}>Client</p>
           <Dropdown
-            onChange={(e) => props?.setClientName(e)}
+            onChange={handleClientSelect}
             value={props?.clientName || undefined}
             placeholder="Select Client"
           >
@@ -70,7 +73,9 @@ const ClientPage = (props) => {
           imagealign="right"
           image={"/images/arrow-right.svg"}
           disabled={!props?.clientName ? true : false}
-          onClick={() => props?.setPage("services")}
+          onClick={() => {
+            props?.setPage("services");
+          }}
         />
       </div>
     </>
