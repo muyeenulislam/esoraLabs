@@ -1,11 +1,11 @@
 import React from "react";
-import YellowButton from "@/components/buttons/yellowbutton";
-import WhiteButton from "@/components/buttons/whitebutton";
 
-import styles from "./styles";
+
 
 import { InboxOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
+import WhiteButton from "@/components/buttons/whitebutton";
+import YellowButton from "@/components/buttons/yellowbutton";
 const { Dragger } = Upload;
 
 
@@ -33,6 +33,7 @@ const Documents = (props) => {
       console.log('Dropped files', e.dataTransfer.files);
     },
   };
+  const fileList  = props;
   return (
     <>
       <div className="border-solid">
@@ -45,6 +46,13 @@ const Documents = (props) => {
           PDF, DOC, PNG, JPG or GIF (Maximum upload size: 2MB (max. 5 files))
           </p>
         </Dragger>
+      </div>
+      <div>
+        {fileList.map((file, index) => (
+          <div key={index}>
+            <p>{file.name}</p> {/* Render the name of each file */}
+          </div>
+        ))}
       </div>
       <div className={styles.loginContainer}>
         <WhiteButton

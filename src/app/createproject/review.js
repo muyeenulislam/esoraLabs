@@ -7,6 +7,23 @@ import WhiteButton from "@/components/buttons/whitebutton";
 import styles from "./styles";
 
 const Review = (props) => {
+
+  const data ={
+    targetAudience:props?.targetAudience,
+    goals:props?.goals,
+    "services": props?.services,
+    "geographicalScope": props?.geographicalScope,
+    "maturityProjects": props?.maturity,
+    "whenProjectStart": props?.startTime,
+    "whenProjectComplete":props?.deadline,
+    "info":  props?.otherInfo,
+    "document": props?.fileList,
+    "companyId": "1234567890",
+    "status": "In Progress"
+  }
+
+console.log("filelist",props?.fileList);
+
   const review = [
     {
       id: 1,
@@ -48,12 +65,20 @@ const Review = (props) => {
       name: "What other info should we pass along?",
       value: props?.otherInfo || "-",
     },
-    {
-      id: 9,
-      name: "Do you have any briefing or relevant documents to share?",
-      value: props?.documents || "-",
-    },
+    // {
+    //   id: 10,
+    //   name: "Do you have any file?",
+    //   value: props?.fileList || "-",
+    // },
   ];
+  
+
+   // Function to handle submission
+   const handleSubmit = () => {
+    // Call the onSubmit function with the review data
+    props.onSubmit(data);
+
+  };
   return (
     <>
       <div>
@@ -70,6 +95,24 @@ const Review = (props) => {
             </p>
           </div>
         ))}
+     <div>
+  {props?.fileList.map((item) => {
+    console.log("Array", item);
+    return (
+      <div
+        key={item?.uid}
+        className={`p-6 ${
+          item?.uid % 2 === 0 ? "bg-transparent" : "bg-gray50"
+        } flex flex-col gap-2`}
+      >
+        <h3 className="text-primary text-[16px] font-bold">Do you have any briefing or relevant documents to share?</h3>
+        <p className="text-subtitleText text-[14px] font-normal mb-0">
+        {item?.name}
+        </p>
+      </div>
+    )
+  })}
+</div>;
         <Spacer height="80px" />
       </div>
       <div className={styles.loginContainer}>
@@ -82,6 +125,7 @@ const Review = (props) => {
           text={"Submit"}
           imagealign="right"
           image={"/images/arrow-right.svg"}
+          onClick={handleSubmit}
         />
       </div>
     </>
