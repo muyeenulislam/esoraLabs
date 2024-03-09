@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 
 import Spacer from "@/components/spacer/spacer";
 import YellowButton from "@/components/buttons/yellowbutton";
@@ -9,6 +10,8 @@ import pricingData from "@/utils/mockdata/pricingdata";
 import PricingPlanComponent from "./pricingplancomponent";
 
 const PricingPlan = () => {
+  const router = useRouter();
+
   return (
     <div>
       <Spacer height="32px" />
@@ -22,7 +25,10 @@ const PricingPlan = () => {
               Create or manage your plans
             </p>
           </div>
-          <YellowButton text="Create a Plan" />
+          <YellowButton
+            text="Create a Plan"
+            onClick={() => router.push("/settings/createplan")}
+          />
         </div>
 
         {pricingData?.map((item, index) => (

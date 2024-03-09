@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Tabs } from "antd";
 
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
@@ -13,7 +14,9 @@ import Team from "./team";
 import PricingPlan from "./pricingplan";
 
 const Settings = () => {
-  const [activeKey, setActivekey] = useState("1");
+  const searchParams = useSearchParams();
+
+  const [activeKey, setActivekey] = useState(searchParams.get("tab") ?? "1");
 
   const breadcumbData = [
     { title: "Settings", link: "/settings", active: true },
