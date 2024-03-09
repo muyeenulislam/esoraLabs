@@ -11,12 +11,20 @@ import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 
 import settingsTeamData from "@/utils/mockdata/settingsteamdata";
 import roleData from "@/utils/mockdata/roledata";
+import { useRouter } from "next/navigation";
 
 const Members = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(settingsTeamData?.length / 10);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+
+
+  const route = useRouter()
+
+  const handleView =() =>{
+    route.push('/settings/team/[id]')
+  }
 
   const columns = [
     {
@@ -70,7 +78,7 @@ const Members = () => {
           <p className="m-0 text-subtitleText text-[14px] font-medium">
             Delete
           </p>
-          <WhiteButtonTable text="View" />
+          <WhiteButtonTable onClick={handleView} text="View" />
         </div>
       ),
     },

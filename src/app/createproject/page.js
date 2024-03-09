@@ -53,12 +53,31 @@ const Login = () => {
     setFileList(fileList);
   };
 
- // Function to receive review data and handle submission
- const handleSubmit = (review) => {
-  setReviewData(review);
-  // Perform any action with the review data, such as submitting to an API
-  console.log("Review data:", review);
-};
+  // Function to receive review data and handle submission
+  const handleSubmit = async (review) => {
+    setReviewData(review);
+    // Perform any action with the review data, such as submitting to an API
+    console.log("Review data:", review);
+    try {
+      const apiUrl = "api";
+
+      const response = await axios.post(apiUrl, review);
+
+      router.push("/dashboard");
+      messageApi.open({
+        type: "success",
+        content: "Created a new project successfully!",
+      });
+    } catch (error) {
+      console.error("Error create project:", error);
+      messageApi.open({
+        type: "error",
+        content: "Failed to create new project!",
+      });
+    }
+  };
+
+  //  Post request
 
   return (
     <div className={styles.container}>
@@ -137,13 +156,13 @@ const Login = () => {
           />
         ) : page === "documents" ? (
           <Documents
-          fileList={fileList} // Pass fileList state to the Documents component
-          onFileListChange={handleFileListChange} 
+            fileList={fileList} // Pass fileList state to the Documents component
+            onFileListChange={handleFileListChange}
             page={page}
             setPage={setPage}
           />
         ) : page === "review" ? (
-          <Review 
+          <Review
             clientName={clientName}
             services={services}
             description={description}

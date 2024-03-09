@@ -30,6 +30,9 @@ const website = () => {
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [isOpen, setOpen] = useState(false);
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [markedAsUnderReview, setMarkedAsUnderReview] = useState(false);
   
     const breadcumbData = [
       { title: "Clients", link: "/clients", active: false },
@@ -116,6 +119,8 @@ const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAdd = () => {
     console.log(state);
+    setOpen(false)
+    setMarkedAsUnderReview(true);
   };
 
 
@@ -167,10 +172,11 @@ const [isModalOpen, setIsModalOpen] = useState(false);
           footer={[
             <div className="grid grid-cols-2 gap-3" key={1}>
               <WhiteButton text={"Cancel"} onClick={() => setOpen(false)} />
-              <YellowButton text={"Mark as Under Review"} onClick={handleAdd} />
+           
+                <YellowButton text={"Mark as Under Review"} onClick={handleAdd} />
+           
             </div>,
           ]}
-         
         >
           <div>
           <div className='rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center'>
@@ -201,13 +207,13 @@ const [isModalOpen, setIsModalOpen] = useState(false);
     <div className='flex gap-5 mt-2 '>
 
    
-    <div className="flex p-3 pl-5 justify-center items-center gap-3 rounded-full border border-gray-300 bg-white">
+    <div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white"  onClick={() => setOpen(true)}>
     Mark as Under Review <img src='/images/check.svg' />
 </div>
-<div className="flex p-3 pl-5 justify-center items-center gap-3 rounded-full border border-gray-300 bg-white">
+<div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white">
 Mark as In Progress<img src='/images/check.svg' />
 </div>
-<div className="flex p-3 pl-5 justify-center items-center gap-3 rounded-full border border-gray-300 bg-white">
+<div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white">
 Mark as Delivered<img src='/images/check.svg' />
 </div>
 </div>
@@ -229,7 +235,7 @@ Mark as Delivered<img src='/images/check.svg' />
             imagealign="right"
             image={"/images/user-check.svg"}
             text={"Assign"}
-            onClick={() => setOpen(true)}
+            // onClick={() => setOpen(true)}
           />
 
   <Modal title="Basic Modal" centered open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
