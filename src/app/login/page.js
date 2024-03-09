@@ -2,23 +2,44 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles";
+import {  message } from 'antd';
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
-
+  const [messageApi, contextHolder] = message.useMessage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!email) {
       setErrorEmail("Email is required");
     } else if (!password) {
       setErrorPassword("Password is required");
     } else {
-      router.push("/dashboard");
+      const data = {email, password}
+      console.log("Data",data);
+      try {
+        const apiUrl = "https://api.esoralabs.com/api/v1/auth/login?=";
+  
+        const response = await axios.post(apiUrl, data);
+  
+        router.push("/dashboard");
+        messageApi.open({
+          type: "success",
+          content: "Created a new project successfully!",
+        });
+      } catch (error) {
+        console.error("Error create project:", error);
+        messageApi.open({
+          type: "error",
+          content: "Failed to create new project!",
+        });
+      }
+   
     }
   };
   return (
