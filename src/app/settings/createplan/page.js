@@ -9,7 +9,7 @@ import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
 import DefaultInput from "@/components/inputs/defaultinput";
 
-import currencyList from "@/utils/mockdata/currencylist";
+import CurrencyDropdownInput from "@/components/inputs/currencydropdowninput";
 
 const CreatePlan = () => {
   const router = useRouter();
@@ -19,10 +19,11 @@ const CreatePlan = () => {
     subtitle: "",
     pricingPlan: "",
     price: "",
-    currency: "",
-    currencySymbol: "",
+    currency: "USD",
+    currencySymbol: "$",
     subHeading: "",
   });
+  console.log(state);
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -56,7 +57,9 @@ const CreatePlan = () => {
             Enter the name of plan in 1 or 2 words (e.g. Standard)
           </p>
           <Spacer height="16px" />
-          <DefaultInput />
+          <DefaultInput
+            onChange={(e) => setState({ ...state, name: e.target.value })}
+          />
         </div>
         {/* subheading */}
         <div className="p-6 border-b border-grayBorderDashboard">
@@ -68,7 +71,9 @@ const CreatePlan = () => {
             Enter a sub-heading to describe your plan in short
           </p>
           <Spacer height="16px" />
-          <DefaultInput />
+          <DefaultInput
+            onChange={(e) => setState({ ...state, subtitle: e.target.value })}
+          />
         </div>
         {/* pricing */}
         <div className="p-6 border-b border-grayBorderDashboard">
@@ -101,7 +106,7 @@ const CreatePlan = () => {
               </Radio.Group>
             </div>
             <div className="col-span-2">
-              <DefaultInput />
+              <CurrencyDropdownInput state={state} setState={setState} />
             </div>
           </div>
           <Spacer height="24px" />
