@@ -118,7 +118,9 @@ const CreatePlan = () => {
             Enter a sub-heading to describe your pricing in few words
           </p>
           <Spacer height="16px" />
-          <DefaultInput />
+          <DefaultInput
+            onChange={(e) => setState({ ...state, subHeading: e.target.value })}
+          />
         </div>
       </div>
     </div>
