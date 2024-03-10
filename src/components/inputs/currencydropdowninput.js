@@ -14,10 +14,11 @@ const CurrencyDropdownInput = (props) => {
             props?.setState({
               ...props?.state,
               currency: value?.code,
-              currencySymbol: value?.symbol,
+              currencySymbol: value?.symbol_native,
             });
           }}
           className="custom-select w-[120px]"
+          showSearch
         >
           {currencyList.map((item) => (
             <Select.Option key={item.code} value={JSON.stringify(item)}>
