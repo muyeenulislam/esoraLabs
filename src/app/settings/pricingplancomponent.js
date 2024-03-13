@@ -1,10 +1,16 @@
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Switch } from "antd";
 import Image from "next/image";
 
 import Spacer from "@/components/spacer/spacer";
 import WhiteButton from "@/components/buttons/whitebutton";
+
+import currencyList from "@/utils/mockdata/currencylist";
+
 const PricingPlanComponent = (props) => {
+  const router = useRouter();
+
   return (
     <div
       className={`p-6  ${
@@ -25,7 +31,12 @@ const PricingPlanComponent = (props) => {
           </div>
           <div className="flex gap-4">
             <button>Delete</button>
-            <WhiteButton text="Edit" />
+            <WhiteButton
+              text="Edit"
+              onClick={() =>
+                router.push(`/settings/editplan/${props?.item?.id}`)
+              }
+            />
           </div>
         </div>
         <Spacer height="32px" />
@@ -48,7 +59,12 @@ const PricingPlanComponent = (props) => {
         </p>
         <Spacer height="32px" />
         <h2 className="headers text-primary text-[48px] font-bold m-0">
-          {props?.item?.pricing}/
+          {
+            currencyList.filter(
+              (item) => item.code === props?.item?.currency
+            )[0]?.symbol_native
+          }
+          {parseInt(props?.item?.pricing)?.toLocaleString()}/
           {props?.item?.paymentMethod === "monthly" ? "m" : "yr"}
         </h2>
         <p className="m-0 text-subtitleText text-[24px] font-normal">
@@ -60,7 +76,7 @@ const PricingPlanComponent = (props) => {
         </h2>
         <Spacer height="16px" />
         {props?.item?.features?.map((feature, index) => (
-          <div key={feature?.id} className="flex gap-[10px] my-2 items-center">
+          <div key={index} className="flex gap-[10px] my-2 items-center">
             <div className="bg-primary h-6 w-6 rounded-full flex items-center justify-center">
               <Image
                 src={"/images/greentick.svg"}
@@ -70,7 +86,7 @@ const PricingPlanComponent = (props) => {
               />
             </div>
             <p className="m-0 text-primary text-[16px] font-normal">
-              {feature?.label}
+              {feature}
             </p>
           </div>
         ))}

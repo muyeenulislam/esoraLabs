@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { Radio, Modal } from "antd";
 
@@ -10,11 +10,14 @@ import Spacer from "@/components/spacer/spacer";
 import DefaultInput from "@/components/inputs/defaultinput";
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
-
 import CurrencyDropdownInput from "@/components/inputs/currencydropdowninput";
+
+import pricingData from "@/utils/mockdata/pricingdata";
+import currencyList from "@/utils/mockdata/currencylist";
 
 const CreatePlan = () => {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState({
@@ -28,6 +31,26 @@ const CreatePlan = () => {
     features: ["", "", ""],
     badge: "",
   });
+
+  useEffect(() => {
+    const id = pathname?.split("/")[3].replace(/%20/g, " ");
+    const planData = pricingData.filter((item) => item.id === id)[0];
+    const currencySymbol = currencyList.filter(
+      (item) => item.code === planData?.currency
+    )[0];
+
+    setState({
+      name: planData.name,
+      subtitle: planData.subtitle,
+      pricingPlan: planData.paymentMethod,
+      price: planData?.pricing,
+      currency: planData?.currency,
+      currencySymbol: currencySymbol?.symbol_native,
+      subHeading: planData?.subHeading,
+      features: planData.features,
+      badge: planData?.badge,
+    });
+  }, [pathname]);
 
   const handleAddMorefeatures = () => {
     setState({
@@ -58,7 +81,7 @@ const CreatePlan = () => {
   return (
     <div>
       <div className="flex justify-between items-center">
-        <PageHeading heading="Create Plan" subHeading="Create your plan" />
+        <PageHeading heading="Edit Plan" subHeading="Edit your plan" />
         <button
           className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow"
           onClick={() => router.push("/settings?tab=4")}
@@ -75,7 +98,7 @@ const CreatePlan = () => {
       <div className="w-[70%] m-auto flex flex-col rounded-xl shadow-md">
         <div className="p-6 bg-primary rounded-t-xl flex justify-between items-center">
           <h2 className="headers text-white text-[20px] font-bold m-0">
-            Enter your plan details
+            Edit your plan details
           </h2>
         </div>
         {/* name */}
@@ -90,6 +113,7 @@ const CreatePlan = () => {
           <Spacer height="16px" />
           <DefaultInput
             onChange={(e) => setState({ ...state, name: e.target.value })}
+            value={state?.name}
           />
         </div>
         {/* subheading */}
@@ -104,6 +128,7 @@ const CreatePlan = () => {
           <Spacer height="16px" />
           <DefaultInput
             onChange={(e) => setState({ ...state, subtitle: e.target.value })}
+            value={state?.subtitle}
           />
         </div>
         {/* pricing */}
@@ -151,6 +176,7 @@ const CreatePlan = () => {
           <Spacer height="16px" />
           <DefaultInput
             onChange={(e) => setState({ ...state, subHeading: e.target.value })}
+            value={state?.subHeading}
           />
         </div>
         {/* whats included */}
@@ -176,6 +202,7 @@ const CreatePlan = () => {
                       features: newValue,
                     });
                   }}
+                  value={item}
                 />
               ) : (
                 <div className="flex gap-3">
@@ -188,6 +215,7 @@ const CreatePlan = () => {
                         features: newValue,
                       });
                     }}
+                    value={item}
                   />
                   <Image
                     onClick={() => {
@@ -230,6 +258,7 @@ const CreatePlan = () => {
           <Spacer height="16px" />
           <DefaultInput
             onChange={(e) => setState({ ...state, badge: e.target.value })}
+            value={state?.badge}
           />
         </div>
         {/* button */}
@@ -260,7 +289,7 @@ const CreatePlan = () => {
             </div>
             <Spacer height="20px" />
             <h1 className="headers text-primary text-[20px] mb-0">
-              Your plan was created successfully
+              Your plan was edited successfully
             </h1>
 
             <p className="font-normal text-[14px] text-subtitleText mb-0">
