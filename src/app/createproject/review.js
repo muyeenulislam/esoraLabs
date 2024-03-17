@@ -112,7 +112,7 @@ console.log("filelist",props?.fileList);
       </div>
     )
   })}
-</div>;
+</div>
         <Spacer height="80px" />
       </div>
       <div className={styles.loginContainer}>
