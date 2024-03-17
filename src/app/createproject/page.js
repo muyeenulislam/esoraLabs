@@ -20,6 +20,7 @@ import Documents from "./documents";
 import Review from "./review";
 
 import styles from "./styles";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
@@ -39,35 +40,30 @@ const Login = () => {
   const [reviewData, setReviewData] = useState(null);
   const [documents, setDocuments] = useState([]);
 
-  const onSubmit = () => {
-    if (!email) {
-      setErrorEmail("Email is required");
-    } else if (!password) {
-      setErrorPassword("Password is required");
-    } else {
-      router.push("/dashboard");
-    }
-  };
-
   const handleFileListChange = (fileList) => {
     setFileList(fileList);
   };
 
   // Function to receive review data and handle submission
   const handleSubmit = async (review) => {
+    review = {
+      ...review,
+      companyId: "1234567890",
+      status: "In Progress"
+    };
     setReviewData(review);
     // Perform any action with the review data, such as submitting to an API
     console.log("Review data:", review);
     try {
-      const apiUrl = "api";
+      const apiUrl = "https://api.esoralabs.com/api/v1/projects";
 
       const response = await axios.post(apiUrl, review);
 
-      router.push("/dashboard");
-      messageApi.open({
-        type: "success",
-        content: "Created a new project successfully!",
-      });
+      // router.push("/dashboard");
+      // messageApi.open({
+      //   type: "success",
+      //   content: "Created a new project successfully!",
+      // });
     } catch (error) {
       console.error("Error create project:", error);
       messageApi.open({

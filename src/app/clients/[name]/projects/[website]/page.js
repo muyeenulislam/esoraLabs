@@ -29,6 +29,7 @@ import PrimaryTable from "@/components/table/primarytable";
 import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 import { FaArrowRight, FaSearch, FaTimes } from "react-icons/fa";
+import Requirements from "./requirements";
 
 const website = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -68,7 +69,7 @@ const website = () => {
     {
       key: "2",
       label: "Requirements",
-      children: <ProfileDetailsProjects data={data} />,
+      children: <Requirements data={data} />,
     },
     {
       key: "3",
