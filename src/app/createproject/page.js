@@ -26,25 +26,56 @@ const Login = () => {
   const router = useRouter();
 
   const [page, setPage] = useState("clientSelect");
-  const [clientName, setClientName] = useState("");
+  const [clientName, setClientName] = useState("12345");
+  const [companyId, setCompanyId] = useState("12345");
   const [services, setServices] = useState([]);
-  const [description, setDescription] = useState("");
-  const [goals, setGoals] = useState("");
-  const [targetAudience, setTargetAudience] = useState("");
-  const [geographicalScope, setGeographicalScope] = useState("");
-  const [maturity, setMaturity] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [otherInfo, setOtherInfo] = useState("");
+  const [description, setDescription] = useState("fdf sdf ");
+  const [goals, setGoals] = useState(" sdfd ");
+  const [targetAudience, setTargetAudience] = useState("sdf d");
+  const [geographicalScope, setGeographicalScope] = useState("sdf ");
+  const [maturityProjects, setMaturityProjects] = useState(" sdf ");
+  const [whenProjectStart, setStartTime] = useState("fsdfds");
+  const [whenProjectComplete, setWhenProjectComplete] = useState("sdfdsf");
+  const [otherInfo, setOtherInfo] = useState("sdfsdf");
   const [fileList, setFileList] = useState([]);
   const [reviewData, setReviewData] = useState(null);
   const [documents, setDocuments] = useState([]);
+
 
   const handleFileListChange = (fileList) => {
     setFileList(fileList);
   };
 
   // Function to receive review data and handle submission
+  // const handleSubmit = async (review) => {
+  //   review = {
+  //     ...review,
+  //     companyId: "1234567890",
+  //     status: "In Progress"
+  //   };
+  //   setReviewData(review);
+  //   // Perform any action with the review data, such as submitting to an API
+  //   console.log("Review data:", review);
+  //   try {
+  //     // const apiUrl = "https://api.esoralabs.com/api/v1/projects";
+  //     const apiUrl = "http://localhost:8000/api/v1/projects";
+
+  //     const response = await axios.post(apiUrl, review);
+
+  //     // router.push("/dashboard");
+  //     // messageApi.open({
+  //     //   type: "success",
+  //     //   content: "Created a new project successfully!",
+  //     // });
+  //   } catch (error) {
+  //     console.error("Error create project:", error);
+  //     messageApi.open({
+  //       type: "error",
+  //       content: "Failed to create new project!",
+  //     });
+  //   }
+  // };
+
   const handleSubmit = async (review) => {
     review = {
       ...review,
@@ -52,24 +83,41 @@ const Login = () => {
       status: "In Progress"
     };
     setReviewData(review);
-    // Perform any action with the review data, such as submitting to an API
-    console.log("Review data:", review);
     try {
-      const apiUrl = "https://api.esoralabs.com/api/v1/projects";
-
-      const response = await axios.post(apiUrl, review);
-
-      // router.push("/dashboard");
-      // messageApi.open({
-      //   type: "success",
-      //   content: "Created a new project successfully!",
-      // });
-    } catch (error) {
-      console.error("Error create project:", error);
-      messageApi.open({
-        type: "error",
-        content: "Failed to create new project!",
+      const apiUrl = "http://localhost:8000/api/v1/projects";
+  
+      const formData = new FormData();
+      formData.append('clientName', clientName);
+      formData.append('companyId', companyId);
+      formData.append('services', JSON.stringify(services));
+      formData.append('description', description);
+      formData.append('goals', goals);
+      formData.append('targetAudience', targetAudience);
+      formData.append('geographicalScope', geographicalScope);
+      formData.append('maturityProjects', maturityProjects);
+      formData.append('whenProjectStart', whenProjectStart);
+      formData.append('whenProjectComplete', whenProjectComplete);
+      formData.append('otherInfo', otherInfo);
+      
+      // Check if fileList is defined before iterating
+      if (fileList && fileList?.length > 0) {
+        fileList.forEach((file) => {
+          console.log("file",file)
+          formData.append('document', file.originFileObj);
+        });
+      }
+  
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
+  
+      console.log("Response from server:", response.data);
+      // Handle response accordingly
+    } catch (error) {
+      console.error("Error creating project:", error);
+      // Handle error accordingly
     }
   };
 
@@ -124,22 +172,22 @@ const Login = () => {
           />
         ) : page === "maturity" ? (
           <Maturity
-            maturity={maturity}
-            setMaturity={setMaturity}
+            maturity={maturityProjects}
+            setMaturity={setMaturityProjects}
             page={page}
             setPage={setPage}
           />
         ) : page === "startDate" ? (
           <StartDate
-            startTime={startTime}
+            startTime={whenProjectStart}
             setStartTime={setStartTime}
             page={page}
             setPage={setPage}
           />
         ) : page === "endDate" ? (
           <EndDate
-            deadline={deadline}
-            setDeadline={setDeadline}
+            deadline={whenProjectComplete}
+            setDeadline={setWhenProjectComplete}
             page={page}
             setPage={setPage}
           />
@@ -165,9 +213,9 @@ const Login = () => {
             goals={goals}
             targetAudience={targetAudience}
             geographicalScope={geographicalScope}
-            maturity={maturity}
-            startTime={startTime}
-            deadline={deadline}
+            maturity={maturityProjects}
+            startTime={whenProjectStart}
+            deadline={whenProjectComplete}
             otherInfo={otherInfo}
             fileList={fileList}
             documents={documents}
