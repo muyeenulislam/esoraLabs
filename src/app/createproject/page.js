@@ -41,7 +41,6 @@ const Login = () => {
   const [reviewData, setReviewData] = useState(null);
   const [documents, setDocuments] = useState([]);
 
-
   const handleFileListChange = (fileList) => {
     setFileList(fileList);
   };
@@ -80,40 +79,40 @@ const Login = () => {
     review = {
       ...review,
       companyId: "1234567890",
-      status: "In Progress"
+      status: "In Progress",
     };
     setReviewData(review);
     try {
       const apiUrl = "https://api.esoralabs.com/api/v1/projects";
-  
+
       const formData = new FormData();
-      formData.append('clientName', clientName);
-      formData.append('companyId', companyId);
-      formData.append('services', JSON.stringify(services));
-      formData.append('description', description);
-      formData.append('goals', goals);
-      formData.append('targetAudience', targetAudience);
-      formData.append('geographicalScope', geographicalScope);
-      formData.append('maturityProjects', maturityProjects);
-      formData.append('whenProjectStart', whenProjectStart);
-      formData.append('whenProjectComplete', whenProjectComplete);
-      formData.append('otherInfo', otherInfo);
-      
+      formData.append("clientName", clientName);
+      formData.append("companyId", companyId);
+      formData.append("services", JSON.stringify(services));
+      formData.append("description", description);
+      formData.append("goals", goals);
+      formData.append("targetAudience", targetAudience);
+      formData.append("geographicalScope", geographicalScope);
+      formData.append("maturityProjects", maturityProjects);
+      formData.append("whenProjectStart", whenProjectStart);
+      formData.append("whenProjectComplete", whenProjectComplete);
+      formData.append("otherInfo", otherInfo);
+
       // Check if fileList is defined before iterating
-      // if (fileList && fileList?.length > 0) {
-      //   fileList.forEach((file) => {
-      //     // console.log("file",file)
-      //     formData.append('document', file.originFileObj);
-      //   });
-      // }
-      console.log("formdata",formData);
-  
+      if (fileList && fileList?.length > 0) {
+        fileList.forEach((file) => {
+          // console.log("file",file)
+          formData.append("document", file.originFileObj);
+        });
+      }
+      // console.log("formdata",formData);
+
       const response = await axios.post(apiUrl, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
-  
+
       console.log("Response from server:", response);
       // Handle response accordingly
     } catch (error) {
