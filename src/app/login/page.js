@@ -28,15 +28,12 @@ const Login = () => {
         const response = await axios.post(apiUrl, data);
   
         router.push("/dashboard");
-        messageApi.open({
-          type: "success",
-          content: "Created a new project successfully!",
-        });
+       message.success("Login Success!")
       } catch (error) {
         console.error("Error create project:", error);
         messageApi.open({
           type: "error",
-          content: "Failed to create new project!",
+          content: "Failed to Login!",
         });
       }
    

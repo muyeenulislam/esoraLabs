@@ -58,6 +58,8 @@ const Services = (props) => {
      setSelectedServices(updatedServices);
     }
   };
+
+  console.log("selectedServices",selectedServices);
   
 
   return (
