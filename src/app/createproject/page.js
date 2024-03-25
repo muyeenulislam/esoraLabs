@@ -84,7 +84,7 @@ const Login = () => {
     };
     setReviewData(review);
     try {
-      const apiUrl = "http://localhost:8000/api/v1/projects";
+      const apiUrl = "https://api.esoralabs.com/api/v1/projects";
   
       const formData = new FormData();
       formData.append('clientName', clientName);
@@ -100,12 +100,13 @@ const Login = () => {
       formData.append('otherInfo', otherInfo);
       
       // Check if fileList is defined before iterating
-      if (fileList && fileList?.length > 0) {
-        fileList.forEach((file) => {
-          console.log("file",file)
-          formData.append('document', file.originFileObj);
-        });
-      }
+      // if (fileList && fileList?.length > 0) {
+      //   fileList.forEach((file) => {
+      //     // console.log("file",file)
+      //     formData.append('document', file.originFileObj);
+      //   });
+      // }
+      console.log("formdata",formData);
   
       const response = await axios.post(apiUrl, formData, {
         headers: {
@@ -113,7 +114,7 @@ const Login = () => {
         }
       });
   
-      console.log("Response from server:", response.data);
+      console.log("Response from server:", response);
       // Handle response accordingly
     } catch (error) {
       console.error("Error creating project:", error);
