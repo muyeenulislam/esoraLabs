@@ -27,8 +27,8 @@ const Login = () => {
   const router = useRouter();
 
   const [page, setPage] = useState("clientSelect");
-  const [clientName, setClientName] = useState("12345");
-  const [companyId, setCompanyId] = useState("12345");
+  const [clientName, setClientName] = useState("");
+  const [companyId, setCompanyId] = useState("");
   const [services, setServices] = useState([]);
   const [description, setDescription] = useState("fdf sdf ");
   const [goals, setGoals] = useState(" sdfd ");
@@ -40,13 +40,7 @@ const Login = () => {
   const [otherInfo, setOtherInfo] = useState("sdfsdf");
   const [fileList, setFileList] = useState([]);
 
-  const [documents, setDocuments] = useState([]);
-
-  const handleFileListChange = (fileList) => {
-    setFileList(fileList);
-  };
-
-  const handleSubmit = async (review) => {
+  const handleSubmit = async () => {
     const formData = new FormData();
     formData.append("clientName", clientName);
     formData.append("companyId", companyId);
@@ -85,6 +79,8 @@ const Login = () => {
           <ClientPage
             clientName={clientName}
             setClientName={setClientName}
+            companyId={companyId}
+            setCompanyId={setCompanyId}
             page={page}
             setPage={setPage}
           />
@@ -154,7 +150,7 @@ const Login = () => {
         ) : page === "documents" ? (
           <Documents
             fileList={fileList}
-            onFileListChange={handleFileListChange}
+            setFileList={setFileList}
             page={page}
             setPage={setPage}
           />
@@ -171,10 +167,10 @@ const Login = () => {
             deadline={whenProjectComplete}
             otherInfo={otherInfo}
             fileList={fileList}
-            documents={documents}
+            setFileList={setFileList}
             page={page}
             setPage={setPage}
-            onSubmit={handleSubmit}
+            handleSubmit={handleSubmit}
           />
         ) : (
           <ClientPage
