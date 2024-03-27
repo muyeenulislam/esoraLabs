@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+
+import ApiCaller from "@/config/apicaller";
 
 import TopTitle from "./toptitle";
 import Spacer from "@/components/spacer/spacer";
@@ -20,7 +21,7 @@ import Documents from "./documents";
 import Review from "./review";
 
 import styles from "./styles";
-import axios from "axios";
+import { message } from "antd";
 
 const Login = () => {
   const router = useRouter();
@@ -38,90 +39,42 @@ const Login = () => {
   const [whenProjectComplete, setWhenProjectComplete] = useState("sdfdsf");
   const [otherInfo, setOtherInfo] = useState("sdfsdf");
   const [fileList, setFileList] = useState([]);
-  const [reviewData, setReviewData] = useState(null);
+
   const [documents, setDocuments] = useState([]);
 
   const handleFileListChange = (fileList) => {
     setFileList(fileList);
   };
 
-  // Function to receive review data and handle submission
-  // const handleSubmit = async (review) => {
-  //   review = {
-  //     ...review,
-  //     companyId: "1234567890",
-  //     status: "In Progress"
-  //   };
-  //   setReviewData(review);
-  //   // Perform any action with the review data, such as submitting to an API
-  //   console.log("Review data:", review);
-  //   try {
-  //     // const apiUrl = "https://api.esoralabs.com/api/v1/projects";
-  //     const apiUrl = "http://localhost:8000/api/v1/projects";
-
-  //     const response = await axios.post(apiUrl, review);
-
-  //     // router.push("/dashboard");
-  //     // messageApi.open({
-  //     //   type: "success",
-  //     //   content: "Created a new project successfully!",
-  //     // });
-  //   } catch (error) {
-  //     console.error("Error create project:", error);
-  //     messageApi.open({
-  //       type: "error",
-  //       content: "Failed to create new project!",
-  //     });
-  //   }
-  // };
-
   const handleSubmit = async (review) => {
-    review = {
-      ...review,
-      companyId: "1234567890",
-      status: "In Progress",
-    };
-    setReviewData(review);
-    try {
-      const apiUrl = "https://api.esoralabs.com/api/v1/projects";
+    const formData = new FormData();
+    formData.append("clientName", clientName);
+    formData.append("companyId", companyId);
+    formData.append("services", JSON.stringify(services));
+    formData.append("description", description);
+    formData.append("goals", goals);
+    formData.append("targetAudience", targetAudience);
+    formData.append("geographicalScope", geographicalScope);
+    formData.append("maturityProjects", maturityProjects);
+    formData.append("whenProjectStart", whenProjectStart);
+    formData.append("whenProjectComplete", whenProjectComplete);
+    formData.append("otherInfo", otherInfo);
 
-      const formData = new FormData();
-      formData.append("clientName", clientName);
-      formData.append("companyId", companyId);
-      formData.append("services", JSON.stringify(services));
-      formData.append("description", description);
-      formData.append("goals", goals);
-      formData.append("targetAudience", targetAudience);
-      formData.append("geographicalScope", geographicalScope);
-      formData.append("maturityProjects", maturityProjects);
-      formData.append("whenProjectStart", whenProjectStart);
-      formData.append("whenProjectComplete", whenProjectComplete);
-      formData.append("otherInfo", otherInfo);
-
-      // Check if fileList is defined before iterating
-      if (fileList && fileList?.length > 0) {
-        fileList.forEach((file) => {
-          // console.log("file",file)
-          formData.append("document", file.originFileObj);
-        });
-      }
-      // console.log("formdata",formData);
-
-      const response = await axios.post(apiUrl, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+    if (fileList && fileList?.length > 0) {
+      fileList.forEach((file) => {
+        formData.append("document", file.originFileObj);
       });
+    }
 
-      console.log("Response from server:", response);
-      // Handle response accordingly
-    } catch (error) {
-      console.error("Error creating project:", error);
-      // Handle error accordingly
+    const response = await ApiCaller.Post("/projects", formData);
+
+    if (response?.status === 200) {
+      message.success("Project Created Successfully");
+      router.push("/dashboard");
+    } else {
+      message.error(response?.data?.message);
     }
   };
-
-  //  Post request
 
   return (
     <div className={styles.container}>
@@ -200,7 +153,7 @@ const Login = () => {
           />
         ) : page === "documents" ? (
           <Documents
-            fileList={fileList} // Pass fileList state to the Documents component
+            fileList={fileList}
             onFileListChange={handleFileListChange}
             page={page}
             setPage={setPage}
