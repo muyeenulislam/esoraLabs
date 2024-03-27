@@ -15,6 +15,7 @@ const Sidebar = () => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("user");
     router.push("/login");
   };
 
@@ -137,7 +138,7 @@ const Sidebar = () => {
 
       <div className={styles.navbarAccountInfoContainer}>
         <div className={styles.navbarAccountImage}>
-          <img src={dummyData.image} alt="logo" />
+          <Image src={dummyData.image} alt="logo" height={24} width={24} />
         </div>
         <div className={styles.flexColumn}>
           <div className={styles.font14weight600}>{dummyData.name}</div>
@@ -148,7 +149,12 @@ const Sidebar = () => {
       </div>
       <div className={styles.logoutContainer} onClick={handleLogout}>
         <div className={styles.logoutText}>Logout</div>
-        <img src="/images/logout-icon.svg" alt="logo" />
+        <Image
+          src="/images/logout-icon.svg"
+          alt="logo"
+          height={16}
+          width={16}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 import styles from "./styles";
 
@@ -6,19 +7,34 @@ const Container = ({ children }) => {
   return (
     <div className={styles.container}>
       <div className={styles.logoContainer}>
-        <img src="/images/esora-logo.svg" alt="logo" className="mr-2" />
-        <img src="/images/esora-text-logo.svg" alt="logo" />
+        <Image
+          src="/images/esora-logo.svg"
+          alt="logo"
+          className="mr-2"
+          height={48}
+          width={55}
+        />
+        <Image
+          src="/images/esora-text-logo.svg"
+          alt="logo"
+          height={32}
+          width={208}
+        />
       </div>
       <div className={styles.valueContainer}>
-        <img
+        <Image
           src="/images/art-right-up.svg"
           alt="logo"
-          className="absolute w-[144 px] h-[272px]  right-0 top-0 "
+          className="absolute right-0 top-0 "
+          height={272}
+          width={144}
         />
-        <img
+        <Image
           src="/images/art-left-down.svg"
           alt="logo"
-          className="absolute w-[186px] h-[186px] left-0 bottom-0 "
+          className="absolute left-0 bottom-0 "
+          height={186}
+          width={186}
         />
 
         {children}

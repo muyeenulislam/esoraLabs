@@ -11,7 +11,7 @@ const styles = {
 
   labelStyle: `text-[14px] font-medium mb-[6px] text-primary`,
 
-  inputStyle: `w-full border-2 border-grayBorder rounded-lg py-[1%] px-[2%] outline-none`,
+  inputStyle: `w-full border-2 border-grayBorder rounded-lg py-[1%] px-[2%] outline-none text-[14px]`,
 
   checkboxContainer: "flex py-[20px] border-t-2 items-center",
   checkbox: "mr-[12px] h-[20px] w-[20px]",

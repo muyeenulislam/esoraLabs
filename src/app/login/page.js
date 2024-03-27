@@ -1,15 +1,19 @@
 "use client";
+
 import React, { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { message } from "antd";
+
+import ApiCaller from "@/config/apicaller";
+
 import styles from "./styles";
-import {  message } from 'antd';
-import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
-  const [messageApi, contextHolder] = message.useMessage();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const [email, setEmail] = useState("test@gamil.com");
+  const [password, setPassword] = useState("testPass");
   const [rememberMe, setRememberMe] = useState(false);
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
@@ -20,23 +24,17 @@ const Login = () => {
     } else if (!password) {
       setErrorPassword("Password is required");
     } else {
-      const data = {email, password}
-      console.log("Data",data);
-      try {
-        const apiUrl = "https://api.esoralabs.com/api/v1/auth/login?=";
-  
-        const response = await axios.post(apiUrl, data);
-  
+      const data = { email, password };
+
+      const response = await ApiCaller.Post("/auth/login", data);
+
+      if (response?.status === 200) {
+        localStorage.setItem("user", JSON.stringify(response?.data));
+        message.success("Login Success!");
         router.push("/dashboard");
-       message.success("Login Success!")
-      } catch (error) {
-        console.error("Error create project:", error);
-        messageApi.open({
-          type: "error",
-          content: "Failed to Login!",
-        });
+      } else {
+        message.error(response?.data?.message);
       }
-   
     }
   };
   return (
@@ -46,35 +44,35 @@ const Login = () => {
         <div>
           <div className="mb-[20px]">
             <div className={styles.labelStyle}>User Name or Email</div>
-            <div>
-              <input
-                className={styles.inputStyle}
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setErrorEmail("");
-                  setEmail(e.target.value);
-                }}
-                required
-                placeholder="e. g. johndoe"
-              />
-            </div>
+
+            <input
+              className={styles.inputStyle}
+              type="email"
+              value={email || undefined}
+              onChange={(e) => {
+                setErrorEmail("");
+                setEmail(e.target.value);
+              }}
+              required
+              placeholder="e. g. johndoe"
+            />
+
             {errorEmail && <div className={styles.errorText}>{errorEmail}</div>}
           </div>
           <div className="mb-[20px]">
             <div className={styles.labelStyle}>Password</div>
-            <div>
-              <input
-                className={styles.inputStyle}
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setErrorPassword("");
-                  setPassword(e.target.value);
-                }}
-                required
-              />
-            </div>
+
+            <input
+              className={styles.inputStyle}
+              type="password"
+              value={password || undefined}
+              onChange={(e) => {
+                setErrorPassword("");
+                setPassword(e.target.value);
+              }}
+              required
+            />
+
             {errorPassword && (
               <div className={styles.errorText}>{errorPassword}</div>
             )}
@@ -83,7 +81,7 @@ const Login = () => {
             <div className={styles.justifyCenterItemsCenter}>
               <input
                 type="checkbox"
-                checked={rememberMe}
+                checked={rememberMe || undefined}
                 onChange={() => setRememberMe(!rememberMe)}
                 className={styles.checkbox}
               />
@@ -94,7 +92,12 @@ const Login = () => {
         <div className={styles.loginContainer}>
           <button className={styles.loginButton} onClick={onSubmit}>
             <div className={styles.loginText}>Log in</div>
-            <img src="/images/arrow-right.svg" alt="logo" />
+            <Image
+              src="/images/arrow-right.svg"
+              alt="logo"
+              height={20}
+              width={20}
+            />
           </button>
         </div>
       </div>
