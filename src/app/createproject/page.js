@@ -100,12 +100,12 @@ const Login = () => {
       formData.append('otherInfo', otherInfo);
       
       // Check if fileList is defined before iterating
-      // if (fileList && fileList?.length > 0) {
-      //   fileList.forEach((file) => {
-      //     // console.log("file",file)
-      //     formData.append('document', file.originFileObj);
-      //   });
-      // }
+      if (fileList && fileList?.length > 0) {
+        fileList.forEach((file) => {
+          // console.log("file",file)
+          formData.append('document', file.originFileObj);
+        });
+      }
       console.log("formdata",formData);
   
       const response = await axios.post(apiUrl, formData, {
@@ -114,7 +114,7 @@ const Login = () => {
         }
       });
   
-      console.log("Response from server:", response);
+      console.log("Response from server:", response.data);
       // Handle response accordingly
     } catch (error) {
       console.error("Error creating project:", error);
