@@ -3,6 +3,9 @@ import Image from "next/image";
 import { FiPhone, FiMail } from "react-icons/fi";
 
 const ClientCard = (props) => {
+
+  // console.log("dataaaaaaa",props);
+    
   return (
     <div
       {...props}
@@ -32,7 +35,7 @@ const ClientCard = (props) => {
             <FiPhone className="text-subtitleText bottomIcon" />
           </div>
           <div className="text-[14px] font-medium text-subtitleText userInfoText">
-            {props?.data?.number}
+            {props?.data?.phoneNumber}
           </div>
         </div>
         <div className="flex items-center">
@@ -47,7 +50,8 @@ const ClientCard = (props) => {
       <div className="grid grid-cols-3 gap-[1px]">
         <div>
           <div className="bg-fadedYellow2 text-primary text-[16px] headers py-3 text-center bottomSection">
-            {props?.data?.project}
+            {/* {props?.data?.project} */}
+            12
           </div>
           <div className="bg-primary text-white text-[12px] py-[6px] text-center rounded-bl-2xl">
             Projects
@@ -55,7 +59,8 @@ const ClientCard = (props) => {
         </div>
         <div>
           <div className="bg-fadedYellow2 text-primary text-[16px] headers py-3 text-center bottomSection">
-            {props?.data?.spent}
+            {/* {props?.data?.spent} */}
+            $120k
           </div>
           <div className="bg-primary text-white text-[12px] py-[6px] text-center ">
             Spent
@@ -63,7 +68,7 @@ const ClientCard = (props) => {
         </div>
         <div>
           <div className="bg-fadedYellow2 text-primary text-[16px] headers py-3 text-center bottomSection">
-            {props?.data?.subscription}
+            {props?.data?.subscriptionStatus}
           </div>
           <div className="bg-primary text-white text-[12px] py-[6px] text-center rounded-br-2xl">
             Subscription
