@@ -10,15 +10,19 @@ import WhiteButton from "@/components/buttons/whitebutton";
 import styles from "./styles";
 
 const clients = [
-  { id: 1, name: "client 1" },
-  { id: 2, name: "client 2" },
-  { id: 3, name: "client 8" }, 
-  { id: 4, name: "client 4" },
+  { id: 3231, name: "client 1" },
+  { id: 243445, name: "client 2" },
+  { id: 323, name: "client 8" },
+  { id: 4232, name: "client 4" },
 ];
+
 const ClientPage = (props) => {
   const handleClientSelect = (selectedValue) => {
-    props?.setClientName(selectedValue);
+    const company = JSON.parse(selectedValue);
+    props?.setClientName(company?.name);
+    props?.setCompanyId(company?.id);
   };
+
   return (
     <>
       <div>
@@ -30,7 +34,7 @@ const ClientPage = (props) => {
             placeholder="Select Client"
           >
             {clients?.map((item) => (
-              <Select.Option value={item?.name} key={item?.id}>
+              <Select.Option value={JSON.stringify(item)} key={item?.id}>
                 {item.name}
               </Select.Option>
             ))}
