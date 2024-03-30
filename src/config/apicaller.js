@@ -5,14 +5,14 @@ const apiUrl = "https://api.esoralabs.com/api/v1";
 
 axios.interceptors.response.use(
   (response) => {
-    if (response.status === 200) {
+    if (response.status === 401) {
       localStorage.removeItem("user");
       navigate("/login");
     }
     return response;
   },
   ({ response }) => {
-    if (response.status === 200) {
+    if (response.status === 401) {
       localStorage.removeItem("user");
       navigate("/login");
     }
