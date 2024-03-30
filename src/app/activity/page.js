@@ -31,6 +31,8 @@ const Activity = () => {
     fetchActivityData();
   }, []);
 
+
+// console.log();
   return (
     <div>
       <Breadcrumb data={breadcumbData} />
