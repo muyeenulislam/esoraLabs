@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import moment from "moment";
 
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
@@ -9,11 +10,9 @@ import PrimaryButton from "@/components/buttons/primarybutton";
 import StatusIndicator from "@/components/statusindicator/statusindicator";
 import PageHeading from "@/components/pageheading/pageheading";
 
-import DateFormatter from "@/utils/dateformatter/dateformatter";
-import DateFormatterLong from "@/utils/dateformatter/dateformatterlong";
-import DateFormatterWithSlash from "@/utils/dateformatter/dateformatterwithslash";
-import { ActivityData } from "@/utils/mockdata/activitydata";
 import { RecentProjectsData } from "@/utils/mockdata/recentprojectsdata";
+
+import ApiCaller from "@/config/apicaller";
 
 import styles from "./styles";
 
@@ -22,8 +21,24 @@ const boxData = [
   { text: "New Clients", value: "2" },
   { text: "Projects Active", value: "12" },
 ];
+
 const Dashboard = () => {
   const router = useRouter();
+
+  const [activityData, setActivityData] = useState([]);
+
+  useEffect(() => {
+    const fetchActivityData = async () => {
+      try {
+        const response = await ApiCaller.Get("/admin/activity");
+        setActivityData(response.data.data);
+      } catch (error) {
+        console.error("Error fetching activity data:", error);
+      }
+    };
+
+    fetchActivityData();
+  }, []);
 
   return (
     <div>
@@ -146,7 +161,7 @@ const Dashboard = () => {
                       <div className={styles.dueDateHeading}>Due by</div>
                       <div className={styles.itemsCenter}>
                         <div className={styles.dueDateValue}>
-                          {DateFormatterLong(item.dueDate)}
+                          {moment(item.dueDate).format("DD MMMM YYYY")}
                         </div>
 
                         {new Date(item.dueDate) < new Date() && (
@@ -161,7 +176,7 @@ const Dashboard = () => {
                 </div>
                 <div style={styles.recentRightSide}>
                   <div className={styles.recentCreatedDate}>
-                    Created on {DateFormatterWithSlash(item.createdOn)}
+                    Created on {moment(item.createdOn).format("MM/DD/YYYY")}
                   </div>
                   <div>
                     <PrimaryButton
@@ -185,7 +200,7 @@ const Dashboard = () => {
             <div>
               <div className={styles.smallTitle}>Activity</div>
               <div style={styles.activityContainer}>
-                {ActivityData?.map((item, index) => (
+                {activityData?.map((item, index) => (
                   <div
                     style={{
                       padding: "16px",
@@ -196,14 +211,14 @@ const Dashboard = () => {
                   >
                     <div className={styles.justifyBetween}>
                       <div className={styles.activityUpperText}>
-                        {item.subTitle}
+                        {item.title}
                       </div>
                       <div className={styles.activityDate}>
-                        {DateFormatter(item.date)}
+                        {moment(item.createdAt).format("DD MMM YYYY")}
                       </div>
                     </div>
                     <div className={styles.activityBottomText}>
-                      {item.title}
+                      {item.description}
                     </div>
                   </div>
                 ))}
