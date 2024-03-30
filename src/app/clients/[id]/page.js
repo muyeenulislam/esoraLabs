@@ -17,19 +17,44 @@ import { ClientData } from "@/utils/mockdata/clientdata";
 import ProfileDetailsMessages from "./messages";
 import ProfileDetailsOverview from "./overview";
 import ProfileDetailsProjects from "./projects";
+import axios from "axios";
 
-const ProfileDetails = () => {
+const ProfileDetails = ({ params }) => {
   const pathname = usePathname();
   const router = useRouter();
 
   const [data, setData] = useState({});
   const [activeKey, setActivekey] = useState("1");
 
+  // useEffect(() => {
+  //   const name = pathname?.split("/")[2].replace(/%20/g, " ");
+  //   const memberData = ClientData.filter((item) => item.name === name);
+  //   setData(memberData[0]);
+  // }, []);
+
+
+  // console.log("param",params);
   useEffect(() => {
-    const name = pathname?.split("/")[2].replace(/%20/g, " ");
-    const memberData = ClientData.filter((item) => item.name === name);
-    setData(memberData[0]);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`https://api.esoralabs.com/api/v1/auth/company`); 
+        const data = response.data.data;
+        // console.log(data);
+        const selectedItem = data.find(
+          (item) => item._id === params.id
+        );
+  
+        setData(selectedItem);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, [params.id]);
+
+  // console.log("Single",data);
+
 
   const breadcumbData = [
     { title: "Clients", link: "/clients", active: false },

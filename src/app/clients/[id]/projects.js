@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Space, Table, Tag } from 'antd';
 import { FaArrowRight } from "react-icons/fa6";
 import PrimaryTable from '@/components/table/primarytable';
@@ -6,6 +6,7 @@ import WhiteButtonTable from '@/components/buttons/whitebuttontable';
 import PrimaryButtonTable from '@/components/buttons/primarybuttontable';
 import Pagination from '@/components/pagination/pagination';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 // const columns = [
 //   {
 //     title: 'Project Name',
@@ -91,11 +92,32 @@ import { useRouter } from 'next/navigation';
 const ProfileDetailsProjects = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-  
+  // console.log("only", data);
 const router = useRouter()
 const handleButtonClick = () => {
   router.push('/clients/[name]/projects/website');
 };
+
+
+const [project, setProject] = useState([])
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      let id =  3231
+      const response = await axios.get(`https://api.esoralabs.com/api/v1/projects/company/?id=${id}`); 
+      setProject(response.data.data)
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
+console.log("Data",project);
 
 
   const columns = [

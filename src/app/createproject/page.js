@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-
-import ApiCaller from "@/config/apicaller";
+import Image from "next/image";
 
 import TopTitle from "./toptitle";
 import Spacer from "@/components/spacer/spacer";
@@ -21,14 +20,14 @@ import Documents from "./documents";
 import Review from "./review";
 
 import styles from "./styles";
-import { message } from "antd";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
 
   const [page, setPage] = useState("clientSelect");
-  const [clientName, setClientName] = useState("");
-  const [companyId, setCompanyId] = useState("");
+  const [clientName, setClientName] = useState("12345");
+  const [companyId, setCompanyId] = useState("12345");
   const [services, setServices] = useState([]);
   const [description, setDescription] = useState("fdf sdf ");
   const [goals, setGoals] = useState(" sdfd ");
@@ -39,36 +38,62 @@ const Login = () => {
   const [whenProjectComplete, setWhenProjectComplete] = useState("sdfdsf");
   const [otherInfo, setOtherInfo] = useState("sdfsdf");
   const [fileList, setFileList] = useState([]);
+  const [reviewData, setReviewData] = useState(null);
+  const [documents, setDocuments] = useState([]);
 
-  const handleSubmit = async () => {
-    const formData = new FormData();
-    formData.append("clientName", clientName);
-    formData.append("companyId", companyId);
-    formData.append("services", JSON.stringify(services));
-    formData.append("description", description);
-    formData.append("goals", goals);
-    formData.append("targetAudience", targetAudience);
-    formData.append("geographicalScope", geographicalScope);
-    formData.append("maturityProjects", maturityProjects);
-    formData.append("whenProjectStart", whenProjectStart);
-    formData.append("whenProjectComplete", whenProjectComplete);
-    formData.append("otherInfo", otherInfo);
 
-    if (fileList && fileList?.length > 0) {
-      fileList.forEach((file) => {
-        formData.append("document", file.originFileObj);
+  const handleFileListChange = (fileList) => {
+    setFileList(fileList);
+  };
+
+
+  const handleSubmit = async (review) => {
+    review = {
+      ...review,
+      companyId: "1234567890",
+      status: "In Progress"
+    };
+    setReviewData(review);
+    try {
+      const apiUrl = "https://api.esoralabs.com/api/v1/projects";
+  
+      const formData = new FormData();
+      formData.append('clientName', clientName);
+      formData.append('companyId', companyId);
+      formData.append('services', JSON.stringify(services));
+      formData.append('description', description);
+      formData.append('goals', goals);
+      formData.append('targetAudience', targetAudience);
+      formData.append('geographicalScope', geographicalScope);
+      formData.append('maturityProjects', maturityProjects);
+      formData.append('whenProjectStart', whenProjectStart);
+      formData.append('whenProjectComplete', whenProjectComplete);
+      formData.append('otherInfo', otherInfo);
+      
+      // Check if fileList is defined before iterating
+      if (fileList && fileList?.length > 0) {
+        fileList.forEach((file) => {
+          // console.log("file",file)
+          formData.append('document', file.originFileObj);
+        });
+      }
+      console.log("formdata",formData);
+  
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-    }
-
-    const response = await ApiCaller.Post("/projects", formData);
-
-    if (response?.status === 200) {
-      message.success("Project Created Successfully");
-      router.push("/dashboard");
-    } else {
-      message.error(response?.data?.message);
+  
+      console.log("Response from server:", response.data);
+      // Handle response accordingly
+    } catch (error) {
+      console.error("Error creating project:", error);
+      // Handle error accordingly
     }
   };
+
+  //  Post request
 
   return (
     <div className={styles.container}>
@@ -79,8 +104,6 @@ const Login = () => {
           <ClientPage
             clientName={clientName}
             setClientName={setClientName}
-            companyId={companyId}
-            setCompanyId={setCompanyId}
             page={page}
             setPage={setPage}
           />
@@ -149,8 +172,8 @@ const Login = () => {
           />
         ) : page === "documents" ? (
           <Documents
-            fileList={fileList}
-            setFileList={setFileList}
+            fileList={fileList} // Pass fileList state to the Documents component
+            onFileListChange={handleFileListChange}
             page={page}
             setPage={setPage}
           />
@@ -167,10 +190,10 @@ const Login = () => {
             deadline={whenProjectComplete}
             otherInfo={otherInfo}
             fileList={fileList}
-            setFileList={setFileList}
+            documents={documents}
             page={page}
             setPage={setPage}
-            handleSubmit={handleSubmit}
+            onSubmit={handleSubmit}
           />
         ) : (
           <ClientPage

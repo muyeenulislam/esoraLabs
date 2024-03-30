@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Select } from "antd";
@@ -17,6 +17,7 @@ import ClientCard from "@/components/cards/clientcard";
 import Pagination from "@/components/pagination/pagination";
 
 import { ClientData } from "@/utils/mockdata/clientdata";
+import axios from "axios";
 
 const breadcumbData = [{ title: "Clients", link: "/clients", active: true }];
 
@@ -30,6 +31,26 @@ const Clients = () => {
   const handleFilterChange = (e) => {
     setSortFilter(e);
   };
+
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://api.esoralabs.com/api/v1/auth/company');
+        setData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  // console.log("data",data);
+
+
+
 
   return (
     <div>
@@ -73,10 +94,10 @@ const Clients = () => {
       </div>
       <Spacer height="32px" />
       <div className="grid grid-cols-3 gap-6">
-        {ClientData?.map((item, index) => (
+        {data?.map((item, index) => (
           <ClientCard data={item} key={index}>
-            <Link href={`/clients/${item.name}`}>View Details</Link>
-          </ClientCard>
+            <Link href={`/clients/${item._id}`}>View Details</Link>
+          </ClientCard> 
         ))}
       </div>
       <Spacer height="32px" />
