@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
@@ -18,6 +18,13 @@ const Login = () => {
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem("user");
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, []);
+
   const onSubmit = async () => {
     if (!email) {
       setErrorEmail("Email is required");
@@ -30,7 +37,7 @@ const Login = () => {
 
       if (response?.status === 200) {
         localStorage.setItem("user", JSON.stringify(response?.data));
-        message.success("Login Success!");
+        message.success("Logged in successfully!");
         router.push("/dashboard");
       } else {
         message.error(response?.data?.message);

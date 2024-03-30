@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Modal } from "antd";
 import Image from "next/image";
@@ -15,6 +15,13 @@ const Container = ({ children }) => {
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("user");
+    if (!token) {
+      router.push("/login");
+    }
+  }, []);
 
   return (
     <div className={styles.container}>

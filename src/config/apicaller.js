@@ -1,16 +1,20 @@
 import axios from "axios";
-import Router from "next/router";
+import { navigate } from "@/utils/navigate";
 
 const apiUrl = "https://api.esoralabs.com/api/v1";
 
 axios.interceptors.response.use(
   (response) => {
+    if (response.status === 200) {
+      localStorage.removeItem("user");
+      navigate("/login");
+    }
     return response;
   },
   ({ response }) => {
-    if (response.status === 401) {
+    if (response.status === 200) {
       localStorage.removeItem("user");
-      Router.push("/login");
+      navigate("/login");
     }
     return response;
   }
