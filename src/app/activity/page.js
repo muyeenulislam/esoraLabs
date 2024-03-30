@@ -9,6 +9,7 @@ import Pagination from "@/components/pagination/pagination";
 
 import styles from "./styles";
 import axios from "axios";
+import ApiCaller from "@/config/apicaller";
 
 const breadcumbData = [{ title: "Activity", link: "/activity", active: true }];
 
@@ -20,15 +21,17 @@ const Activity = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://api.esoralabs.com/api/v1/admin/activity');
+        const response = await  ApiCaller.Get('https://api.esoralabs.com/api/v1/admin/activity');
         setData(response.data.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
-    fetchData();
+    fetchData();   
   }, []);
+
+
 
 
 console.log("data",data);
