@@ -8,16 +8,18 @@ axios.interceptors.response.use(
     if (response.status === 401) {
       localStorage.removeItem("user");
       navigate("/login");
+    } else {
+      return response;
     }
-    return response;
-  },
-  ({ response }) => {
-    if (response.status === 401) {
-      localStorage.removeItem("user");
-      navigate("/login");
-    }
-    return response;
   }
+  // ({ response }) => {
+  //   if (response.status === 401) {
+  //     localStorage.removeItem("user");
+  //     navigate("/login");
+  //   } else {
+  //     return response;
+  //   }
+  // }
 );
 
 axios.interceptors.request.use(

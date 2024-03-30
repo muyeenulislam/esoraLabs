@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Select } from "antd";
 
+import ApiCaller from "@/config/apicaller";
+
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
-
 import SearchBar from "@/components/searchbar/searchbar";
 import Dropdown from "@/components/dropdown/dropdown";
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
@@ -15,9 +16,6 @@ import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
 import ClientCard from "@/components/cards/clientcard";
 import Pagination from "@/components/pagination/pagination";
-
-import { ClientData } from "@/utils/mockdata/clientdata";
-import axios from "axios";
 
 const breadcumbData = [{ title: "Clients", link: "/clients", active: true }];
 
@@ -28,29 +26,24 @@ const Clients = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const handleFilterChange = (e) => {
-    setSortFilter(e);
-  };
+  const [clientData, setClientData] = useState([]);
 
-  const [data, setData] = useState(null);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchClientData = async () => {
       try {
-        const response = await axios.get('https://api.esoralabs.com/api/v1/auth/company');
-        setData(response.data.data);
+        const response = await ApiCaller.Get("/auth/company");
+        setClientData(response.data.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchData();
+    fetchClientData();
   }, []);
 
-
-  // console.log("data",data);
-
-
-
+  const handleFilterChange = (e) => {
+    setSortFilter(e);
+  };
 
   return (
     <div>
@@ -94,10 +87,10 @@ const Clients = () => {
       </div>
       <Spacer height="32px" />
       <div className="grid grid-cols-3 gap-6">
-        {data?.map((item, index) => (
+        {clientData?.map((item, index) => (
           <ClientCard data={item} key={index}>
             <Link href={`/clients/${item._id}`}>View Details</Link>
-          </ClientCard> 
+          </ClientCard>
         ))}
       </div>
       <Spacer height="32px" />
