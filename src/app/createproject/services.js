@@ -35,11 +35,9 @@ const Services = (props) => {
   const [selectedServices, setSelectedServices] = useState([]);
   // const { selectedMultiServices, onSelectedServicesChange } = props;
 
-  useEffect(()=>{
-    props?.setServices(selectedServices)
-  },[selectedServices])
-
-
+  useEffect(() => {
+    props?.setServices(selectedServices);
+  }, [selectedServices]);
 
   const handleSearch = (search) => {
     const filteredData = servicesArray.filter((item) =>
@@ -55,12 +53,11 @@ const Services = (props) => {
     } else {
       const updatedServices = [...selectedServices];
       updatedServices.splice(index, 1);
-     setSelectedServices(updatedServices);
+      setSelectedServices(updatedServices);
     }
   };
 
-  console.log("selectedServices",selectedServices);
-  
+  console.log("selectedServices", selectedServices);
 
   return (
     <>

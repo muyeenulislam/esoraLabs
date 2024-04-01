@@ -60,7 +60,6 @@ const ProfileDetailsProjects = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(data?.length / 10);
 
-  console.log(selectedRows);
   return (
     <div className="border border-gray-200 shadow-clientCard rounded-2xl">
       <PrimaryTable

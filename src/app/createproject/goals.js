@@ -10,11 +10,11 @@ const Goals = (props) => {
   return (
     <>
       <div>
-      <TextBox
-  onChange={(e) => props?.setGoals(e.target.value)}
-  placeholder="Enter Info Here..."
-  value={props?.goals || ''} // Provide a default value of an empty string
-/>
+        <TextBox
+          onChange={(e) => props?.setGoals(e.target.value)}
+          placeholder="Enter Info Here..."
+          value={props?.goals || ""} // Provide a default value of an empty string
+        />
       </div>
       <div className={styles.loginContainer}>
         <WhiteButton

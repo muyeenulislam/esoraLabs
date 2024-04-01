@@ -1,31 +1,25 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+import StatusIndicator from "@/components/statusindicator/statusindicator";
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import Spacer from "@/components/spacer/spacer";
-import Members from "../../members";
-import Role from "../../role";
 import PageHeading from "@/components/pageheading/pageheading";
-import settingsTeamData from "@/utils/mockdata/settingsteamdata";
-import roleData from "@/utils/mockdata/roledata";
 import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 import Pagination from "@/components/pagination/pagination";
-import { Select, Space, Tag } from "antd";
-import Image from "next/image";
-import { FaArrowRight } from "react-icons/fa";
-import { useRouter } from "next/navigation";
 
 const Team = () => {
-  const [totalPage, setTotalPage] = useState(settingsTeamData?.length / 10);
+  const router = useRouter();
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
-  const router = useRouter()
 
   const handleCancel = () => {
-    router.push('/settings');
+    router.push("/settings");
   };
 
   const columns = [
@@ -38,56 +32,16 @@ const Team = () => {
       title: "Priority",
       key: "tags",
       dataIndex: "tags",
-      render: (_, { tags }) => (
-        <>
-          {tags.map((tag) => {
-            let color;
-            if (tag === "High") {
-              color = "Red";
-            }
-            if (tag === "Medium") {
-              color = "Tomato";
-            }
-            if (tag === "Low") {
-              color = "Green";
-            }
-            return (
-              <Tag className="rounded-full" color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+      render: (text, record) => (
+        <StatusIndicator text={"High"} className="w-max" />
       ),
     },
     {
       title: "Status",
       key: "Status",
       dataIndex: "Status",
-      render: (_, { Status }) => (
-        <>
-          {Status.map((tag) => {
-            let color;
-            if (tag === "In progress") {
-              color = "blue";
-            }
-            if (tag === "Under Review") {
-              color = "default";
-            }
-            if (tag === "Completed") {
-              color = "success";
-            }
-            return (
-              <Tag
-                className="rounded-full font-semibold"
-                color={color}
-                key={tag}
-              >
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
+      render: (text, record) => (
+        <StatusIndicator text={"High"} className="w-max" />
       ),
     },
     {
@@ -107,9 +61,8 @@ const Team = () => {
           <p className="m-0 text-subtitleText text-[14px] font-medium">
             Delete
           </p>
- 
-            <WhiteButtonTable onCli text="View" />
-     
+
+          <WhiteButtonTable text="View" />
         </div>
       ),
     },
@@ -137,12 +90,14 @@ const Team = () => {
           subHeading="Mange your team members right from here."
         />
         <div className="flex space-x-4">
-          <button  className="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-xs p-4">
-            {" "}
-            <img src="/images/trash-2.svg" />{" "}
+          <button className="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-xs p-4">
+            <Image height={20} width={20} alt="" src="/images/trash-2.svg" />
           </button>
-          <button onClick={handleCancel}  className="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-xs p-4">
-            <img src="/images/x.svg" />
+          <button
+            onClick={handleCancel}
+            className="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-xs p-4"
+          >
+            <Image height={20} width={20} alt="" src="/images/x.svg" />
           </button>
         </div>
       </div>
@@ -159,23 +114,11 @@ const Team = () => {
             </p>
           </div>
           <div className="flex gap-4">
-            <WhiteButton text="Send Message" onClick={() => setIsOpen(true)}>
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17.5 12.5C17.5 12.942 17.3244 13.366 17.0118 13.6785C16.6993 13.9911 16.2754 14.1667 15.8333 14.1667H5.83333L2.5 17.5V4.16667C2.5 3.72464 2.67559 3.30072 2.98816 2.98816C3.30072 2.67559 3.72464 2.5 4.16667 2.5H15.8333C16.2754 2.5 16.6993 2.67559 17.0118 2.98816C17.3244 3.30072 17.5 3.72464 17.5 4.16667V12.5Z"
-                  stroke="#434A60"
-                  strokeWidth="1.67"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </WhiteButton>
+            <WhiteButton
+              text="Send Message"
+              image={"/images/send-msg-icon.svg"}
+              imagealign="left"
+            />
             <YellowButton text="Assign a Task" />
           </div>
         </div>
@@ -222,7 +165,7 @@ const Team = () => {
             <TableWithoutCheckbox columns={columns} data={data} />
             <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
               <Pagination
-                totalPages={totalPage}
+                totalPages={10}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
               />

@@ -25,11 +25,12 @@ const ProfileDetails = () => {
   const [data, setData] = useState({});
   const [activeKey, setActivekey] = useState("1");
 
+  const id = pathname?.split("/")[2];
+
   useEffect(() => {
-    const name = pathname?.split("/")[2].replace(/%20/g, " ");
-    const memberData = TeamData.filter((item) => item.name === name);
+    const memberData = TeamData.filter((item) => item._id === id);
     setData(memberData[0]);
-  }, []);
+  }, [id]);
 
   const breadcumbData = [
     { title: "Team", link: "/team", active: false },
