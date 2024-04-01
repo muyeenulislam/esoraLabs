@@ -9,18 +9,11 @@ import WhiteButton from "@/components/buttons/whitebutton";
 
 import styles from "./styles";
 
-const clients = [
-  { id: 3231, name: "client 1" },
-  { id: 243445, name: "client 2" },
-  { id: 323, name: "client 8" },
-  { id: 4232, name: "client 4" },
-];
-
 const ClientPage = (props) => {
   const handleClientSelect = (selectedValue) => {
     const company = JSON.parse(selectedValue);
     props?.setClientName(company?.name);
-    props?.setCompanyId(company?.id);
+    props?.setCompanyId(company?._id);
   };
 
   return (
@@ -33,8 +26,8 @@ const ClientPage = (props) => {
             value={props?.clientName || undefined}
             placeholder="Select Client"
           >
-            {clients?.map((item) => (
-              <Select.Option value={JSON.stringify(item)} key={item?.id}>
+            {props?.clientList?.map((item) => (
+              <Select.Option value={JSON.stringify(item)} key={item?._id}>
                 {item.name}
               </Select.Option>
             ))}
