@@ -90,7 +90,6 @@ const Review = (props) => {
                     alt={item.name}
                     height={20}
                     width={20}
-                    onClick={() => removeFile(item)}
                   />
                 </div>
                 <div className="flex flex-col w-full">
