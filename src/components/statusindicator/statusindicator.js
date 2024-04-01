@@ -1,28 +1,37 @@
 import React from "react";
+import Image from "next/image";
 import styles from "./styles";
 
-const StatusIndicator = ({ text, icon }) => {
+const StatusIndicator = (props) => {
   let style = "";
-  if (text.toLowerCase() === "high") {
+  if (props?.text.toLowerCase() === "high") {
     style = styles.statusHigh;
-  } else if (text.toLowerCase() === "medium") {
+  } else if (props?.text.toLowerCase() === "medium") {
     style = styles.statusMedium;
-  } else if (text.toLowerCase() === "low") {
+  } else if (props?.text.toLowerCase() === "low") {
     style = styles.statusLow;
-  } else if (text.toLowerCase() === "completed") {
+  } else if (props?.text.toLowerCase() === "completed") {
     style = styles.statusCompleted;
-  } else if (text.toLowerCase() === "overdue") {
+  } else if (props?.text.toLowerCase() === "overdue") {
     style = styles.statusOverdue;
-  } else if (text.toLowerCase() === "in progress") {
+  } else if (props?.text.toLowerCase() === "in progress") {
     style = styles.statusInProgress;
   } else {
     style = styles.general;
   }
 
   return (
-    <div style={{ ...style, ...styles.container }}>
-      <span>{text}</span>
-      {icon && <img src={icon} style={{ marginLeft: "6px" }} alt="icon" />}
+    <div style={{ ...style, ...styles.container, ...props?.style }} {...props}>
+      <span>{props?.text}</span>
+      {props?.icon && (
+        <Image
+          src={props?.icon}
+          style={{ marginLeft: "6px" }}
+          alt="icon"
+          height={20}
+          width={20}
+        />
+      )}
     </div>
   );
 };

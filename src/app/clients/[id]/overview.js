@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useSearchParams, usePathname } from "next/navigation";
+import React from "react";
+import Image from "next/image";
 
-import { FiMessageSquare, FiPhone, FiUserCheck } from "react-icons/fi";
+import { FiMessageSquare, FiPhone } from "react-icons/fi";
 
 const ProfileDetailsOverview = ({ data }) => {
-
-  
-
   return (
     <div className="border h-auto mx-[200px] mt-[32px] rounded-2xl shadow-md">
       <div className="flex justify-between  items-center p-[24px] bg-[#0B132B] rounded-t-2xl">
         <div className="flex">
-          <img
+          <Image
             src="/images/user.svg"
-            className="p-[16px] rounded-full bg-[#F7D046] mr-[16px]  "
+            className="p-[16px] rounded-full bg-[#F7D046] mr-[16px]"
+            height={60}
+            width={60}
+            alt=""
           />
           <div>
             <div className="text-[#FFFFFF] text-[20px] font-bold">
@@ -41,9 +41,7 @@ const ProfileDetailsOverview = ({ data }) => {
         </div>
         <div className="px-[24px] pt-[25px] pb-[12px] text-[#FFFFFF]">
           <div className="text-[14px] font-normal">Position</div>
-          <div className="text-[16px] font-bold">
-          {data?.jobPosition}
-          </div>
+          <div className="text-[16px] font-bold">{data?.jobPosition}</div>
         </div>
       </div>
       <div className="grid grid-cols-2 bg-[#0B132B] ">
@@ -107,20 +105,20 @@ const ProfileDetailsOverview = ({ data }) => {
         <div className="px-[24px]  py-[12px] ">
           <div className="text-[#52596D] text-[14px]">Company Size</div>
           <div className="text-[#0B132B] text-[16px] font-bold">
-          {data?.size}
+            {data?.size}
           </div>
         </div>
         <div className="px-[24px] py-[12px] ">
           <div className="text-[#52596D] text-[14px]">Company Website</div>
           <div className="text-[#0B132B] text-[16px] font-bold">
-          {data?.website}
+            {data?.website}
           </div>
         </div>
       </div>
       <div className="pt-[12px] pb-[24px] px-[24px]">
         <div className="text-[#52596D] text-[14px]">Location</div>
         <div className="text-[#0B132B] text-[16px] font-bold">
-        {data?.location}
+          {data?.location}
         </div>
       </div>
     </div>

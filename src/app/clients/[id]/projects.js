@@ -1,244 +1,142 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Space, Table, Tag } from 'antd';
-import { FaArrowRight } from "react-icons/fa6";
-import PrimaryTable from '@/components/table/primarytable';
-import WhiteButtonTable from '@/components/buttons/whitebuttontable';
-import PrimaryButtonTable from '@/components/buttons/primarybuttontable';
-import Pagination from '@/components/pagination/pagination';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-// const columns = [
-//   {
-//     title: 'Project Name',
-//     dataIndex: 'name',
-//   },
-//   {
-//     title: 'Assignee',
-//     dataIndex: 'age',
-//     key: 'age',
-//   },
-//   {
-//     title: 'Priority',
-//     key: 'tags',
-//     dataIndex: 'tags',
-//     render: (_, { tags }) => (
-//       <>
-//         {tags.map((tag) => {
-//           let color 
-//           if (tag === 'High') {
-//             color = 'Red';
-//           } if (tag === 'Medium') {
-//             color = 'Tomato';
-//           }
-//           if (tag === 'Low') {
-//             color = 'Green';
-//           }
-//           return (
-//             <Tag className='rounded-full' color={color} key={tag}>
-//               {tag.toUpperCase()}
-//             </Tag>
-//           );
-//         })}
-//       </>
-//     ),
-//   },
-//   {
-//     title: 'Status',
-//     key: 'Status',
-//     dataIndex: 'Status',
-//     render: (_, { Status }) => (
-//       <>
-//         {Status.map((tag) => {
-//           let color 
-//           if (tag === 'In progress') {
-//             color = 'blue';
-//           } if (tag === 'Under Review') {
-//             color = 'default';
-//           }
-//           if (tag === 'Completed') {
-//             color="success"
-//           }
-//           return (
-//             <Tag className='rounded-full font-semibold' color={color} key={tag}>
-//               {tag.toUpperCase()}
-//             </Tag>
-//           );
-//         })}
-//       </>
-//     ),
-//   },
-//   {
-//     title: 'Created On',
-//     dataIndex: 'Created',
-//   },
-//   {
-//     title: 'Due By',
-//     dataIndex: 'Due',
-//   },
-//   {
-//     title: 'Action',
-//     key: 'action',
-//     render: (_, record) => (
-//       <Space size="middle">
-   
-//    <button type="button" class="flex items-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
-//   See Briefing <FaArrowRight class="ml-1" />
-// </button>
-//       </Space>
-//     ),
-//   },
-// ];
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { message } from "antd";
+import moment from "moment";
+
+import ApiCaller from "@/config/apicaller";
+
+import StatusIndicator from "@/components/statusindicator/statusindicator";
+import PrimaryTable from "@/components/table/primarytable";
+import WhiteButtonTable from "@/components/buttons/whitebuttontable";
+import PrimaryButtonTable from "@/components/buttons/primarybuttontable";
+import Pagination from "@/components/pagination/pagination";
 
 const ProfileDetailsProjects = () => {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const id = pathname?.split("/")[2];
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [project, setProject] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // console.log("only", data);
-const router = useRouter()
-const handleButtonClick = () => {
-  router.push('/clients/[name]/projects/website');
-};
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await ApiCaller.Get(
+          `/projects/company/?id=${id}&limit=${limit}$offset=${offset}`
+        );
 
+        if (response.status === 200) {
+          setProject(response.data.data);
+          setIsLoading(false);
+        } else {
+          message.error(response.data.message);
+          setIsLoading(false);
+        }
+      } catch (e) {
+        console.log(e);
+        setIsLoading(false);
+      }
+    };
 
-const [project, setProject] = useState([])
+    fetchData();
+  }, [id]);
 
-
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      let id =  3231
-      const response = await axios.get(`https://api.esoralabs.com/api/v1/projects/company/?id=${id}`); 
-      setProject(response.data.data)
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const handleButtonClick = (projectId) => {
+    router.push(`/clients/${id}/projects/${projectId}`);
   };
-
-  fetchData();
-}, []);
-
-
-console.log("Data",project);
-
 
   const columns = [
     {
-      title: 'Project Name',
-      dataIndex: 'name',
+      title: "Project Name",
+      dataIndex: "name",
+      width: 200,
     },
     {
-      title: 'Assignee',
-      dataIndex: 'age',
-      key: 'age',
+      title: "Assignee",
+      dataIndex: "assignee",
+      key: "assignee",
+      width: 200,
     },
     {
-      title: 'Priority',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (_, { tags }) => (
+      title: "Priority",
+      key: "tags",
+      dataIndex: "tags",
+      width: 100,
+      render: (text, record) => (
         <>
-          {tags.map((tag) => {
-            let color 
-            if (tag === 'High') {
-              color = 'Red';
-            } if (tag === 'Medium') {
-              color = 'Tomato';
-            }
-            if (tag === 'Low') {
-              color = 'Green';
-            }
-            return (
-              <Tag className='rounded-full' color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
+          <StatusIndicator text={"High"} className="w-max" />
         </>
       ),
     },
     {
-      title: 'Status',
-      key: 'Status',
-      dataIndex: 'Status',
-      render: (_, { Status }) => (
+      title: "Status",
+      key: "Status",
+      dataIndex: "Status",
+      width: 100,
+      render: (text, record) => (
         <>
-          {Status.map((tag) => {
-            let color 
-            if (tag === 'In progress') {
-              color = 'blue';
-            } if (tag === 'Under Review') {
-              color = 'default';
-            }
-            if (tag === 'Completed') {
-              color="success"
-            }
-            return (
-              <Tag className='rounded-full font-semibold' color={color} key={tag}>
-                {tag.toUpperCase()}
-              </Tag>
-            );
-          })}
+          <StatusIndicator text={record?.status} className="w-max" />
         </>
       ),
     },
     {
-      title: 'Created On',
-      dataIndex: 'Created',
+      title: "Created On",
+      dataIndex: "Created",
+      width: 150,
+      render: (text, record) => (
+        <>{moment(record?.createdAt).format("DD/MM/YYYY")}</>
+      ),
     },
     {
-      title: 'Due By',
-      dataIndex: 'Due',
+      title: "Due By",
+      dataIndex: "Due",
+      width: 150,
+      render: (text, record) => <>{record?.whenProjectComplete}</>,
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-     
-     <button type="button" className="flex items-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700" onClick={handleButtonClick}>
-    See Briefing <FaArrowRight className="ml-1" />
-  </button>
-        </Space>
+      title: "Action",
+      key: "action",
+      width: 150,
+      render: (text, record) => (
+        <PrimaryButtonTable
+          text={"Start Briefing"}
+          image={"/images/arrow-right-white.svg"}
+          onClick={() => handleButtonClick(record._id)}
+        />
       ),
     },
   ];
-  
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`,
-      tags: ['High' ],
-      Status: ['Under Review'],
-      Created: `01/27/2023`,
-      Due:`01/27/2023`
-    });
-  }
 
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(data?.length / 10);
 
   return (
     <div className="border border-gray-200 shadow-clientCard rounded-2xl">
       <PrimaryTable
+        rowKey={(record) => record?._id}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         columns={columns}
-        data={data}
+        data={project}
+        loading={isLoading}
       />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
         <Pagination
-          totalPages={totalPage}
+          totalPages={10}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />

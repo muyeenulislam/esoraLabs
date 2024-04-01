@@ -31,20 +31,17 @@ import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 import { FaArrowRight, FaSearch, FaTimes } from "react-icons/fa";
 import Requirements from "./requirements";
 
-const website = () => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+const ProjectDetails = () => {
   const pathname = usePathname();
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const [data, setData] = useState({});
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const [activeKey, setActivekey] = useState("1");
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isOpen, setOpen] = useState(false);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const [showRemoveButton, setShowRemoveButton] = useState(false);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [markedAsUnderReview, setMarkedAsUnderReview] = useState(false);
 
   const breadcumbData = [
@@ -54,7 +51,6 @@ const website = () => {
     { title: "Website", link: "/clients", active: true },
   ];
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     const name = pathname?.split("/")[2].replace(/%20/g, " ");
     const memberData = ClientData.filter((item) => item.name === name);
@@ -105,7 +101,7 @@ const website = () => {
   };
 
   //
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -117,7 +113,6 @@ const website = () => {
     setIsModalOpen(false);
   };
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [state, setState] = useState({
     role: "",
     name: "",
@@ -135,10 +130,8 @@ const website = () => {
     setMarkedAsUnderReview(true);
   };
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [isAssignOpen, setAssignOpen] = useState(false);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [loading, setLoading] = useState(false);
 
   const showAssignModal = () => {
@@ -156,8 +149,6 @@ const website = () => {
   };
 
   // handle assign to remove button
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-
 
   const handleAssignClick = () => {
     setShowRemoveButton(true);
@@ -465,4 +456,4 @@ const website = () => {
   );
 };
 
-export default website;
+export default ProjectDetails;
