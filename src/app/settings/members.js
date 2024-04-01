@@ -19,12 +19,11 @@ const Members = () => {
   const [totalPage, setTotalPage] = useState(settingsTeamData?.length / 10);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
+  const route = useRouter();
 
-  const route = useRouter()
-
-  const handleView =() =>{
-    route.push('/settings/team/[id]')
-  }
+  const handleView = (id) => {
+    route.push(`/settings/team/${id}`);
+  };
 
   const columns = [
     {
@@ -78,7 +77,10 @@ const Members = () => {
           <p className="m-0 text-subtitleText text-[14px] font-medium">
             Delete
           </p>
-          <WhiteButtonTable onClick={handleView} text="View" />
+          <WhiteButtonTable
+            onClick={() => handleView(record?._id)}
+            text="View"
+          />
         </div>
       ),
     },

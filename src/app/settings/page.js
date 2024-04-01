@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Tabs } from "antd";
 
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
