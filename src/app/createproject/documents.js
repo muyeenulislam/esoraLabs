@@ -21,6 +21,7 @@ const Documents = (props) => {
     setFileList(newFileList);
   };
 
+  // console.log("data",props?.fileList);
   return (
     <>
       <div>
