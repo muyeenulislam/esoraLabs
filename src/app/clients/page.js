@@ -25,13 +25,16 @@ const Clients = () => {
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const [clientData, setClientData] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const fetchClientData = async () => {
       try {
-        const response = await ApiCaller.Get("/auth/company");
+        const response = await ApiCaller.Get(
+          `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
+        );
         setClientData(response.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);

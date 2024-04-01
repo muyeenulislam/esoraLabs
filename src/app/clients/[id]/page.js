@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Button, Tabs } from "antd";
+import { Tabs } from "antd";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+
+import ApiCaller from "@/config/apicaller";
 
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
 import PageHeading from "@/components/pageheading/pageheading";
@@ -12,12 +14,9 @@ import YellowButton from "@/components/buttons/yellowbutton";
 import Spacer from "@/components/spacer/spacer";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-import { ClientData } from "@/utils/mockdata/clientdata";
-
 import ProfileDetailsMessages from "./messages";
 import ProfileDetailsOverview from "./overview";
 import ProfileDetailsProjects from "./projects";
-import axios from "axios";
 
 const ProfileDetails = ({ params }) => {
   const pathname = usePathname();
@@ -26,35 +25,21 @@ const ProfileDetails = ({ params }) => {
   const [data, setData] = useState({});
   const [activeKey, setActivekey] = useState("1");
 
-  // useEffect(() => {
-  //   const name = pathname?.split("/")[2].replace(/%20/g, " ");
-  //   const memberData = ClientData.filter((item) => item.name === name);
-  //   setData(memberData[0]);
-  // }, []);
+  const id = pathname?.split("/")[2];
 
-
-  // console.log("param",params);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://api.esoralabs.com/api/v1/auth/company`); 
+        const response = await ApiCaller.Get(`/auth/company/${id}`);
         const data = response.data.data;
-        // console.log(data);
-        const selectedItem = data.find(
-          (item) => item._id === params.id
-        );
-  
-        setData(selectedItem);
+        setData(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
-  }, [params.id]);
-
-  // console.log("Single",data);
-
+  }, [id]);
 
   const breadcumbData = [
     { title: "Clients", link: "/clients", active: false },
