@@ -185,211 +185,212 @@ const ProjectDetails = () => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div>
-          <Breadcrumb data={breadcumbData} />
-          <Spacer height="32px" />
-          <div className="flex justify-between">
-            <div className="flex items-center">
-              <Link
-                href={"/clients"}
-                className="border border-gray300 rounded-[10px] p-[14px] mr-[16px] shadow"
-              >
-                <Image
-                  height={20}
-                  width={20}
-                  alt=""
-                  src="/images/arrow-left.svg"
-                />
-              </Link>
-              <PageHeading
-                heading="Websites"
-                subHeading="Mange your clients right from here."
-              />
-            </div>
-            <div className="flex justify-between items-center gap-2">
-              <WhiteButton
-                imagealign="left"
-                image={"/images/arrow-left.svg"}
-                text={"Previous"}
-                onClick={handlePrevTab}
-              />
-              <YellowButton
-                imagealign="right"
-                image={"/images/arrow-right.svg"}
-                text={"Next"}
-                onClick={handleNextTab}
-              />
+        <div>project details</div>
+        // <div>
+        //   <Breadcrumb data={breadcumbData} />
+        //   <Spacer height="32px" />
+        //   <div className="flex justify-between">
+        //     <div className="flex items-center">
+        //       <Link
+        //         href={"/clients"}
+        //         className="border border-gray300 rounded-[10px] p-[14px] mr-[16px] shadow"
+        //       >
+        //         <Image
+        //           height={20}
+        //           width={20}
+        //           alt=""
+        //           src="/images/arrow-left.svg"
+        //         />
+        //       </Link>
+        //       <PageHeading
+        //         heading="Websites"
+        //         subHeading="Mange your clients right from here."
+        //       />
+        //     </div>
+        //     <div className="flex justify-between items-center gap-2">
+        //       <WhiteButton
+        //         imagealign="left"
+        //         image={"/images/arrow-left.svg"}
+        //         text={"Previous"}
+        //         onClick={handlePrevTab}
+        //       />
+        //       <YellowButton
+        //         imagealign="right"
+        //         image={"/images/arrow-right.svg"}
+        //         text={"Next"}
+        //         onClick={handleNextTab}
+        //       />
 
-              {/* <Button type="primary"  onClick={showModal}>
-        Open Modal
-     
-          <button className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow">
-            <FaRegTrashAlt />
-          </button>
-          </Button> */}
-            </div>
-          </div>
-          <div>
-            <div className="rounded-xl shadow border mt-9 my-auto border-gray-300 p-4">
-              <div className="flex  justify-between">
-                <div className="flex gap-5 mt-2 ">
-                  <div
-                    className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white"
-                    onClick={() => setOpen(true)}
-                  >
-                    Mark as Under Review{" "}
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
-                  <div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white">
-                    Mark as In Progress
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
-                  <div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white">
-                    Mark as Delivered
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
-                </div>
-                <div className="flex p-3 justify-center items-center gap-3 pointer rounded-full bg-gray-100">
-                  <Image
-                    height={20}
-                    width={20}
-                    alt=""
-                    src="/images/chevron-down.svg"
-                  />
-                </div>
-              </div>
-              <Divider />
-              <div className="flex mt-4 mb-4 my-auto text-md mx-4 item-center justify-between">
-                <div>
-                  <PageHeading
-                    heading="Assignee"
-                    subHeading="No assignee! Assign a team member now."
-                  />
-                </div>
-                <div>
-                  <YellowButton
-                    imagealign="right"
-                    image={"/images/user-check.svg"}
-                    text={"Assign"}
-                    onClick={() => setAssignOpen(true)}
-                  />
-                </div>
-              </div>
-              {showRemoveButton && (
-                <>
-                  <Divider />
+        //       {/* <Button type="primary"  onClick={showModal}>
+        // Open Modal
 
-                  <div className="flex justify-between p-3">
-                    <div className="flex items-center">
-                      <div className="rounded-full bg-yellow-200 flex items-center w-[48px] h-[48px] justify-center ">
-                        <Image
-                          height={28}
-                          width={28}
-                          alt=""
-                          src="/images/user.svg"
-                        />
-                      </div>
-                      <div className="ml-4 ">
-                        <h3 className="font-semibold  text-lg">Mohiuddin</h3>
-                        <p className="text-gray-700 font-plus-jakarta-sans font-normal text-base leading-5">
-                          MERN Stack Developer
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <button
-                        className="flex items-center justify-center text-black rounded-md border bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2 me-2 mb-2"
-                        onClick={() => setShowRemoveButton(false)}
-                      >
-                        remove
-                      </button>
-                    </div>
-                  </div>
-                  <Divider />
-                  <div className="flex items-center p-2">
-                    <div className="w-full flex justify-between items-center">
-                      <PageHeading
-                        heading="Priority"
-                        subHeading="Set task priority"
-                      />
-                      <div className=" flex gap-4">
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-green-300 bg-green-50">
-                          low
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle.svg"
-                          />
-                        </div>
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-300 bg-red-50">
-                          Medium
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle.svg"
-                          />
-                        </div>
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-500 text-white">
-                          High
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle.svg"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <Divider type="vertical" className="h-[50px]" />
-                    <div className="flex justify-between w-full items-center">
-                      <div>
-                        <PageHeading
-                          heading="Due By"
-                          subHeading="Set due date"
-                        />
-                      </div>
-                      <div>
-                        <DatePicker
-                          onChange={onChange}
-                          needConfirm
-                          placeholder="Select Due Date"
-                          className="w-64"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+        //   <button className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow">
+        //     <FaRegTrashAlt />
+        //   </button>
+        //   </Button> */}
+        //     </div>
+        //   </div>
+        //   <div>
+        //     <div className="rounded-xl shadow border mt-9 my-auto border-gray-300 p-4">
+        //       <div className="flex  justify-between">
+        //         <div className="flex gap-5 mt-2 ">
+        //           <div
+        //             className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white"
+        //             onClick={() => setOpen(true)}
+        //           >
+        //             Mark as Under Review{" "}
+        //             <Image
+        //               height={20}
+        //               width={20}
+        //               alt=""
+        //               src="/images/check.svg"
+        //             />
+        //           </div>
+        //           <div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white">
+        //             Mark as In Progress
+        //             <Image
+        //               height={20}
+        //               width={20}
+        //               alt=""
+        //               src="/images/check.svg"
+        //             />
+        //           </div>
+        //           <div className="flex p-3 pl-5 justify-center pointer items-center gap-3 rounded-full border border-gray-300 bg-white">
+        //             Mark as Delivered
+        //             <Image
+        //               height={20}
+        //               width={20}
+        //               alt=""
+        //               src="/images/check.svg"
+        //             />
+        //           </div>
+        //         </div>
+        //         <div className="flex p-3 justify-center items-center gap-3 pointer rounded-full bg-gray-100">
+        //           <Image
+        //             height={20}
+        //             width={20}
+        //             alt=""
+        //             src="/images/chevron-down.svg"
+        //           />
+        //         </div>
+        //       </div>
+        //       <Divider />
+        //       <div className="flex mt-4 mb-4 my-auto text-md mx-4 item-center justify-between">
+        //         <div>
+        //           <PageHeading
+        //             heading="Assignee"
+        //             subHeading="No assignee! Assign a team member now."
+        //           />
+        //         </div>
+        //         <div>
+        //           <YellowButton
+        //             imagealign="right"
+        //             image={"/images/user-check.svg"}
+        //             text={"Assign"}
+        //             onClick={() => setAssignOpen(true)}
+        //           />
+        //         </div>
+        //       </div>
+        //       {showRemoveButton && (
+        //         <>
+        //           <Divider />
 
-          <Spacer height="32px" />
-          <Tabs
-            defaultActiveKey={"1"}
-            activeKey={activeKey}
-            items={items}
-            onChange={changeTab}
-          />
-        </div>
+        //           <div className="flex justify-between p-3">
+        //             <div className="flex items-center">
+        //               <div className="rounded-full bg-yellow-200 flex items-center w-[48px] h-[48px] justify-center ">
+        //                 <Image
+        //                   height={28}
+        //                   width={28}
+        //                   alt=""
+        //                   src="/images/user.svg"
+        //                 />
+        //               </div>
+        //               <div className="ml-4 ">
+        //                 <h3 className="font-semibold  text-lg">Mohiuddin</h3>
+        //                 <p className="text-gray-700 font-plus-jakarta-sans font-normal text-base leading-5">
+        //                   MERN Stack Developer
+        //                 </p>
+        //               </div>
+        //             </div>
+        //             <div>
+        //               <button
+        //                 className="flex items-center justify-center text-black rounded-md border bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2 me-2 mb-2"
+        //                 onClick={() => setShowRemoveButton(false)}
+        //               >
+        //                 remove
+        //               </button>
+        //             </div>
+        //           </div>
+        //           <Divider />
+        //           <div className="flex items-center p-2">
+        //             <div className="w-full flex justify-between items-center">
+        //               <PageHeading
+        //                 heading="Priority"
+        //                 subHeading="Set task priority"
+        //               />
+        //               <div className=" flex gap-4">
+        //                 <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-green-300 bg-green-50">
+        //                   low
+        //                   <Image
+        //                     height={20}
+        //                     width={20}
+        //                     alt=""
+        //                     src="/images/check-circle.svg"
+        //                   />
+        //                 </div>
+        //                 <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-300 bg-red-50">
+        //                   Medium
+        //                   <Image
+        //                     height={20}
+        //                     width={20}
+        //                     alt=""
+        //                     src="/images/check-circle.svg"
+        //                   />
+        //                 </div>
+        //                 <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-500 text-white">
+        //                   High
+        //                   <Image
+        //                     height={20}
+        //                     width={20}
+        //                     alt=""
+        //                     src="/images/check-circle.svg"
+        //                   />
+        //                 </div>
+        //               </div>
+        //             </div>
+        //             <Divider type="vertical" className="h-[50px]" />
+        //             <div className="flex justify-between w-full items-center">
+        //               <div>
+        //                 <PageHeading
+        //                   heading="Due By"
+        //                   subHeading="Set due date"
+        //                 />
+        //               </div>
+        //               <div>
+        //                 <DatePicker
+        //                   onChange={onChange}
+        //                   needConfirm
+        //                   placeholder="Select Due Date"
+        //                   className="w-64"
+        //                 />
+        //               </div>
+        //             </div>
+        //           </div>
+        //         </>
+        //       )}
+        //     </div>
+        //   </div>
+
+        //   <Spacer height="32px" />
+        //   <Tabs
+        //     defaultActiveKey={"1"}
+        //     activeKey={activeKey}
+        //     items={items}
+        //     onChange={changeTab}
+        //   />
+        // </div>
       )}
-      {isAssignOpen && (
+      {/* {isAssignOpen && (
         <Modal
           open={isAssignOpen}
           centered
@@ -459,7 +460,7 @@ const ProjectDetails = () => {
             </div>
           </div>
         </Modal>
-      )}
+      )} */}
     </div>
   );
 };
