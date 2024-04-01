@@ -38,8 +38,8 @@ const Login = () => {
   const [whenProjectComplete, setWhenProjectComplete] = useState("sdfdsf");
   const [otherInfo, setOtherInfo] = useState("sdfsdf");
   const [fileList, setFileList] = useState([]);
-  const [reviewData, setReviewData] = useState(null);
-  const [documents, setDocuments] = useState([]);
+  
+ 
 
 
   const handleFileListChange = (fileList) => {
@@ -47,13 +47,7 @@ const Login = () => {
   };
 
 
-  const handleSubmit = async (review) => {
-    review = {
-      ...review,
-      companyId: "1234567890",
-      status: "In Progress"
-    };
-    setReviewData(review);
+  const handleSubmit = async () => {
     try {
       const apiUrl = "https://api.esoralabs.com/api/v1/projects";
   
@@ -84,6 +78,9 @@ const Login = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      if(response.status===200){
+        router.push("/dashboard")
+      }
   
       console.log("Response from server:", response.data);
       // Handle response accordingly
@@ -104,6 +101,7 @@ const Login = () => {
           <ClientPage
             clientName={clientName}
             setClientName={setClientName}
+            setCompanyId={setCompanyId}
             page={page}
             setPage={setPage}
           />
@@ -174,6 +172,7 @@ const Login = () => {
           <Documents
             fileList={fileList} // Pass fileList state to the Documents component
             onFileListChange={handleFileListChange}
+            setFileList={setFileList}
             page={page}
             setPage={setPage}
           />
@@ -182,6 +181,7 @@ const Login = () => {
             clientName={clientName}
             services={services}
             description={description}
+            setFileList={setFileList}
             goals={goals}
             targetAudience={targetAudience}
             geographicalScope={geographicalScope}
@@ -190,7 +190,7 @@ const Login = () => {
             deadline={whenProjectComplete}
             otherInfo={otherInfo}
             fileList={fileList}
-            documents={documents}
+     
             page={page}
             setPage={setPage}
             onSubmit={handleSubmit}
