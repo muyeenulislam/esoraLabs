@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { DatePicker, Divider, Input, Modal, Tabs } from "antd";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { FaArrowRight, FaSearch } from "react-icons/fa";
@@ -17,16 +17,17 @@ import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
 import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 
-import ProfileDetailsMessages from "../../messages";
-import ProfileDetailsProjects from "../../projects";
+import ProfileDetailsMessages from "../messages";
+import ProfileDetailsProjects from "../projects";
 import Website_overview from "./website_overview";
 import Requirements from "./requirements";
 
 const ProjectDetails = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const id = pathname?.split("/")[2];
-  const projectid = pathname?.split("/")[2];
+  const projectId = searchParams.get("projectid");
 
   const [data, setData] = useState({});
   const [isLoading, setLoading] = useState(false);
@@ -39,8 +40,8 @@ const ProjectDetails = () => {
   const breadcumbData = [
     { title: "Clients", link: "/clients", active: false },
     { title: `${data?.name}`, link: `/clients/${data?._id}`, active: false },
-    { title: "Project", link: "/clients", active: false },
-    { title: "Website", link: "#", active: true },
+    { title: "Project", link: `/clients/${data?._id}?tab=2`, active: false },
+    { title: projectId, link: "#", active: true },
   ];
 
   useEffect(() => {

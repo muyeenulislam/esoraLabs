@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Tabs } from "antd";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import ApiCaller from "@/config/apicaller";
@@ -22,9 +22,10 @@ import ProfileDetailsProjects from "./projects";
 
 const ProfileDetails = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [data, setData] = useState({});
-  const [activeKey, setActivekey] = useState("1");
+  const [activeKey, setActivekey] = useState(searchParams.get("tab") ?? "1");
   const [isLoading, setLoading] = useState(false);
 
   const id = pathname?.split("/")[2];

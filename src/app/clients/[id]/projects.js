@@ -51,7 +51,7 @@ const ProfileDetailsProjects = () => {
   }, [id]);
 
   const handleButtonClick = (projectId) => {
-    router.push(`/clients/${id}/projects/${projectId}`);
+    router.push(`/clients/${id}/projects?projectid=${projectId}`);
   };
 
   const columns = [
@@ -118,10 +118,6 @@ const ProfileDetailsProjects = () => {
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
   };
 
   return (
