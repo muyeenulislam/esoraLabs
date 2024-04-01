@@ -1,10 +1,7 @@
 import YellowButton from "@/components/buttons/yellowbutton";
 import React from "react";
-import { FiMessageSquare, FiPhone } from "react-icons/fi";
 
 const Website_overview = ({ data }) => {
-  console.log("data", data);
-
   return (
     <div className="border h-auto mx-[200px] mt-[24px] rounded-2xl shadow-md">
       <div className=" p-[24px] bg-[#0B132B] rounded-t-2xl"></div>
@@ -52,7 +49,7 @@ const Website_overview = ({ data }) => {
         </div>
       </div>
       {data && (
-        <div className="flex justify-between rounded-b-lg justify-between  bg-[#0B132B] ">
+        <div className="flex justify-between rounded-b-lg bg-[#0B132B]">
           <div className="px-[24px] pb-[24px] text-[#FFFFFF]">
             <div className="text-[24px] mt-5 font-bold">Deliverables</div>
             <div className="text-[16px] font-normal">3 revisions remaining</div>
