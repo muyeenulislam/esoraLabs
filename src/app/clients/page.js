@@ -25,9 +25,10 @@ const Clients = () => {
 
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [clientData, setClientData] = useState([]);
   const [clientLoading, setClientLoading] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
 
@@ -35,8 +36,9 @@ const Clients = () => {
     const fetchClientData = async () => {
       try {
         setClientLoading(true);
+        console.log(`/auth/company?name=${search}&limit=${limit}&offset=0`);
         const response = await ApiCaller.Get(
-          `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
+          `/auth/company?name=${search}&limit=${limit}&offset=0`
         );
         if (response.status === 200) {
           setClientData(response.data.data);
@@ -45,17 +47,44 @@ const Clients = () => {
           setClientLoading(false);
           console.log(response);
         }
+        setCurrentPage(1);
       } catch (error) {
         setClientLoading(false);
         console.error("Error fetching data:", error);
       }
     };
-
     fetchClientData();
-  }, []);
+  }, [search]);
+
+  const handlePagination = async (pageNumber) => {
+    const offset = (pageNumber - 1) * limit;
+    setOffset(offset);
+    try {
+      setClientLoading(true);
+      console.log(
+        `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
+      );
+      const response = await ApiCaller.Get(
+        `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
+      );
+      if (response.status === 200) {
+        setClientData(response.data.data);
+        setClientLoading(false);
+      } else {
+        setClientLoading(false);
+        console.log(response);
+      }
+    } catch (error) {
+      setClientLoading(false);
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleFilterChange = (e) => {
     setSortFilter(e);
+  };
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
   };
 
   return (
@@ -89,7 +118,7 @@ const Clients = () => {
       <Spacer height="32px" />
       <div className="flex justify-between">
         <div style={{ width: "460px" }}>
-          <SearchBar onChange={(e) => setSearch(e.target.value)} />
+          <SearchBar onChange={(e) => handleSearch(e)} />
         </div>
         <div className="w-[240px]">
           <Dropdown value={sortFilter} onChange={handleFilterChange}>
@@ -116,6 +145,7 @@ const Clients = () => {
           totalPages={10}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          onChange={handlePagination}
         />
       </div>
     </div>

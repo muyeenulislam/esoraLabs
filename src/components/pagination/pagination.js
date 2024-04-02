@@ -4,6 +4,7 @@ const Pagination = (props) => {
   const handlePagination = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= props?.totalPages) {
       props?.setCurrentPage(pageNumber);
+      props?.onChange(pageNumber);
     }
   };
 

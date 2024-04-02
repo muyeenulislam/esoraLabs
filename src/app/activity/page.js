@@ -16,16 +16,21 @@ import styles from "./styles";
 const breadcumbData = [{ title: "Activity", link: "/activity", active: true }];
 
 const Activity = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [offset, setOffset] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   useEffect(() => {
     const fetchActivityData = async () => {
       try {
         setLoading(true);
-        const response = await ApiCaller.Get("/admin/activity");
+
+        const response = await ApiCaller.Get(
+          `/admin/activity?limit=${limit}&offset=${offset}`
+        );
         if (response.status === 200) {
           setData(response.data.data);
           setLoading(false);
@@ -40,6 +45,28 @@ const Activity = () => {
     };
     fetchActivityData();
   }, []);
+
+  const handlePagination = async (pageNumber) => {
+    const offset = (pageNumber - 1) * limit;
+
+    try {
+      setLoading(true);
+      const response = await ApiCaller.Get(
+        `/admin/activity?limit=${limit}&offset=${offset}`
+      );
+      if (response.status === 200) {
+        setData(response.data.data);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+      setOffset(offset);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
 
   return (
     <div>
@@ -82,6 +109,7 @@ const Activity = () => {
             totalPages={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onChange={handlePagination}
           />
         </div>
       </div>
