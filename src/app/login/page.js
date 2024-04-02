@@ -36,7 +36,10 @@ const Login = () => {
       const response = await ApiCaller.Post("/auth/login", data);
 
       if (response?.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response?.data));
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ email, ...response?.data })
+        );
         message.success("Logged in successfully!");
         router.push("/dashboard");
       } else {

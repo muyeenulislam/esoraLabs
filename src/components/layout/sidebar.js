@@ -1,14 +1,42 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
+
+import ApiCaller from "@/config/apicaller";
 
 import styles from "./styles";
 
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
+
+  const [state, setState] = useState({ email: "", name: "" });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const email = JSON.parse(localStorage.getItem("user"))?.email;
+        const response = await ApiCaller.Get(
+          `/auth/users?type=admin&email=${email}`
+        );
+
+        if (response.status === 200) {
+          setState({
+            email: response.data?.data[0]?.email,
+            name: response.data?.data[0]?.fullName,
+          });
+        } else {
+          message.error(response.data.message);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -138,12 +166,17 @@ const Sidebar = () => {
 
       <div className={styles.navbarAccountInfoContainer}>
         <div className={styles.navbarAccountImage}>
-          <Image src={dummyData.image} alt="logo" height={24} width={24} />
+          <Image
+            src={"/images/profile-icon.svg"}
+            alt="logo"
+            height={24}
+            width={24}
+          />
         </div>
         <div className={styles.flexColumn}>
-          <div className={styles.font14weight600}>{dummyData.name}</div>
+          <div className={styles.font14weight600}>{state?.name}</div>
           <div className={`${styles.font14weight400} text-grayText`}>
-            {dummyData.email}
+            {state?.email}
           </div>
         </div>
       </div>
