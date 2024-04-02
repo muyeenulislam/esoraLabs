@@ -7,6 +7,7 @@ import { Select } from "antd";
 
 import ApiCaller from "@/config/apicaller";
 
+import Loader from "@/components/loader";
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import SearchBar from "@/components/searchbar/searchbar";
@@ -26,17 +27,26 @@ const Clients = () => {
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [clientData, setClientData] = useState([]);
+  const [clientLoading, setClientLoading] = useState(false);
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const fetchClientData = async () => {
       try {
+        setClientLoading(true);
         const response = await ApiCaller.Get(
           `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
         );
-        setClientData(response.data.data);
+        if (response.status === 200) {
+          setClientData(response.data.data);
+          setClientLoading(false);
+        } else {
+          setClientLoading(false);
+          console.log(response);
+        }
       } catch (error) {
+        setClientLoading(false);
         console.error("Error fetching data:", error);
       }
     };
@@ -89,13 +99,17 @@ const Clients = () => {
         </div>
       </div>
       <Spacer height="32px" />
-      <div className="grid grid-cols-3 gap-6">
-        {clientData?.map((item, index) => (
-          <ClientCard data={item} key={index}>
-            <Link href={`/clients/${item._id}`}>View Details</Link>
-          </ClientCard>
-        ))}
-      </div>
+      {clientLoading ? (
+        <Loader />
+      ) : (
+        <div className="grid grid-cols-3 gap-6">
+          {clientData?.map((item, index) => (
+            <ClientCard data={item} key={index}>
+              <Link href={`/clients/${item._id}`}>View Details</Link>
+            </ClientCard>
+          ))}
+        </div>
+      )}
       <Spacer height="32px" />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
         <Pagination

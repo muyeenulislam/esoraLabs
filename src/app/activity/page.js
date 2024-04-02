@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 
+import Loader from "@/components/loader";
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
 import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
@@ -18,13 +19,22 @@ const Activity = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchActivityData = async () => {
       try {
+        setLoading(true);
         const response = await ApiCaller.Get("/admin/activity");
-        setData(response.data.data);
+        if (response.status === 200) {
+          setData(response.data.data);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          console.log(response);
+        }
       } catch (error) {
+        setLoading(false);
         console.error("Error fetching activity data:", error);
       }
     };
@@ -41,28 +51,32 @@ const Activity = () => {
       />
       <Spacer height="32px" />
       <div className="shadow-clientCard border border-grayBorderDashboard rounded-2xl">
-        <div style={styles.activityContainer}>
-          {data?.map((item, index) => (
-            <div
-              style={{
-                padding: "16px",
-                background: index % 2 === 0 ? "#F9FAFB" : "white",
-              }}
-              key={index}
-              className="flex flex-col gap-2"
-            >
-              <div className={styles.justifyBetween}>
-                <div className={styles.activityUpperText}>
-                  {item.description}
+        {loading ? (
+          <Loader />
+        ) : (
+          <div style={styles.activityContainer}>
+            {data?.map((item, index) => (
+              <div
+                style={{
+                  padding: "16px",
+                  background: index % 2 === 0 ? "#F9FAFB" : "white",
+                }}
+                key={index}
+                className="flex flex-col gap-2"
+              >
+                <div className={styles.justifyBetween}>
+                  <div className={styles.activityUpperText}>
+                    {item.description}
+                  </div>
+                  <div className={styles.activityDate}>
+                    {moment(item.createdAt).format("DD MMM YYYY")}
+                  </div>
                 </div>
-                <div className={styles.activityDate}>
-                  {moment(item.createdAt).format("DD MMM YYYY")}
-                </div>
+                <div className={styles.activityBottomText}>{item.title}</div>
               </div>
-              <div className={styles.activityBottomText}>{item.title}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
           <Pagination
             totalPages={10}

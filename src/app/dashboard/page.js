@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import moment from "moment";
 
+import Loader from "@/components/loader";
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import PrimaryButton from "@/components/buttons/primarybutton";
@@ -26,13 +27,22 @@ const Dashboard = () => {
   const router = useRouter();
 
   const [activityData, setActivityData] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(false);
 
   useEffect(() => {
     const fetchActivityData = async () => {
       try {
+        setActivityLoading(true);
         const response = await ApiCaller.Get("/admin/activity");
-        setActivityData(response.data.data);
+        if (response.status === 200) {
+          setActivityData(response.data.data);
+          setActivityLoading(false);
+        } else {
+          setActivityLoading(false);
+          console.log(response);
+        }
       } catch (error) {
+        setActivityLoading(false);
         console.error("Error fetching activity data:", error);
       }
     };
@@ -199,30 +209,34 @@ const Dashboard = () => {
             </div>
             <div>
               <div className={styles.smallTitle}>Activity</div>
-              <div style={styles.activityContainer}>
-                {activityData?.map((item, index) => (
-                  <div
-                    style={{
-                      padding: "16px",
-                      background: index % 2 === 0 ? "#F9FAFB" : "white",
-                    }}
-                    className="flex flex-col gap-2"
-                    key={index}
-                  >
-                    <div className={styles.justifyBetween}>
-                      <div className={styles.activityUpperText}>
-                        {item.title}
+              {activityLoading ? (
+                <Loader />
+              ) : (
+                <div style={styles.activityContainer}>
+                  {activityData?.map((item, index) => (
+                    <div
+                      style={{
+                        padding: "16px",
+                        background: index % 2 === 0 ? "#F9FAFB" : "white",
+                      }}
+                      className="flex flex-col gap-2"
+                      key={index}
+                    >
+                      <div className={styles.justifyBetween}>
+                        <div className={styles.activityUpperText}>
+                          {item.title}
+                        </div>
+                        <div className={styles.activityDate}>
+                          {moment(item.createdAt).format("DD MMM YYYY")}
+                        </div>
                       </div>
-                      <div className={styles.activityDate}>
-                        {moment(item.createdAt).format("DD MMM YYYY")}
+                      <div className={styles.activityBottomText}>
+                        {item.description}
                       </div>
                     </div>
-                    <div className={styles.activityBottomText}>
-                      {item.description}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

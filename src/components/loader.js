@@ -8,6 +8,7 @@ const Loader = (props) => (
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      padding: "10px",
     }}
   >
     <Spin
