@@ -18,7 +18,6 @@ const ProfileDetailsProjects = () => {
 
   const id = pathname?.split("/")[2];
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [project, setProject] = useState([]);
@@ -115,10 +114,6 @@ const ProfileDetailsProjects = () => {
       ),
     },
   ];
-
-  const onSelectChange = (newSelectedRowKeys) => {
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
 
   return (
     <div className="border border-gray-200 shadow-clientCard rounded-2xl">

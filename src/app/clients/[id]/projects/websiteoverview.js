@@ -1,7 +1,9 @@
-import YellowButton from "@/components/buttons/yellowbutton";
 import React from "react";
+import moment from "moment";
 
-const Website_overview = ({ data }) => {
+import YellowButton from "@/components/buttons/yellowbutton";
+
+const WebsiteOverview = ({ projectdata }) => {
   return (
     <div className="border h-auto mx-[200px] mt-[24px] rounded-2xl shadow-md">
       <div className=" p-[24px] bg-[#0B132B] rounded-t-2xl"></div>
@@ -26,7 +28,7 @@ const Website_overview = ({ data }) => {
             Created On
           </div>{" "}
           <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            01/27/2023
+            {moment(projectdata?.createdAt).format("DD/MM/YYYY")}
           </div>
         </div>
       </div>
@@ -37,18 +39,10 @@ const Website_overview = ({ data }) => {
         </div>
         <div className=""></div>
         <div className=" text-gray-500 self-stretch text-[14px] font-sans text-base font-normal leading-5">
-          Greetings, we represent a business operating in the field of mobility,
-          dedicated to providing eco-friendly last mile delivery options using
-          bicycles. <br />
-          Our objective is to present our business clients with a digital
-          platform by the end of this year that allows them to efficiently
-          handle all their deliveries in an environmentally responsible manner.
-          We are in search of a service provider who aligns with our ethical
-          values, demonstrates prompt responsiveness, and can be relied upon for
-          a lasting partnership.
+          {projectdata?.description}
         </div>
       </div>
-      {data && (
+      {projectdata?.assignees && projectdata?.assignees?.length > 0 && (
         <div className="flex justify-between rounded-b-lg bg-[#0B132B]">
           <div className="px-[24px] pb-[24px] text-[#FFFFFF]">
             <div className="text-[24px] mt-5 font-bold">Deliverables</div>
@@ -57,6 +51,7 @@ const Website_overview = ({ data }) => {
           <div className="p-5 mt-2">
             <YellowButton
               imagealign="left"
+              s
               image={"/images/upload-cloud.svg"}
               text={"Upload"}
             />
@@ -67,4 +62,4 @@ const Website_overview = ({ data }) => {
   );
 };
 
-export default Website_overview;
+export default WebsiteOverview;

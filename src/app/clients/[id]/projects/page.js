@@ -19,7 +19,7 @@ import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 
 import ProfileDetailsMessages from "../messages";
 import ProfileDetailsProjects from "../projects";
-import Website_overview from "./website_overview";
+import WebsiteOverview from "./websiteoverview";
 import Requirements from "./requirements";
 
 const ProjectDetails = () => {
@@ -31,6 +31,8 @@ const ProjectDetails = () => {
 
   const [data, setData] = useState({});
   const [isLoading, setLoading] = useState(false);
+  const [projectdata, setProjectData] = useState({});
+  const [isProjectLoading, setProjectLoading] = useState(false);
   const [activeKey, setActivekey] = useState("1");
   const [isOpen, setOpen] = useState(false);
   const [showRemoveButton, setShowRemoveButton] = useState(false);
@@ -63,11 +65,32 @@ const ProjectDetails = () => {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      try {
+        setProjectLoading(true);
+        const response = await ApiCaller.Get(`/projects/${projectId}`);
+        const data = response.data.data;
+        if (response.status === 200) {
+          setProjectData(data);
+        }
+        setProjectLoading(false);
+      } catch (error) {
+        setProjectLoading(false);
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchProjectData();
+  }, [projectId]);
+
+  console.log(projectdata);
+
   const items = [
     {
       key: "1",
       label: "Overview",
-      children: <Website_overview data={showRemoveButton} />,
+      children: <WebsiteOverview projectdata={projectdata} />,
     },
     {
       key: "2",
@@ -184,7 +207,7 @@ const ProjectDetails = () => {
 
   return (
     <div>
-      {isLoading ? (
+      {isLoading || isProjectLoading ? (
         <Loader />
       ) : (
         <div>
@@ -221,14 +244,6 @@ const ProjectDetails = () => {
                 text={"Next"}
                 onClick={handleNextTab}
               />
-
-              {/* <Button type="primary"  onClick={showModal}>
-        Open Modal
-
-          <button className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow">
-            <FaRegTrashAlt />
-          </button>
-          </Button> */}
             </div>
           </div>
           <div>
