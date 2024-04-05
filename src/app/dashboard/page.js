@@ -17,17 +17,17 @@ import ApiCaller from "@/config/apicaller";
 
 import styles from "./styles";
 
-const boxData = [
-  { text: "Total Clients", value: "32" },
-  { text: "New Clients", value: "2" },
-  { text: "Projects Active", value: "12" },
-];
-
 const Dashboard = () => {
   const router = useRouter();
 
   const [activityData, setActivityData] = useState([]);
   const [activityLoading, setActivityLoading] = useState(false);
+  const [state, setState] = useState({
+    totalClient: "",
+    newClient: "",
+    activeProject: "",
+    totalRevenue: "",
+  });
 
   useEffect(() => {
     const fetchActivityData = async () => {
@@ -49,6 +49,35 @@ const Dashboard = () => {
 
     fetchActivityData();
   }, []);
+
+  useEffect(() => {
+    const fetchOverview = async () => {
+      try {
+        const response = await ApiCaller.Get("/admin/overview");
+
+        if (response.status === 200) {
+          setState({
+            totalClient: response.data.data.totalClient,
+            newClient: response.data.data.newClient,
+            activeProject: response.data.data.activeProject,
+            totalRevenue: response.data.data.totalRevenue,
+          });
+        } else {
+          console.log(response);
+        }
+      } catch (error) {
+        console.error("Error fetching activity data:", error);
+      }
+    };
+
+    fetchOverview();
+  }, []);
+
+  const boxData = [
+    { text: "Total Clients", value: state?.totalClient },
+    { text: "New Clients", value: state?.newClient },
+    { text: "Projects Active", value: state?.activeProject },
+  ];
 
   return (
     <div>
@@ -204,7 +233,7 @@ const Dashboard = () => {
             <div className={`${styles.leftSideBoxes} my-8`}>
               <div className={styles.boxUpperText}>Total Received (USD)</div>
               <div className={styles.boxLowerText}>
-                ${parseFloat("200056.02").toLocaleString()}
+                ${parseFloat(state?.totalRevenue).toLocaleString()}
               </div>
             </div>
             <div>
