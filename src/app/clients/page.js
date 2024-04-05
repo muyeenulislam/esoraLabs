@@ -36,7 +36,6 @@ const Clients = () => {
     const fetchClientData = async () => {
       try {
         setClientLoading(true);
-        console.log(`/auth/company?name=${search}&limit=${limit}&offset=0`);
         const response = await ApiCaller.Get(
           `/auth/company?name=${search}&limit=${limit}&offset=0`
         );
@@ -61,9 +60,7 @@ const Clients = () => {
     setOffset(offset);
     try {
       setClientLoading(true);
-      console.log(
-        `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
-      );
+
       const response = await ApiCaller.Get(
         `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
       );
