@@ -55,7 +55,6 @@ const ProfileDetails = () => {
     fetchTeamData();
   }, []);
 
-  console.log(data);
   const breadcumbData = [
     { title: "Team", link: "/team", active: false },
     { title: `${data?.name}`, link: "#", active: true },
