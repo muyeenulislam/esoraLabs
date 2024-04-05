@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Modal, Select } from "antd";
 
+import ApiCaller from "@/config/apicaller";
+
+import Loader from "@/components/loader";
 import YellowButton from "@/components/buttons/yellowbutton";
 import WhiteButton from "@/components/buttons/whitebutton";
-import PaginationButton from "@/components/buttons/paginationbutton";
+import Pagination from "@/components/pagination/pagination";
 import SearchBar from "@/components/searchbar/searchbar";
 import Dropdown from "@/components/dropdown/dropdown";
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
@@ -15,7 +18,6 @@ import Spacer from "@/components/spacer/spacer";
 import TeamCard from "@/components/cards/teamcard";
 import DefaultInput from "@/components/inputs/defaultinput";
 
-import { TeamData } from "@/utils/mockdata/teamdata";
 import roleData from "@/utils/mockdata/roledata";
 
 const breadcumbData = [{ title: "Team", link: "/team", active: true }];
@@ -25,12 +27,65 @@ const Team = () => {
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
 
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [offset, setOffset] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+
   const [state, setState] = useState({
     role: "",
     name: "",
     designation: "",
     email: "",
   });
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        setLoading(true);
+
+        const response = await ApiCaller.Get(
+          `/admin/getteams?name=${search}&limit=${limit}&offset=0`
+        );
+
+        if (response.status === 200) {
+          setData(response.data.teams);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          console.log(response);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("Error fetching activity data:", error);
+      }
+    };
+    fetchTeamData();
+  }, []);
+
+  const handlePagination = async (pageNumber) => {
+    const offset = (pageNumber - 1) * limit;
+
+    try {
+      setLoading(true);
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+      );
+      if (response.status === 200) {
+        setData(response.data.teams);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+      setOffset(offset);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
 
   const handleFilterChange = (e) => {
     setSortFilter(e);
@@ -72,25 +127,26 @@ const Team = () => {
         </div>
       </div>
       <Spacer height="32px" />
-      <div className="grid grid-cols-3 gap-6">
-        {TeamData?.map((item, index) => (
-          <TeamCard data={item} key={index}>
-            <div>Assign</div>
-            <Link href={`/team/${item._id}`}>View Details</Link>
-          </TeamCard>
-        ))}
-      </div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="grid grid-cols-3 gap-6">
+          {data?.map((item, index) => (
+            <TeamCard data={item} key={index}>
+              <div>Assign</div>
+              <Link href={`/team/${item._id}`}>View Details</Link>
+            </TeamCard>
+          ))}
+        </div>
+      )}
       <Spacer height="32px" />
-      <div className="pt-[11px] pb-4 flex items-center justify-between border-t border-t-grayBorder">
-        <div className="flex">
-          <PaginationButton text={"Previous"} />
-          <div className="w-3"></div>
-          <PaginationButton text={"Next"} />
-        </div>
-        <div className="text-subtitleText text-[14px] font-normal">
-          Page <span className="font-medium">1</span> of{" "}
-          <span className="font-medium">4</span>
-        </div>
+      <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
+        <Pagination
+          totalPages={10}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          onChange={handlePagination}
+        />
       </div>
       {isOpen && (
         <Modal

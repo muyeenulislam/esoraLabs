@@ -32,7 +32,7 @@ const TeamCard = (props) => {
             <FiPhone className="text-subtitleText bottomIcon" />
           </div>
           <div className="text-[14px] font-medium text-subtitleText userInfoText">
-            {props?.data?.number}
+            {props?.data?.phoneNumber}
           </div>
         </div>
         <div className="flex items-center">
