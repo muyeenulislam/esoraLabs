@@ -45,7 +45,7 @@ const Login = () => {
     const fetchClientData = async () => {
       try {
         const response = await ApiCaller.Get(`/auth/company`);
-        setClientList(response.data.data);
+        setClientList(response?.data?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -81,11 +81,11 @@ const Login = () => {
 
     const response = await ApiCaller.Post("/projects", formData);
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       message.success("Project created successfully.");
       router.push("/dashboard");
     } else {
-      message.error(response.data.message);
+      message.error(response?.data?.message);
     }
   };
 

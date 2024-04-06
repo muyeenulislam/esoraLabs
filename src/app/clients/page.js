@@ -39,8 +39,8 @@ const Clients = () => {
         const response = await ApiCaller.Get(
           `/auth/company?name=${search}&limit=${limit}&offset=0`
         );
-        if (response.status === 200) {
-          setClientData(response.data.data);
+        if (response?.status === 200) {
+          setClientData(response?.data?.data);
           setClientLoading(false);
         } else {
           setClientLoading(false);
@@ -64,8 +64,8 @@ const Clients = () => {
       const response = await ApiCaller.Get(
         `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
       );
-      if (response.status === 200) {
-        setClientData(response.data.data);
+      if (response?.status === 200) {
+        setClientData(response?.data?.data);
         setClientLoading(false);
       } else {
         setClientLoading(false);
@@ -130,7 +130,11 @@ const Clients = () => {
       ) : (
         <div className="grid grid-cols-3 gap-6">
           {clientData?.map((item, index) => (
-            <ClientCard data={item} key={index}>
+            <ClientCard
+              data={item}
+              key={index}
+              onClick={() => router.push(`/clients/${item._id}`)}
+            >
               <Link href={`/clients/${item._id}`}>View Details</Link>
             </ClientCard>
           ))}

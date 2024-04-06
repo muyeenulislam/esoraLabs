@@ -22,13 +22,13 @@ const Sidebar = () => {
           `/auth/users?type=admin&email=${email}`
         );
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
           setState({
             email: response.data?.data[0]?.email,
             name: response.data?.data[0]?.fullName,
           });
         } else {
-          message.error(response.data.message);
+          message.error(response?.data?.message);
         }
       } catch (e) {
         console.log(e);

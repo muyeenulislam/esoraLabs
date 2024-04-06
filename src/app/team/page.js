@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Modal, Select } from "antd";
+import { Modal, Select, message } from "antd";
 
 import ApiCaller from "@/config/apicaller";
 
@@ -23,6 +24,8 @@ import roleData from "@/utils/mockdata/roledata";
 const breadcumbData = [{ title: "Team", link: "/team", active: true }];
 
 const Team = () => {
+  const router = useRouter();
+
   const [isOpen, setOpen] = useState(false);
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
@@ -37,31 +40,33 @@ const Team = () => {
   const [state, setState] = useState({
     role: "",
     name: "",
+    phoneNumber: "",
     designation: "",
     email: "",
   });
 
-  useEffect(() => {
-    const fetchTeamData = async () => {
-      try {
-        setLoading(true);
+  const fetchTeamData = async () => {
+    try {
+      setLoading(true);
 
-        const response = await ApiCaller.Get(
-          `/admin/getteams?name=${search}&limit=${limit}&offset=0`
-        );
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=${limit}&offset=0`
+      );
 
-        if (response.status === 200) {
-          setData(response.data.teams);
-          setLoading(false);
-        } else {
-          setLoading(false);
-          console.log(response);
-        }
-      } catch (error) {
+      if (response?.status === 200) {
+        setData(response.data.teams);
         setLoading(false);
-        console.error("Error fetching activity data:", error);
+      } else {
+        setLoading(false);
+        console.log(response);
       }
-    };
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchTeamData();
   }, []);
 
@@ -73,7 +78,7 @@ const Team = () => {
       const response = await ApiCaller.Get(
         `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
       );
-      if (response.status === 200) {
+      if (response?.status === 200) {
         setData(response.data.teams);
         setLoading(false);
       } else {
@@ -91,8 +96,27 @@ const Team = () => {
     setSortFilter(e);
   };
 
-  const handleAdd = () => {
-    console.log(state);
+  const handleAdd = async () => {
+    const data = {
+      name: state?.name,
+      email: state?.email,
+      phoneNumber: state?.phoneNumber,
+      password: "testPass",
+      confirmPassword: "testPass",
+      role: state?.role,
+      designation: state?.designation,
+    };
+
+    const response = await ApiCaller.Post(`/admin/teamregister`, data);
+
+    if (response?.status === 200) {
+      setOpen(false);
+      message.success("Team member added successfully");
+      fetchTeamData();
+    } else {
+      console.log(response);
+      message.error(response?.message);
+    }
   };
 
   return (
@@ -101,8 +125,8 @@ const Team = () => {
       <Spacer height="32px" />
       <div className="flex justify-between">
         <PageHeading
-          heading="Clients"
-          subHeading="Track, manage and forecast your clients."
+          heading="Team"
+          subHeading="Track, manage and forecast your team."
         />
         <div className="max-h-6">
           <YellowButton
@@ -132,7 +156,11 @@ const Team = () => {
       ) : (
         <div className="grid grid-cols-3 gap-6">
           {data?.map((item, index) => (
-            <TeamCard data={item} key={index}>
+            <TeamCard
+              data={item}
+              key={index}
+              onClick={() => router.push(`/team/${item._id}`)}
+            >
               <div>Assign</div>
               <Link href={`/team/${item._id}`}>View Details</Link>
             </TeamCard>
@@ -214,6 +242,19 @@ const Team = () => {
                 value={state.email}
                 placeholder="Enter email"
                 onChange={(e) => setState({ ...state, email: e.target.value })}
+              />
+              <Spacer height="6px" />
+              <p className="text-[14px] font-semibold text-[#0B132B] m-0">
+                Phone Number
+              </p>
+              <Spacer height="6px" />
+              <DefaultInput
+                value={state.phoneNumber}
+                placeholder="Enter phone number"
+                onChange={(e) =>
+                  setState({ ...state, phoneNumber: e.target.value })
+                }
+                type="number"
               />
               <Spacer height="32px" />
             </div>

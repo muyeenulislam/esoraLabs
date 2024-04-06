@@ -34,8 +34,8 @@ const Dashboard = () => {
       try {
         setActivityLoading(true);
         const response = await ApiCaller.Get("/admin/activity");
-        if (response.status === 200) {
-          setActivityData(response.data.data);
+        if (response?.status === 200) {
+          setActivityData(response?.data?.data);
           setActivityLoading(false);
         } else {
           setActivityLoading(false);
@@ -55,12 +55,12 @@ const Dashboard = () => {
       try {
         const response = await ApiCaller.Get("/admin/overview");
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
           setState({
-            totalClient: response.data.data.totalClient,
-            newClient: response.data.data.newClient,
-            activeProject: response.data.data.activeProject,
-            totalRevenue: response.data.data.totalRevenue,
+            totalClient: response?.data?.data.totalClient,
+            newClient: response?.data?.data.newClient,
+            activeProject: response?.data?.data.activeProject,
+            totalRevenue: response?.data?.data.totalRevenue,
           });
         } else {
           console.log(response);
