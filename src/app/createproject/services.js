@@ -32,8 +32,7 @@ const servicesArray = [
 
 const Services = (props) => {
   const [servicesData, setServicesData] = useState(servicesArray);
-  const [selectedServices, setSelectedServices] = useState([]);
-  // const { selectedMultiServices, onSelectedServicesChange } = props;
+  const [selectedServices, setSelectedServices] = useState("");
 
   useEffect(() => {
     props?.setServices(selectedServices);
@@ -47,17 +46,12 @@ const Services = (props) => {
   };
 
   const handleServiceClick = (label) => {
-    const index = selectedServices.indexOf(label);
-    if (index === -1) {
-      setSelectedServices([...selectedServices, label]);
+    if (selectedServices === label) {
+      setSelectedServices("");
     } else {
-      const updatedServices = [...selectedServices];
-      updatedServices.splice(index, 1);
-      setSelectedServices(updatedServices);
+      setSelectedServices(label);
     }
   };
-
-  console.log("selectedServices", selectedServices);
 
   return (
     <>

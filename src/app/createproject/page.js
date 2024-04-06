@@ -30,7 +30,7 @@ const Login = () => {
   const [page, setPage] = useState("clientSelect");
   const [clientName, setClientName] = useState("");
   const [companyId, setCompanyId] = useState("");
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState("");
   const [description, setDescription] = useState("fdf sdf ");
   const [goals, setGoals] = useState(" sdfd ");
   const [targetAudience, setTargetAudience] = useState("sdf d");
@@ -63,7 +63,7 @@ const Login = () => {
 
     formData.append("clientName", clientName);
     formData.append("companyId", companyId);
-    formData.append("services", JSON.stringify(services));
+    formData.append("services", services);
     formData.append("description", description);
     formData.append("goals", goals);
     formData.append("targetAudience", targetAudience);

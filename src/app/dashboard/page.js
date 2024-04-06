@@ -23,10 +23,10 @@ const Dashboard = () => {
   const [activityData, setActivityData] = useState([]);
   const [activityLoading, setActivityLoading] = useState(false);
   const [state, setState] = useState({
-    totalClient: "",
-    newClient: "",
-    activeProject: "",
-    totalRevenue: "",
+    totalClient: "0",
+    newClient: "0",
+    activeProject: "0",
+    totalRevenue: "0",
   });
 
   useEffect(() => {
