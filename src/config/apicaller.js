@@ -1,11 +1,12 @@
 import axios from "axios";
+import { message } from "antd";
 import { navigate } from "@/utils/navigate";
 
 const apiUrl = "https://api.esoralabs.com/api/v1";
 
 axios.interceptors.response.use(
   (response) => {
-    if (response.status === 401) {
+    if (response?.status === 401) {
       localStorage.removeItem("user");
       navigate("/login");
     } else {
@@ -13,7 +14,7 @@ axios.interceptors.response.use(
     }
   }
   // ({ response }) => {
-  //   if (response.status === 401) {
+  //   if (response?.status === 401) {
   //     localStorage.removeItem("user");
   //     navigate("/login");
   //   } else {
@@ -42,28 +43,48 @@ axios.interceptors.request.use(
 
 export default class ApiCaller {
   static Get = async (endPoint = "", body = {}, headers = {}) => {
-    const response = await axios.get(`${apiUrl}${endPoint}`, body, {
-      headers,
-    });
-    return response;
+    try {
+      const response = await axios.get(`${apiUrl}${endPoint}`, body, {
+        headers,
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+      message.error(e?.response?.data?.message);
+    }
   };
 
   static Post = async (endPoint = "", body = {}, headers = {}) => {
-    const response = await axios.post(`${apiUrl}${endPoint}`, body, {
-      headers,
-    });
-    return response;
+    try {
+      const response = await axios.post(`${apiUrl}${endPoint}`, body, {
+        headers,
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+      message.error(e?.response?.data?.message);
+    }
   };
   static Put = async (endPoint = "", body = {}, headers = {}) => {
-    const response = await axios.put(`${apiUrl}${endPoint}`, body, {
-      headers,
-    });
-    return response;
+    try {
+      const response = await axios.put(`${apiUrl}${endPoint}`, body, {
+        headers,
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+      message.error(e?.response?.data?.message);
+    }
   };
   static Delete = async (endPoint = "", body = {}, headers = {}) => {
-    const response = await axios.delete(`${apiUrl}${endPoint}`, body, {
-      headers,
-    });
-    return response;
+    try {
+      const response = await axios.delete(`${apiUrl}${endPoint}`, body, {
+        headers,
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
+      message.error(e?.response?.data?.message);
+    }
   };
 }

@@ -40,7 +40,7 @@ const ProfileDetails = () => {
         };
         const response = await ApiCaller.Post(`/admin/getteam`, payload);
 
-        if (response.status === 200) {
+        if (response?.status === 200) {
           setData(response.data.team);
           setLoading(false);
         } else {

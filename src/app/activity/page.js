@@ -31,8 +31,8 @@ const Activity = () => {
         const response = await ApiCaller.Get(
           `/admin/activity?limit=${limit}&offset=${offset}`
         );
-        if (response.status === 200) {
-          setData(response.data.data);
+        if (response?.status === 200) {
+          setData(response?.data?.data);
           setLoading(false);
         } else {
           setLoading(false);
@@ -54,8 +54,8 @@ const Activity = () => {
       const response = await ApiCaller.Get(
         `/admin/activity?limit=${limit}&offset=${offset}`
       );
-      if (response.status === 200) {
-        setData(response.data.data);
+      if (response?.status === 200) {
+        setData(response?.data?.data);
         setLoading(false);
       } else {
         setLoading(false);

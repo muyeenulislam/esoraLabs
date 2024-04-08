@@ -33,11 +33,11 @@ const ProfileDetailsProjects = () => {
           `/projects/company/?id=${id}&limit=${limit}$offset=${offset}`
         );
 
-        if (response.status === 200) {
-          setProject(response.data.data);
+        if (response?.status === 200) {
+          setProject(response?.data?.data);
           setIsLoading(false);
         } else {
-          message.error(response.data.message);
+          message.error(response?.data?.message);
           setIsLoading(false);
         }
       } catch (e) {

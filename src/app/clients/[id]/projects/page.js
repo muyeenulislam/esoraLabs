@@ -51,8 +51,8 @@ const ProjectDetails = () => {
       try {
         setLoading(true);
         const response = await ApiCaller.Get(`/auth/company/${id}`);
-        const data = response.data.data;
-        if (response.status === 200) {
+        const data = response?.data?.data;
+        if (response?.status === 200) {
           setData(data);
         }
         setLoading(false);
@@ -70,8 +70,8 @@ const ProjectDetails = () => {
       try {
         setProjectLoading(true);
         const response = await ApiCaller.Get(`/projects/${projectId}`);
-        const data = response.data.data;
-        if (response.status === 200) {
+        const data = response?.data?.data;
+        if (response?.status === 200) {
           setProjectData(data);
         }
         setProjectLoading(false);

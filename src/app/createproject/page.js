@@ -30,7 +30,7 @@ const Login = () => {
   const [page, setPage] = useState("clientSelect");
   const [clientName, setClientName] = useState("");
   const [companyId, setCompanyId] = useState("");
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState("");
   const [description, setDescription] = useState("fdf sdf ");
   const [goals, setGoals] = useState(" sdfd ");
   const [targetAudience, setTargetAudience] = useState("sdf d");
@@ -45,7 +45,7 @@ const Login = () => {
     const fetchClientData = async () => {
       try {
         const response = await ApiCaller.Get(`/auth/company`);
-        setClientList(response.data.data);
+        setClientList(response?.data?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -63,7 +63,7 @@ const Login = () => {
 
     formData.append("clientName", clientName);
     formData.append("companyId", companyId);
-    formData.append("services", JSON.stringify(services));
+    formData.append("services", services);
     formData.append("description", description);
     formData.append("goals", goals);
     formData.append("targetAudience", targetAudience);
@@ -81,11 +81,11 @@ const Login = () => {
 
     const response = await ApiCaller.Post("/projects", formData);
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       message.success("Project created successfully.");
       router.push("/dashboard");
     } else {
-      message.error(response.data.message);
+      message.error(response?.data?.message);
     }
   };
 

@@ -35,8 +35,8 @@ const ProfileDetails = () => {
       try {
         setLoading(true);
         const response = await ApiCaller.Get(`/auth/company/${id}`);
-        const data = response.data.data;
-        if (response.status === 200) {
+        const data = response?.data?.data;
+        if (response?.status === 200) {
           setData(data);
         }
         setLoading(false);
