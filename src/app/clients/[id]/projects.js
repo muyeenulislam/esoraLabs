@@ -8,7 +8,7 @@ import ApiCaller from "@/config/apicaller";
 
 import StatusIndicator from "@/components/statusindicator/statusindicator";
 import PrimaryTable from "@/components/table/primarytable";
-import WhiteButtonTable from "@/components/buttons/whitebuttontable";
+
 import PrimaryButtonTable from "@/components/buttons/primarybuttontable";
 import Pagination from "@/components/pagination/pagination";
 
@@ -21,6 +21,8 @@ const ProfileDetailsProjects = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [project, setProject] = useState([]);
+  const [projectCount, setProjectCount] = useState(0);
+
   const [limit, setLimit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,11 +32,12 @@ const ProfileDetailsProjects = () => {
       try {
         setIsLoading(true);
         const response = await ApiCaller.Get(
-          `/projects/company/?id=${id}&limit=${limit}$offset=${offset}`
+          `/projects/company/?id=${id}&limit=${limit}&offset=${offset}`
         );
 
         if (response?.status === 200) {
-          setProject(response?.data?.data);
+          setProject(response?.data?.projects);
+          setProjectCount(response?.data?.projectsCount);
           setIsLoading(false);
         } else {
           message.error(response?.data?.message);
@@ -49,6 +52,31 @@ const ProfileDetailsProjects = () => {
     fetchData();
   }, [id]);
 
+  console.log(project);
+
+  const handlePagination = async (pageNumber) => {
+    const offset = (pageNumber - 1) * limit;
+
+    try {
+      setIsLoading(true);
+      const response = await ApiCaller.Get(
+        `/projects/company/?id=${id}&limit=${limit}&offset=${offset}`
+      );
+      if (response?.status === 200) {
+        setProject(response?.data?.projects);
+        setProjectCount(response?.data?.projectsCount);
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+        console.log(response);
+      }
+      setOffset(offset);
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error fetching project data:", error);
+    }
+  };
+
   const handleButtonClick = (projectId) => {
     router.push(`/clients/${id}/projects?projectid=${projectId}`);
   };
@@ -56,7 +84,7 @@ const ProfileDetailsProjects = () => {
   const columns = [
     {
       title: "Project Name",
-      dataIndex: "name",
+      dataIndex: "services",
       width: 200,
     },
     {
@@ -64,6 +92,21 @@ const ProfileDetailsProjects = () => {
       dataIndex: "assignee",
       key: "assignee",
       width: 200,
+      render: (text, record) => (
+        <>
+          {record?.teams?.length === 0 ? (
+            "-"
+          ) : (
+            <>
+              {record?.teams?.map((item, index) => (
+                <>
+                  {item?.name} {index !== record.teams.length - 1 && ","}
+                </>
+              ))}
+            </>
+          )}
+        </>
+      ),
     },
     {
       title: "Priority",
@@ -127,9 +170,11 @@ const ProfileDetailsProjects = () => {
       />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
         <Pagination
-          totalPages={10}
+          limit={limit}
+          totalPages={projectCount}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          onChange={handlePagination}
         />
       </div>
     </div>

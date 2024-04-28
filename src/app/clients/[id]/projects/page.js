@@ -43,7 +43,7 @@ const ProjectDetails = () => {
     { title: "Clients", link: "/clients", active: false },
     { title: `${data?.name}`, link: `/clients/${data?._id}`, active: false },
     { title: "Project", link: `/clients/${data?._id}?tab=2`, active: false },
-    { title: projectId, link: "#", active: true },
+    { title: projectdata?.services, link: "#", active: true },
   ];
 
   useEffect(() => {
@@ -83,8 +83,6 @@ const ProjectDetails = () => {
 
     fetchProjectData();
   }, [projectId]);
-
-  console.log(projectdata);
 
   const items = [
     {
@@ -148,7 +146,6 @@ const ProjectDetails = () => {
     console.log(date, dateString);
   };
 
-  // assigned table
   const dataSource = [
     {
       key: "1",

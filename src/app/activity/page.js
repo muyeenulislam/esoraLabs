@@ -17,11 +17,12 @@ const breadcumbData = [{ title: "Activity", link: "/activity", active: true }];
 
 const Activity = () => {
   const [data, setData] = useState([]);
+  const [activityCount, setActivityCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(9);
 
   useEffect(() => {
     const fetchActivityData = async () => {
@@ -32,7 +33,8 @@ const Activity = () => {
           `/admin/activity?limit=${limit}&offset=${offset}`
         );
         if (response?.status === 200) {
-          setData(response?.data?.data);
+          setData(response?.data?.activity);
+          setActivityCount(response?.data?.activityCount);
           setLoading(false);
         } else {
           setLoading(false);
@@ -55,7 +57,8 @@ const Activity = () => {
         `/admin/activity?limit=${limit}&offset=${offset}`
       );
       if (response?.status === 200) {
-        setData(response?.data?.data);
+        setData(response?.data?.activity);
+        setActivityCount(response?.data?.activityCount);
         setLoading(false);
       } else {
         setLoading(false);
@@ -106,8 +109,9 @@ const Activity = () => {
         )}
         <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
           <Pagination
-            totalPages={10}
+            totalPages={activityCount}
             currentPage={currentPage}
+            limit={limit}
             setCurrentPage={setCurrentPage}
             onChange={handlePagination}
           />

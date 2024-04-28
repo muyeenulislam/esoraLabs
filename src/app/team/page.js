@@ -51,7 +51,7 @@ const Team = () => {
       setLoading(true);
 
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=0`
+        `/admin/getteams?name=${search}&limit=${limit}&offset=0&sort=${sortFilter}`
       );
 
       if (response?.status === 200) {
@@ -70,7 +70,7 @@ const Team = () => {
 
   useEffect(() => {
     fetchTeamData();
-  }, [search]);
+  }, [search, sortFilter]);
 
   const defaultState = () => {
     setState({
@@ -87,7 +87,7 @@ const Team = () => {
     try {
       setLoading(true);
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}&sort=${sortFilter}`
       );
       if (response?.status === 200) {
         setData(response.data.teams);

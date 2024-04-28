@@ -3,9 +3,6 @@ import Image from "next/image";
 import { FiPhone, FiMail } from "react-icons/fi";
 
 const ClientCard = (props) => {
-
-  // console.log("dataaaaaaa",props);
-    
   return (
     <div
       {...props}
@@ -26,7 +23,7 @@ const ClientCard = (props) => {
               {props?.data?.name}
             </div>
             <div className="text-[14px] font-normal text-subtitleText">
-              {props?.data?.company}
+              {props?.data?.companyName}
             </div>
           </div>
         </div>

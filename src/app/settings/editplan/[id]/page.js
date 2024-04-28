@@ -69,12 +69,10 @@ const CreatePlan = () => {
   };
 
   const handleSubmit = () => {
-    console.log(state);
     setIsOpen(true);
   };
 
   const handleMakeActive = () => {
-    console.log("make active");
     router.push("/settings?tab=4");
   };
 
