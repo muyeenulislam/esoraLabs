@@ -25,7 +25,9 @@ const Pagination = (props) => {
       </div>
       <div className="text-subtitleText text-[14px] font-normal">
         Page <span className="font-medium">{props?.currentPage}</span> of{" "}
-        <span className="font-medium">{props?.totalPages}</span>
+        <span className="font-medium">
+          {Math.ceil(props?.totalPages / props?.limit)}
+        </span>
       </div>
     </>
   );

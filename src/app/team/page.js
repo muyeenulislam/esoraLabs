@@ -31,11 +31,12 @@ const Team = () => {
   const [search, setSearch] = useState("");
 
   const [data, setData] = useState([]);
+  const [teamsCount, setTeamsCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(9);
 
   const [state, setState] = useState({
     role: "",
@@ -54,7 +55,9 @@ const Team = () => {
       );
 
       if (response?.status === 200) {
+        console.log(response.data);
         setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
         setLoading(false);
       } else {
         setLoading(false);
@@ -68,7 +71,7 @@ const Team = () => {
 
   useEffect(() => {
     fetchTeamData();
-  }, []);
+  }, [search]);
 
   const handlePagination = async (pageNumber) => {
     const offset = (pageNumber - 1) * limit;
@@ -80,6 +83,7 @@ const Team = () => {
       );
       if (response?.status === 200) {
         setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
         setLoading(false);
       } else {
         setLoading(false);
@@ -170,7 +174,8 @@ const Team = () => {
       <Spacer height="32px" />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
         <Pagination
-          totalPages={10}
+          totalPages={teamsCount}
+          limit={limit}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           onChange={handlePagination}
