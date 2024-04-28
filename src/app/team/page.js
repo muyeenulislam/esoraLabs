@@ -55,7 +55,6 @@ const Team = () => {
       );
 
       if (response?.status === 200) {
-        console.log(response.data);
         setData(response.data.teams);
         setTeamsCount(response.data.teamsCount);
         setLoading(false);
@@ -73,6 +72,15 @@ const Team = () => {
     fetchTeamData();
   }, [search]);
 
+  const defaultState = () => {
+    setState({
+      role: "",
+      name: "",
+      phoneNumber: "",
+      designation: "",
+      email: "",
+    });
+  };
   const handlePagination = async (pageNumber) => {
     const offset = (pageNumber - 1) * limit;
 
@@ -101,12 +109,12 @@ const Team = () => {
   };
 
   const handleAdd = async () => {
+    setLoading(true);
+    setOpen(false);
     const data = {
       name: state?.name,
       email: state?.email,
       phoneNumber: state?.phoneNumber,
-      password: "testPass",
-      confirmPassword: "testPass",
       role: state?.role,
       designation: state?.designation,
     };
@@ -114,11 +122,12 @@ const Team = () => {
     const response = await ApiCaller.Post(`/admin/teamregister`, data);
 
     if (response?.status === 200) {
-      setOpen(false);
       message.success("Team member added successfully");
+      defaultState();
       fetchTeamData();
     } else {
       console.log(response);
+      setLoading(false);
       message.error(response?.message);
     }
   };
