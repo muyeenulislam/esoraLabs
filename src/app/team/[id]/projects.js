@@ -57,8 +57,12 @@ for (let i = 0; i < 10; i++) {
 
 const ProfileDetailsProjects = () => {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [project, setProject] = useState([]);
+  const [projectCount, setProjectCount] = useState(0);
+
+  const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(data?.length / 10);
+  const [limit, setLimit] = useState(9);
 
   return (
     <div className="border border-gray-200 shadow-clientCard rounded-2xl">
@@ -70,7 +74,8 @@ const ProfileDetailsProjects = () => {
       />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
         <Pagination
-          totalPages={totalPage}
+          limit={limit}
+          totalPages={projectCount}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />

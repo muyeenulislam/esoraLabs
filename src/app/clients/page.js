@@ -26,6 +26,7 @@ const Clients = () => {
   const [sortFilter, setSortFilter] = useState("newest");
   const [search, setSearch] = useState("");
   const [clientData, setClientData] = useState([]);
+  const [clientCount, setClientCount] = useState(0);
   const [clientLoading, setClientLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,10 +38,11 @@ const Clients = () => {
       try {
         setClientLoading(true);
         const response = await ApiCaller.Get(
-          `/auth/company?name=${search}&limit=${limit}&offset=0`
+          `/auth/company?name=${search}&limit=${limit}&offset=0&sort=${sortFilter}`
         );
         if (response?.status === 200) {
-          setClientData(response?.data?.data);
+          setClientData(response?.data?.company);
+          setClientCount(response?.data?.companyCount);
           setClientLoading(false);
         } else {
           setClientLoading(false);
@@ -53,7 +55,7 @@ const Clients = () => {
       }
     };
     fetchClientData();
-  }, [search]);
+  }, [search, sortFilter]);
 
   const handlePagination = async (pageNumber) => {
     const offset = (pageNumber - 1) * limit;
@@ -62,10 +64,11 @@ const Clients = () => {
       setClientLoading(true);
 
       const response = await ApiCaller.Get(
-        `/auth/company?name=${search}&limit=${limit}&offset=${offset}`
+        `/auth/company?name=${search}&limit=${limit}&offset=${offset}&sort=${sortFilter}`
       );
       if (response?.status === 200) {
-        setClientData(response?.data?.data);
+        setClientData(response?.data?.company);
+        setClientCount(response?.data?.companyCount);
         setClientLoading(false);
       } else {
         setClientLoading(false);
@@ -143,7 +146,8 @@ const Clients = () => {
       <Spacer height="32px" />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
         <Pagination
-          totalPages={10}
+          totalPages={clientCount}
+          limit={limit}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           onChange={handlePagination}

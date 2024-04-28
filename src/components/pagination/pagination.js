@@ -1,6 +1,7 @@
 import PaginationButton from "../buttons/paginationbutton";
 
 const Pagination = (props) => {
+  const totalPageCount = Math.ceil(props?.totalPages / props?.limit);
   const handlePagination = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= props?.totalPages) {
       props?.setCurrentPage(pageNumber);
@@ -20,12 +21,12 @@ const Pagination = (props) => {
         <PaginationButton
           text="Next"
           onClick={() => handlePagination(props?.currentPage + 1)}
-          disabled={props?.currentPage === props?.totalPages}
+          disabled={props?.currentPage === totalPageCount}
         />
       </div>
       <div className="text-subtitleText text-[14px] font-normal">
         Page <span className="font-medium">{props?.currentPage}</span> of{" "}
-        <span className="font-medium">{props?.totalPages}</span>
+        <span className="font-medium">{totalPageCount}</span>
       </div>
     </>
   );

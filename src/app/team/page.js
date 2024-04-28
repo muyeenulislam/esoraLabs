@@ -31,11 +31,12 @@ const Team = () => {
   const [search, setSearch] = useState("");
 
   const [data, setData] = useState([]);
+  const [teamsCount, setTeamsCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(9);
 
   const [state, setState] = useState({
     role: "",
@@ -50,11 +51,12 @@ const Team = () => {
       setLoading(true);
 
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=0`
+        `/admin/getteams?name=${search}&limit=${limit}&offset=0&sort=${sortFilter}`
       );
 
       if (response?.status === 200) {
         setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
         setLoading(false);
       } else {
         setLoading(false);
@@ -68,18 +70,28 @@ const Team = () => {
 
   useEffect(() => {
     fetchTeamData();
-  }, []);
+  }, [search, sortFilter]);
 
+  const defaultState = () => {
+    setState({
+      role: "",
+      name: "",
+      phoneNumber: "",
+      designation: "",
+      email: "",
+    });
+  };
   const handlePagination = async (pageNumber) => {
     const offset = (pageNumber - 1) * limit;
 
     try {
       setLoading(true);
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}&sort=${sortFilter}`
       );
       if (response?.status === 200) {
         setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
         setLoading(false);
       } else {
         setLoading(false);
@@ -97,12 +109,12 @@ const Team = () => {
   };
 
   const handleAdd = async () => {
+    setLoading(true);
+    setOpen(false);
     const data = {
       name: state?.name,
       email: state?.email,
       phoneNumber: state?.phoneNumber,
-      password: "testPass",
-      confirmPassword: "testPass",
       role: state?.role,
       designation: state?.designation,
     };
@@ -110,11 +122,12 @@ const Team = () => {
     const response = await ApiCaller.Post(`/admin/teamregister`, data);
 
     if (response?.status === 200) {
-      setOpen(false);
       message.success("Team member added successfully");
+      defaultState();
       fetchTeamData();
     } else {
       console.log(response);
+      setLoading(false);
       message.error(response?.message);
     }
   };
@@ -170,7 +183,8 @@ const Team = () => {
       <Spacer height="32px" />
       <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
         <Pagination
-          totalPages={10}
+          totalPages={teamsCount}
+          limit={limit}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
           onChange={handlePagination}

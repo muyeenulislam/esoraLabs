@@ -45,7 +45,7 @@ const Login = () => {
     const fetchClientData = async () => {
       try {
         const response = await ApiCaller.Get(`/auth/company`);
-        setClientList(response?.data?.data);
+        setClientList(response?.data?.company);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

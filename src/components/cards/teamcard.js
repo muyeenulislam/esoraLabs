@@ -47,7 +47,7 @@ const TeamCard = (props) => {
       <div className="grid grid-cols-2 gap-[1px]">
         <div>
           <div className="bg-fadedYellow2 text-primary text-[16px] headers py-3 text-center bottomSection">
-            {props?.data?.projectAssigned}
+            {props?.data?.projects?.length}
           </div>
           <div className="bg-primary text-white text-[12px] py-[6px] text-center rounded-bl-2xl">
             Projects Assigned

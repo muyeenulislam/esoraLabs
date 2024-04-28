@@ -35,7 +35,7 @@ const Dashboard = () => {
         setActivityLoading(true);
         const response = await ApiCaller.Get("/admin/activity");
         if (response?.status === 200) {
-          setActivityData(response?.data?.data);
+          setActivityData(response?.data?.activity);
           setActivityLoading(false);
         } else {
           setActivityLoading(false);
