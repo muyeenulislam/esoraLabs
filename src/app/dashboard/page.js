@@ -22,6 +22,8 @@ const Dashboard = () => {
 
   const [activityData, setActivityData] = useState([]);
   const [activityLoading, setActivityLoading] = useState(false);
+  const [recentProjectsData, setRecentProjectsData] = useState([]);
+  const [recentProjectsLoading, setRecentProjectsLoading] = useState(false);
   const [state, setState] = useState({
     totalClient: "0",
     newClient: "0",
@@ -49,6 +51,29 @@ const Dashboard = () => {
 
     fetchActivityData();
   }, []);
+
+  useEffect(() => {
+    const fetchRecentProjects = async () => {
+      try {
+        setRecentProjectsLoading(true);
+        const response = await ApiCaller.Get("/projects/recent-projects");
+        if (response?.status === 200) {
+          setRecentProjectsData(response?.data?.projects);
+          setRecentProjectsLoading(false);
+        } else {
+          setRecentProjectsLoading(false);
+          console.log(response);
+        }
+      } catch (error) {
+        setRecentProjectsLoading(false);
+        console.error("Error fetching activity data:", error);
+      }
+    };
+
+    fetchRecentProjects();
+  }, []);
+
+  console.log(recentProjectsData);
 
   useEffect(() => {
     const fetchOverview = async () => {
@@ -126,11 +151,11 @@ const Dashboard = () => {
           </div>
           <div>
             <div className={styles.smallTitle}>Recent Projects</div>
-            {RecentProjectsData?.map((item, index) => (
+            {recentProjectsData?.map((item, index) => (
               <div style={styles.recentContainer} key={index}>
                 <div style={styles.recentLeftSide}>
                   <div className="flex flex-col gap-2">
-                    <div className={styles.recentTitle}>{item.title}</div>
+                    <div className={styles.recentTitle}>{item?.services}</div>
                     <div className={styles.recentDescription}>
                       {item?.description?.length > 200
                         ? `${item?.description?.slice(0, 200)}...`
@@ -138,53 +163,53 @@ const Dashboard = () => {
                     </div>
                   </div>
                   <div className="flex mb-3">
-                    <div className="mr-4">
+                    <div className="mr-4 max-w-[20%]">
                       <div className={styles.smallHeadings}>Priority</div>
                       <div>
-                        <StatusIndicator text={item.priority} />
+                        <StatusIndicator text={"low"} />
                       </div>
                     </div>
-                    <div className="mr-4">
+                    <div className="mr-4 max-w-[20%]">
                       <div className={styles.smallHeadings}>Status</div>
                       <div>
-                        <StatusIndicator text={item.status} />
+                        <StatusIndicator text={item?.status} />
                       </div>
                     </div>
-                    <div className="mr-4">
-                      {item?.assignees?.length === 0 ? (
+                    <div className="mr-4 max-w-[60%] ">
+                      {item?.teams?.length === 0 ? (
                         <>
                           <div className={styles.smallHeadings}>Assignee</div>
                           <StatusIndicator text={"Not Assigned"} />
                         </>
                       ) : (
                         <div>
-                          {item?.assignees?.length === 1 ? (
+                          {item?.teams?.length === 1 ? (
                             <div>
                               <div className={styles.smallHeadings}>
                                 Assignee
                               </div>
                               <div>
                                 <div className={styles.assigneeName}>
-                                  {item.assignees[0].name}
+                                  {item.teams[0].name}
                                 </div>
                                 <div className={styles.assigneeDesignation}>
-                                  {item.assignees[0].designation}
+                                  {item.teams[0].designation}
                                 </div>
                               </div>
                             </div>
                           ) : (
-                            <div className="flex">
-                              {item?.assignees?.map((assignee, index) => (
+                            <div className="flex overflow-auto overflow-y-hidden">
+                              {item?.teams?.map((item, index) => (
                                 <div key={index} className="mr-6">
                                   <div className={styles.smallHeadings}>
                                     Assignee {index + 1}
                                   </div>
                                   <div>
                                     <div className={styles.assigneeName}>
-                                      {assignee.name}
+                                      {item.name}
                                     </div>
                                     <div className={styles.assigneeDesignation}>
-                                      {assignee.designation}
+                                      {item.designation}
                                     </div>
                                   </div>
                                 </div>
@@ -195,27 +220,28 @@ const Dashboard = () => {
                       )}
                     </div>
                   </div>
-                  {item?.dueDate && (
+                  {item?.whenProjectComplete && (
                     <div>
                       <div className={styles.dueDateHeading}>Due by</div>
                       <div className={styles.itemsCenter}>
                         <div className={styles.dueDateValue}>
-                          {moment(item.dueDate).format("DD MMMM YYYY")}
+                          {/* {moment(item.dueDate).format("DD MMMM YYYY")} */}
+                          {item?.whenProjectComplete}
                         </div>
 
-                        {new Date(item.dueDate) < new Date() && (
+                        {/* {new Date(item.dueDate) < new Date() && (
                           <StatusIndicator
                             text={"Overdue"}
                             icon={"/images/overdue-icon.svg"}
                           />
-                        )}
+                        )} */}
                       </div>
                     </div>
                   )}
                 </div>
                 <div style={styles.recentRightSide}>
                   <div className={styles.recentCreatedDate}>
-                    Created on {moment(item.createdOn).format("MM/DD/YYYY")}
+                    Created on {moment(item.createdAt).format("MM/DD/YYYY")}
                   </div>
                   <div>
                     <PrimaryButton

@@ -33,7 +33,7 @@ const styles = {
   recentLeftSide: {
     display: "flex",
     flexDirection: "column",
-    width: "70%",
+    width: "80%",
   },
   recentRightSide: {
     display: "flex",
@@ -45,7 +45,7 @@ const styles = {
   recentTitle: "text-[16px] headers",
   recentDescription: "text-[14px] text-subtitleText font-normal mb-4",
 
-  smallHeadings: "text-[12px] font-normal text-subtitleText mb-1",
+  smallHeadings: "text-[12px] font-normal text-subtitleText mb-1 w-[90px]",
   assigneeName: "text-primary text-[14px] font-semibold",
   assigneeDesignation: "text-subtitleText text-[12px] font-normal",
 
