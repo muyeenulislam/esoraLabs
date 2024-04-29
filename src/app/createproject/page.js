@@ -40,6 +40,7 @@ const Login = () => {
   const [whenProjectComplete, setWhenProjectComplete] = useState("sdfdsf");
   const [otherInfo, setOtherInfo] = useState("sdfsdf");
   const [fileList, setFileList] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -59,6 +60,7 @@ const Login = () => {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const formData = new FormData();
 
     formData.append("clientName", clientName);
@@ -84,7 +86,9 @@ const Login = () => {
     if (response?.status === 200) {
       message.success("Project created successfully.");
       router.push("/dashboard");
+      setLoading(false);
     } else {
+      setLoading(false);
       message.error(response?.data?.message);
     }
   };
@@ -191,6 +195,7 @@ const Login = () => {
             page={page}
             setPage={setPage}
             handleSubmit={handleSubmit}
+            isLoading={isLoading}
           />
         ) : (
           <ClientPage
