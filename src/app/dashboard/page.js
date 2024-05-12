@@ -247,6 +247,11 @@ const Dashboard = () => {
                     <PrimaryButton
                       text={"Start Briefing"}
                       image={"/images/arrow-right-white.svg"}
+                      onClick={() =>
+                        router.push(
+                          `/clients/${item?.companyId}/projects?projectid=${item?._id}`
+                        )
+                      }
                     />
                   </div>
                 </div>
