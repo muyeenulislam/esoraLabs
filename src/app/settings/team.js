@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Tabs, Modal } from "antd";
+
+import ApiCaller from "@/config/apicaller";
 
 import Spacer from "@/components/spacer/spacer";
 import WhiteButton from "@/components/buttons/whitebutton";
@@ -12,23 +14,12 @@ import YellowButton from "@/components/buttons/yellowbutton";
 import Members from "./members";
 import Role from "./role";
 
-const items = [
-  {
-    key: "1",
-    label: "Members",
-    children: <Members />,
-  },
-  {
-    key: "2",
-    label: "Role",
-    children: <Role />,
-  },
-];
-
 const Team = () => {
   const [activeKey, setActivekey] = useState("1");
   const [isOpen, setIsOpen] = useState(false);
   const [roles, setRoles] = useState([{ label: "", value: "" }]);
+  const [roleData, setRoleData] = useState([]);
+  const [roleLoading, setRoleLoading] = useState(false);
 
   const changeTab = (e) => {
     setActivekey(e);
@@ -38,10 +29,66 @@ const Team = () => {
     setRoles([...roles, { label: "", value: "" }]);
   };
 
-  const handleAddRole = () => {
-    setIsOpen(false);
-    setRoles([{ label: "", value: "" }]);
+  useEffect(() => {
+    getAllRoles();
+  }, []);
+
+  const getAllRoles = async () => {
+    try {
+      setRoleLoading(true);
+      const response = await ApiCaller.Get(`/roles`);
+      if (response.status === 200) {
+        setRoleData(response.data.roles);
+      } else {
+        console.log(response);
+      }
+      setRoleLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
   };
+
+  const handleAddRole = async () => {
+    try {
+      setRoleLoading(true);
+
+      const payload = { roles };
+
+      const response = await ApiCaller.Post(`/roles`, payload);
+
+      if (response?.status === 200) {
+        setRoleLoading(false);
+        getAllRoles();
+      } else {
+        setRoleLoading(false);
+        console.log(response);
+      }
+      setIsOpen(false);
+      setRoles([{ label: "", value: "" }]);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  const items = [
+    {
+      key: "1",
+      label: "Members",
+      children: <Members roleData={roleData} roleLoading={roleLoading} />,
+    },
+    {
+      key: "2",
+      label: "Role",
+      children: (
+        <Role
+          roleData={roleData}
+          roleLoading={roleLoading}
+          getAllRoles={getAllRoles}
+        />
+      ),
+    },
+  ];
 
   return (
     <div>

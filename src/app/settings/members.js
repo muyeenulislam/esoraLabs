@@ -1,29 +1,94 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Select } from "antd";
 import Image from "next/image";
+
+import ApiCaller from "@/config/apicaller";
 
 import SearchBar from "@/components/searchbar/searchbar";
 import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 import Pagination from "@/components/pagination/pagination";
 import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 
-import settingsTeamData from "@/utils/mockdata/settingsteamdata";
-import roleData from "@/utils/mockdata/roledata";
 import { useRouter } from "next/navigation";
 
-const Members = () => {
+const Members = (props) => {
+  const route = useRouter();
+
   const [search, setSearch] = useState("");
+
+  const [data, setData] = useState([]);
+  const [teamsCount, setTeamsCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(settingsTeamData?.length / 10);
+  const [limit, setLimit] = useState(10);
+
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
-  const route = useRouter();
+  useEffect(() => {
+    fetchTeamData();
+  }, [search]);
 
   const handleView = (id) => {
     route.push(`/settings/team/${id}`);
   };
+
+  const fetchTeamData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=${limit}&offset=0`
+      );
+
+      if (response?.status === 200) {
+        setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  const handlePagination = async (pageNumber) => {
+    const offset = (pageNumber - 1) * limit;
+
+    try {
+      setLoading(true);
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+      );
+      if (response?.status === 200) {
+        setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+      setOffset(offset);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  const handleOpenChange = (e) => {
+    setIsSelectOpen(e);
+  };
+  const handleRoleChange = (role, team) => {
+    console.log(role);
+  };
+
+  console.log(data);
 
   const columns = [
     {
@@ -45,7 +110,7 @@ const Members = () => {
       dataIndex: "role",
       render: (text, record) => (
         <Select
-          className="w-full table-select"
+          className="w-full table-select capitalize"
           value={record?.role}
           showSearch
           suffixIcon={
@@ -58,9 +123,14 @@ const Members = () => {
             />
           }
           onDropdownVisibleChange={handleOpenChange}
+          onChange={(e) => handleRoleChange(e, record)}
         >
-          {roleData?.map((roleData, index) => (
-            <Select.Option key={index} value={roleData?.value}>
+          {props?.roleData?.map((roleData, index) => (
+            <Select.Option
+              key={index}
+              value={roleData?.title}
+              className="capitalize"
+            >
               {roleData?.title}
             </Select.Option>
           ))}
@@ -86,10 +156,6 @@ const Members = () => {
     },
   ];
 
-  const handleOpenChange = (open) => {
-    setIsSelectOpen(open);
-  };
-
   return (
     <div>
       <SearchBar
@@ -98,12 +164,18 @@ const Members = () => {
       />
       <div className="h-[1px] bg-grayBorderDashboard my-4"></div>
       <div className="border border-gray-200 shadow-clientCard rounded-2xl">
-        <TableWithoutCheckbox columns={columns} data={settingsTeamData} />
+        <TableWithoutCheckbox
+          columns={columns}
+          data={data}
+          loading={loading || props?.roleLoading}
+        />
         <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
           <Pagination
-            totalPages={totalPage}
+            totalPages={teamsCount}
+            limit={limit}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
+            onChange={handlePagination}
           />
         </div>
       </div>
