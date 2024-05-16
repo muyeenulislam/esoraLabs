@@ -111,6 +111,28 @@ const Members = (props) => {
     }
   };
 
+  const handleDeleteTeam = async (teamId) => {
+    setLoading(true);
+
+    const response = await ApiCaller.Put(`/admin/teamdelete/${teamId}`);
+    if (response.status === 200) {
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+      );
+      if (response?.status === 200) {
+        setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+    } else {
+      setLoading(false);
+      console.log(response);
+    }
+  };
+
   const columns = [
     {
       title: "Name",
@@ -167,7 +189,10 @@ const Members = (props) => {
       width: 150,
       render: (text, record) => (
         <div className="flex items-center justify-end gap-3">
-          <p className="m-0 text-subtitleText text-[14px] font-medium">
+          <p
+            className="m-0 text-subtitleText text-[14px] font-medium cursor-pointer"
+            onClick={() => handleDeleteTeam(record._id)}
+          >
             Delete
           </p>
           <WhiteButtonTable
