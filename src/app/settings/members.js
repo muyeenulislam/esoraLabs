@@ -84,16 +84,38 @@ const Members = (props) => {
   const handleOpenChange = (e) => {
     setIsSelectOpen(e);
   };
-  const handleRoleChange = (role, team) => {
-    console.log(role);
-  };
 
-  console.log(data);
+  const handleRoleChange = async (role, team) => {
+    setLoading(true);
+    const payload = { role };
+
+    const response = await ApiCaller.Post(
+      `/admin/teamupdate/${team._id}`,
+      payload
+    );
+    if (response.status === 200) {
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+      );
+      if (response?.status === 200) {
+        setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+    } else {
+      setLoading(false);
+      console.log(response);
+    }
+  };
 
   const columns = [
     {
       title: "Name",
       dataIndex: "name",
+      width: 300,
       render: (text, record) => (
         <div className="flex flex-col">
           <p className="m-0 text-primary text-[14px] font-bold">
@@ -108,6 +130,7 @@ const Members = (props) => {
     {
       title: "Role",
       dataIndex: "role",
+      width: 200,
       render: (text, record) => (
         <Select
           className="w-full table-select capitalize"
@@ -141,7 +164,7 @@ const Members = (props) => {
     {
       title: " ",
       dataIndex: "action",
-      width: 350,
+      width: 150,
       render: (text, record) => (
         <div className="flex items-center justify-end gap-3">
           <p className="m-0 text-subtitleText text-[14px] font-medium">
@@ -165,6 +188,7 @@ const Members = (props) => {
       <div className="h-[1px] bg-grayBorderDashboard my-4"></div>
       <div className="border border-gray-200 shadow-clientCard rounded-2xl">
         <TableWithoutCheckbox
+          rowKey={(record) => record._id}
           columns={columns}
           data={data}
           loading={loading || props?.roleLoading}

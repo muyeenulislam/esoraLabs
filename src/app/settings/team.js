@@ -57,8 +57,9 @@ const Team = () => {
       const response = await ApiCaller.Post(`/roles`, payload);
 
       if (response?.status === 200) {
-        setRoleLoading(false);
-        getAllRoles();
+        setTimeout(() => {
+          getAllRoles();
+        }, 2000);
       } else {
         setRoleLoading(false);
         console.log(response);
@@ -67,7 +68,7 @@ const Team = () => {
       setRoles([{ label: "", value: "" }]);
     } catch (error) {
       setLoading(false);
-      console.error("Error fetching activity data:", error);
+      console.error("Error adding role data:", error);
     }
   };
 

@@ -9,7 +9,6 @@ import Loader from "@/components/loader";
 const Role = (props) => {
   const handleDelete = async (item) => {
     const response = await ApiCaller.Put(`/roles/${item._id}`);
-    console.log(response);
     if (response.status === 200) {
       props.getAllRoles();
     } else {
@@ -25,7 +24,7 @@ const Role = (props) => {
         <>
           {props?.roleData?.map((item, index) => (
             <div
-              key={item?.title}
+              key={index}
               className={`px-6 py-4 flex justify-between items-center ${
                 index === roleData?.length - 1
                   ? ""
