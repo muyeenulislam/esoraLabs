@@ -4,82 +4,101 @@ import Image from "next/image";
 
 import { FaRegCheckCircle, FaCheckCircle } from "react-icons/fa";
 
+import ApiCaller from "@/config/apicaller";
+
 import Spacer from "@/components/spacer/spacer";
 import SearchBar from "@/components/searchbar/searchbar";
 import YellowButton from "@/components/buttons/yellowbutton";
 import WhiteButton from "@/components/buttons/whitebutton";
+import Loader from "@/components/loader";
 
 import styles from "./styles";
 
-const servicesArray = [
-  { label: "Websites", status: "unavailable" },
-  { label: "Mobile apps", status: "available" },
-  { label: "Slide decks", status: "available" },
-  { label: "Trade show banners", status: "available" },
-  { label: "Direct mail", status: "available" },
-  { label: "Email graphics", status: "available" },
-  { label: "Infographics", status: "available" },
-  { label: "Logos & branding", status: "available" },
-  { label: "Packaging", status: "available" },
-  { label: "Wireframes", status: "available" },
-  { label: "Brand guidelines", status: "available" },
-  { label: "Social media graphics", status: "available" },
-  { label: "Digital ads", status: "available" },
-  { label: "Pitch decks", status: "available" },
-  { label: "Billboards", status: "available" },
-  { label: "Icons", status: "available" },
-];
-
 const Services = (props) => {
-  const [servicesData, setServicesData] = useState(servicesArray);
-  const [selectedServices, setSelectedServices] = useState("");
+  const [servicesData, setServicesData] = useState([]);
+  const [selectedServices, setSelectedServices] = useState(
+    props?.services || ""
+  );
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     props?.setServices(selectedServices);
   }, [selectedServices]);
 
-  const handleSearch = (search) => {
-    const filteredData = servicesArray.filter((item) =>
-      item.label.toLowerCase().includes(search.toLowerCase())
-    );
-    setServicesData(filteredData);
-  };
+  useEffect(() => {
+    fetchServicesData();
+  }, []);
 
-  const handleServiceClick = (label) => {
-    if (selectedServices === label) {
-      setSelectedServices("");
+  const handleSearch = (search) => {
+    if (!search) {
+      fetchServicesData();
     } else {
-      setSelectedServices(label);
+      const filteredData = servicesData.filter((item) =>
+        item.title.toLowerCase().includes(search.toLowerCase())
+      );
+      setServicesData(filteredData);
     }
   };
 
+  const handleServiceClick = (title) => {
+    if (selectedServices === title) {
+      setSelectedServices("");
+    } else {
+      setSelectedServices(title);
+    }
+  };
+
+  const fetchServicesData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await ApiCaller.Get(`/services`);
+
+      if (response?.status === 200) {
+        setServicesData(response?.data?.services);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching services data:", error);
+    }
+  };
+
+  console.log(selectedServices);
   return (
     <>
       <div>
         <SearchBar onChange={(e) => handleSearch(e.target.value)} />
         <div className="h-[1px] my-4 bg-[#D9D9D9]"></div>
-        <div className="flex flex-wrap gap-2">
-          {servicesData?.map((item) => (
-            <div
-              key={item?.label}
-              className={`flex gap-3 py-3 pl-5 pr-3 rounded-[48px] cursor-pointer ${
-                selectedServices.includes(item.label)
-                  ? "bg-primary text-white"
-                  : "border border-gray300"
-              } `}
-              onClick={() => handleServiceClick(item.label)}
-            >
-              <span>{item?.label}</span>
-              <span>
-                {selectedServices.includes(item.label) ? (
-                  <FaCheckCircle />
-                ) : (
-                  <FaRegCheckCircle />
-                )}
-              </span>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {servicesData?.map((item) => (
+              <div
+                key={item?.title}
+                className={`flex gap-3 py-3 pl-5 pr-3 rounded-[48px] cursor-pointer ${
+                  selectedServices.includes(item.title)
+                    ? "bg-primary text-white"
+                    : "border border-gray300"
+                } `}
+                onClick={() => handleServiceClick(item.title)}
+              >
+                <span>{item?.title}</span>
+                <span>
+                  {selectedServices.includes(item.title) ? (
+                    <FaCheckCircle />
+                  ) : (
+                    <FaRegCheckCircle />
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className={styles.loginContainer}>
         <WhiteButton

@@ -52,7 +52,8 @@ const Team = () => {
     try {
       setRoleLoading(true);
 
-      const payload = { roles };
+      const filteredRoles = roles.filter((item) => item.label !== "");
+      const payload = { roles: filteredRoles };
 
       const response = await ApiCaller.Post(`/roles`, payload);
 
