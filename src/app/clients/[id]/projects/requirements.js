@@ -7,28 +7,68 @@ import truncateString from "@/utils/truncatestring";
 import Spacer from "@/components/spacer/spacer";
 import YellowButton from "@/components/buttons/yellowbutton";
 import WhiteButton from "@/components/buttons/whitebutton";
+import { useSearchParams } from "next/navigation";
+
+import ApiCaller from "@/config/apicaller";
 
 const { TextArea } = Input;
 const { Text } = Typography;
 
 const Requirements = () => {
-  const [Targetvalue, setTargetValue] = useState(1);
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get("projectid");
+  const [projectdata, setProjectData] = useState({});
+  const [Targetvalue, setTargetValue] = useState("");
   const [showTargetValue, setShowTargetValue] = useState(false);
   const [save, setSave] = useState(false);
   const [fileInfoList, setFileInfoList] = useState([]);
   const [showFile, setShowFile] = useState(false);
-  const [geographicalvalue, setGeographicalValue] = useState(1);
+  const [geographicalvalue, setGeographicalValue] = useState("");
   const [showGeographical, setShowGeographical] = useState(false);
-  const [maturityProject, setMaturityProject] = useState(1);
+  const [maturityProject, setMaturityProject] = useState("");
   const [showMaturity, setShowMaturity] = useState(false);
-  const [startvalue, setStartValue] = useState(1);
+  const [startvalue, setStartValue] = useState("");
   const [showStartDate, setShowStartDate] = useState(false);
-  const [completedvalue, setCompletedValue] = useState(1);
+  const [completedvalue, setCompletedValue] = useState("");
   const [showCompletionTime, setShowCompletionTime] = useState(false);
   const [mediavalue, setMediaValue] = useState(1);
   const [showMediaCost, setShowMediaCost] = useState(false);
   const [isEditing, setIsEditing] = useState(true);
   const [textValue, setTextValue] = useState("");
+  const [id,setId] = useState("")
+
+  // console.log("projectId",projectId);
+
+  // Get project api call
+  useEffect(() => {
+    const fetchProjectData = async () => {
+      try {
+        const response = await ApiCaller.Get(`/projects/${projectId}`);
+        const data = response?.data?.data?.project;
+        // setTeams(response?.data?.data?.teams);
+        if (response?.status === 200) {
+          setId(data?._id)
+          setProjectData(data);
+          setTargetValue(data.targetAudience);
+          setGeographicalValue(data.geographicalScope);
+          setMaturityProject(data.maturityProjects);
+          setStartValue(data?.whenProjectStart);
+          setCompletedValue(data?.whenProjectComplete);
+          setTextValue(data?.goals);
+          setPassValue(data?.description);
+          setFileInfoList(data?.document)
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchProjectData();
+  }, [projectId]);
+
+  console.log("projectdata", projectdata);
+
+  // console.log("fileInfoList",fileInfoList);
 
   const onChange = ({ fileList: newFileList }) => {
     setFileInfoList(newFileList);
@@ -77,7 +117,7 @@ const Requirements = () => {
     setMediaValue(e.target.value);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setSave(true);
     setShowTargetValue(true);
     setShowGeographical(true);
@@ -88,6 +128,45 @@ const Requirements = () => {
     setShowMediaCost(true);
     setShowFile(true);
     setIsEditing(false);
+
+
+    try {
+      // Assuming you have a URL for your API endpoint
+      const url = `/projects/${id}`;
+      
+      // Prepare the data object with the state values
+      const postData = {
+        targetAudience: Targetvalue,
+        geographicalScope: geographicalvalue,
+        maturityProjects: maturityProject,
+        whenProjectStart: startvalue,
+        whenProjectComplete: completedvalue,
+        goals: textValue,
+        description: passValue,
+        document: fileInfoList,
+        mediavalue:mediavalue
+        // Add any other data fields you want to include in the post request
+      };
+      console.log("postData",postData);
+  
+      // Perform the POST request
+      const response = await  ApiCaller.Put(url, postData);
+      
+      // Handle the response as needed
+      console.log('PUT request response:', response.data);
+  
+      // Set editing state or any other logic here
+      setIsEditing(false);
+    } catch (error) {
+      // Handle errors
+      console.error('Error while making POST request:', error);
+    }
+
+
+
+
+
+
   };
 
   const handleEdit = () => {
@@ -102,6 +181,17 @@ const Requirements = () => {
     setShowFile(false);
     setIsEditing(true);
   };
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="border h-auto mx-[200px] mt-[24px] rounded-2xl shadow-md">
@@ -137,6 +227,7 @@ const Requirements = () => {
               rows={4}
               placeholder="Write something......."
               onChange={handleTextChange}
+              value={textValue}
             />
           )}
         </div>
@@ -372,6 +463,7 @@ const Requirements = () => {
               rows={4}
               placeholder="Enter Info here......."
               onChange={handlePassTextChange}
+              value={passValue}
             />
           </div>
         )}
@@ -464,6 +556,7 @@ const Requirements = () => {
                   </div>
                 </div>
               ))}
+             
           </div>
         </div>
       </div>

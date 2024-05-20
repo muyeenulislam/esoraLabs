@@ -86,6 +86,7 @@ const Clients = () => {
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
+  console.log("client data",clientData);
 
   return (
     <div>

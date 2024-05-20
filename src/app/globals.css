@@ -37,7 +37,6 @@ input[type="number"] {
 /* scrollbar */
 /* width */
 ::-webkit-scrollbar {
-  height: 6px;
   width: 6px;
   background: #e4e7ec;
   border-radius: 5px;

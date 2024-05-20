@@ -4,6 +4,9 @@ import moment from "moment";
 import YellowButton from "@/components/buttons/yellowbutton";
 
 const WebsiteOverview = ({ projectdata }) => {
+
+// console.log("projectdata",projectdata);
+
   return (
     <div className="border h-auto mx-[200px] mt-[24px] rounded-2xl shadow-md">
       <div className=" p-[24px] bg-[#0B132B] rounded-t-2xl"></div>
@@ -20,7 +23,7 @@ const WebsiteOverview = ({ projectdata }) => {
             Industry type
           </div>
           <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            Transportatione.
+            {projectdata?.project?.geographicalScope}
           </div>
         </div>
         <div className="px-[24px] pt-[24px] pb-[12px] text-[20px] font-bold">
@@ -28,7 +31,7 @@ const WebsiteOverview = ({ projectdata }) => {
             Created On
           </div>{" "}
           <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {moment(projectdata?.createdAt).format("DD/MM/YYYY")}
+            {moment(projectdata?.project?.createdAt).format("DD/MM/YYYY")}
           </div>
         </div>
       </div>
@@ -39,7 +42,7 @@ const WebsiteOverview = ({ projectdata }) => {
         </div>
         <div className=""></div>
         <div className=" text-gray-500 self-stretch text-[14px] font-sans text-base font-normal leading-5">
-          {projectdata?.description}
+          {projectdata?.project?.description}
         </div>
       </div>
       {projectdata?.assignees && projectdata?.assignees?.length > 0 && (
