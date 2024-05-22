@@ -67,9 +67,33 @@ const Team = () => {
       console.error("Error fetching activity data:", error);
     }
   };
+  const [role, setRole] = useState()
+
+  const fetchRoleData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await ApiCaller.Get(
+        `/roles`
+      );
+
+      if (response?.status === 200) {
+        setRole(response.data.roles);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        console.log(response);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+// console.log("role", role);
 
   useEffect(() => {
     fetchTeamData();
+    fetchRoleData()
   }, [search, sortFilter]);
 
   const defaultState = () => {
@@ -219,8 +243,8 @@ const Team = () => {
                 value={state?.role || undefined}
                 onChange={(e) => setState({ ...state, role: e })}
               >
-                {roleData?.map((item, index) => (
-                  <Select.Option value={item.value} key={index}>
+                {role?.map((item, index) => (
+                  <Select.Option value={item._id} key={index}>
                     {item?.title}
                   </Select.Option>
                 ))}

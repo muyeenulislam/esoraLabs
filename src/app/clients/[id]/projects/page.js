@@ -268,9 +268,9 @@ const ProjectDetails = () => {
     // Handle apply button click
     console.log("Selected Date:", selectedDate);
 
-    if (!isBefore(selectedDate, new Date())) {
+    if (projectdata.project.dueDate && isBefore(selectedDate, new Date())) {
       console.log("Selected date is after today. No need to post.");
-      message.error("Selected date is after today");
+      message.error("Selected date is before the current due date");
       return; // Exit function early
     } else {
       try {
@@ -320,10 +320,9 @@ const ProjectDetails = () => {
   const updatedAtcompleted = projectdata?.project?.completed?.updatedAt;
   const timeElapsedcompleted = calculateTimeElapsed(updatedAtcompleted);
 
-  const isUnderReview = projectdata?.project?.status === "Under Review";
 
-  const isinProgress = projectdata?.project?.status === "In Progress";
-  const isDelivered = projectdata?.project?.status === "Under Review";
+  const isinProgress = projectdata?.project?.inProgress?.status === true;
+  const isDelivered = projectdata?.project?.completed?.status === true;
 
   // in progress modal
   const [isModalOpenInProgress, setIsModalOpenInProgress] = useState(false);
@@ -339,27 +338,89 @@ const ProjectDetails = () => {
       // Perform the POST request
       const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
         // Add the data you want to send in the request body
-        inProgress:{
+        inProgress: {
           status: true,
-          updatedAt:formattedDate
-        }
-       
+          updatedAt: formattedDate,
+        },
+
         // Add any other data you need
       });
-  
+      if (response.status === 200) {
+        // Reload the page
+        window.location.reload();
+      } else {
+        // Handle other response statuses if necessary
+        console.log("Unexpected response status:", response.status);
+      }
       // Handle the response if needed
-      console.log('POST request response:', response);
-  
+      console.log("POST request response:", response);
+
       // Close the modal or perform any other actions
       setIsModalOpenInProgress(false);
     } catch (error) {
       // Handle errors
-      console.error('Error while making the POST request:', error);
+      console.error("Error while making the POST request:", error);
     }
   };
   const handleCancelInProgress = () => {
     setIsModalOpenInProgress(false);
   };
+
+// Delivered 
+const [isModalOpenCompleted, setIsModalOpenCompleted] = useState(false);
+
+const showModalCompleted = () => {
+  setIsModalOpenCompleted(true);
+};
+
+const handleOkCompleted = async () => {
+  setIsModalOpenCompleted(false);
+
+  try {
+    const currentDate = new Date();
+
+    // Format the date and time as required (in ISO 8601 format)
+    const formattedDate = currentDate.toISOString();
+    // Perform the POST request
+    const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
+      // Add the data you want to send in the request body
+      completed: {
+        status: true,
+        updatedAt: formattedDate,
+      },
+
+      // Add any other data you need
+    });
+    if (response.status === 200) {
+      // Reload the page
+      window.location.reload();
+    } else {
+      // Handle other response statuses if necessary
+      console.log("Unexpected response status:", response.status);
+    }
+
+    // Handle the response if needed
+    console.log("POST request response:", response);
+
+    // Close the modal or perform any other actions
+    setIsModalOpenInProgress(false);
+  } catch (error) {
+    // Handle errors
+    console.error("Error while making the POST request:", error);
+  }
+  // Add your logic for marking as completed here
+};
+
+const handleCancelCompleted = () => {
+  setIsModalOpenCompleted(false);
+};
+
+
+
+
+
+
+
 
   return (
     <div>
@@ -409,7 +470,7 @@ const ProjectDetails = () => {
                   <div
                     className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 ${
                       markedAsUnderReview ||
-                      projectdata?.project?.status === "Under Review"
+                      projectdata?.project?.underReview?.status === true
                         ? "bg-black text-white"
                         : "bg-white"
                     }`}
@@ -438,7 +499,6 @@ const ProjectDetails = () => {
                     />
                   </div>
                   <Modal
-                    
                     open={isModalOpenInProgress}
                     onOk={handleOkInProgress}
                     centered={true}
@@ -473,26 +533,68 @@ const ProjectDetails = () => {
 
                       <div>
                         <p className="text-[14px] font-semibold text-[#0B132B]">
-                          You’re marking this project as In Progress, so
-                          clients will be notified about this update.
+                          You’re marking this project as In Progress, so clients
+                          will be notified about this update.
                         </p>
                       </div>
                     </div>
                   </Modal>
 
                   <div
-                    className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 
-                  ${isDelivered ? "bg-green-700 text-white" : "bg-white"}
+  className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 
+  ${isDelivered ? "bg-green-700 text-white" : "bg-white"}
 `}
-                  >
-                    Mark as Delivered
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
+  onClick={showModalCompleted}
+>
+  Mark as Delivered
+  <Image
+    height={20}
+    width={20}
+    alt=""
+    src="/images/check.svg"
+  />
+</div>
+<Modal
+  open={isModalOpenCompleted}
+  onOk={handleOkCompleted}
+  centered={true}
+  onCancel={handleCancelCompleted}
+  footer={[
+    <div className="grid grid-cols-2 gap-3" key={1}>
+      <WhiteButton
+        text={"Cancel"}
+        onClick={handleCancelCompleted}
+      />
+
+      <YellowButton
+        text={"Mark as Completed"}
+        onClick={handleOkCompleted}
+      />
+    </div>,
+  ]}
+>
+  <div>
+    <div className="rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center">
+      <Image
+        height={24}
+        width={24}
+        alt=""
+        src="/images/eye.svg"
+      />
+    </div>
+
+    <h1 className="text-[20px] pb-3 mt-4 font-bold m-0">
+      Mark as Completed
+    </h1>
+
+    <div>
+      <p className="text-[14px] font-semibold text-[#0B132B]">
+        You’re marking this project as Completed, so clients
+        will be notified about this update.
+      </p>
+    </div>
+  </div>
+</Modal>
                 </div>
                 <div
                   className="flex px-4 justify-center items-center gap-3 cursor-pointer  bg-gray-100"
@@ -512,13 +614,17 @@ const ProjectDetails = () => {
                           <>
                             <div className="flex gap-3">
                               <p>
-                                {projectdata.project.underReview.status ? (
+                                {projectdata.project.underReview.status===true ? (
+                                  <>
                                   <strong>Marked as Under Review</strong>
-                                ) : null}
-                              </p>
-                              <span className="text-gray-500">
+                                  <span className="text-gray-500 ml-4">
                                 {timeElapsedunderReview}
                               </span>
+                                  
+                                  </>
+                                ) : null}
+                              </p>
+                              
                             </div>
                           </>
                         ),
@@ -529,13 +635,18 @@ const ProjectDetails = () => {
                           <>
                             <div className="flex gap-3">
                               <p>
-                                {projectdata.project.inProgress.status ? (
+                                {projectdata.project.inProgress.status===true ? (
+                                  <>
+                                  
                                   <strong>Marked as In Progress</strong>
-                                ) : null}
-                              </p>
-                              <span className="text-gray-500">
+                                  <span className="text-gray-500 ml-4">
                                 {timeElapsedinProgress}
                               </span>
+                                  </>
+                                  
+                                ) : null}
+                              </p>
+                              
                             </div>
                           </>
                         ),
@@ -546,13 +657,16 @@ const ProjectDetails = () => {
                           <>
                             <div className="flex gap-3">
                               <p>
-                                {projectdata.project.completed.status ? (
+                                {projectdata.project.completed.status===true ? (
+                                  <>
                                   <strong>Marked as Completed</strong>
-                                ) : null}
-                              </p>
-                              <span className="text-gray-500">
+                                  <span className="text-gray-500 ml-4">
                                 {timeElapsedcompleted}
                               </span>
+                                  </>
+                                ) : null}
+                              </p>
+                              
                             </div>
                           </>
                         ),
@@ -727,8 +841,8 @@ const ProjectDetails = () => {
                         needConfirm
                       />
                       {selectedDate && isBefore(selectedDate, new Date()) && (
-                        <div>overtime</div>
-                      )}
+        <div>overtime</div>
+      )}
                     </div>
                   </div>
                 </div>
@@ -752,12 +866,18 @@ const ProjectDetails = () => {
           centered
           onOk={handleAssignOk}
           width={800}
-          onCancel={() => setAssignOpen(false)}
+          onCancel={() => {
+            setAssignOpen(false);
+            window.location.reload(); // Reload the page when the modal is closed
+          }}
           footer={[
             <button
               className=" w-full rounded-md border border-gray-300 bg-white shadow-xs flex items-center justify-center gap-2 flex-1 py-2 px-4"
               key="back"
-              onClick={() => setAssignOpen(false)}
+              onClick={() => {
+                setAssignOpen(false);
+                window.location.reload(); // Reload the page when the modal is closed
+              }}
             >
               Close
             </button>,
