@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Switch } from "antd";
 import Image from "next/image";
-
-import ApiCaller from "@/config/apicaller";
 
 import Spacer from "@/components/spacer/spacer";
 import WhiteButton from "@/components/buttons/whitebutton";
@@ -12,6 +10,22 @@ import currencyList from "@/utils/mockdata/currencylist";
 
 const PricingPlanComponent = (props) => {
   const router = useRouter();
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const [status, setStatus] = useState("incative");
+
+  useEffect(() => {
+    getStatus();
+  }, []);
+
+  const getStatus = () => {
+    if (props?.item?.activeUsers?.includes(user?.userId)) {
+      setStatus("active");
+    } else {
+      setStatus("inactive");
+    }
+  };
 
   return (
     <div
@@ -26,10 +40,11 @@ const PricingPlanComponent = (props) => {
         <div className="flex justify-between items-center">
           <div className="flex gap-3 items-center">
             <Switch
-              defaultChecked={props?.item?.status === "active" ? true : false}
+              checked={status === "active" ? true : false}
+              onChange={(e) => props?.activatePlan(props?.item?._id, e)}
             />
             <p className="m-0 text-primary text-[16px] font-medium">
-              Currently {props?.item?.status}
+              Currently {status}
             </p>
           </div>
           <div className="flex gap-4">

@@ -23,8 +23,6 @@ const Services = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [servicesAdd, setServicesAdd] = useState([{ label: "", value: "" }]);
 
-  console.log(data);
-
   useEffect(() => {
     fetchServicesData();
   }, []);

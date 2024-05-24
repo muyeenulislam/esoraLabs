@@ -21,6 +21,23 @@ const PricingPlan = () => {
     getAllPlans();
   }, []);
 
+  const activatePlan = async (id, value) => {
+    try {
+      const payload = {
+        planId: id,
+        makeActive: value,
+      };
+      const response = await ApiCaller.Post(`/plan/activatePlan`, payload);
+      if (response.status === 200) {
+        getAllPlans();
+      } else {
+        console.log(response);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const getAllPlans = async () => {
     setLoading(true);
     try {
@@ -89,6 +106,7 @@ const PricingPlan = () => {
                     index={index}
                     pricingData={plans}
                     handleDelete={handleDelete}
+                    activatePlan={activatePlan}
                   />
                 ))}
               </>
