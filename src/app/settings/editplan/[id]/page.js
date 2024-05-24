@@ -5,20 +5,25 @@ import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { Radio, Modal } from "antd";
 
+import ApiCaller from "@/config/apicaller";
+
 import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
 import DefaultInput from "@/components/inputs/defaultinput";
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import CurrencyDropdownInput from "@/components/inputs/currencydropdowninput";
+import Loader from "@/components/loader";
 
-import pricingData from "@/utils/mockdata/pricingdata";
 import currencyList from "@/utils/mockdata/currencylist";
 
 const CreatePlan = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+  const id = pathname?.split("/")[3].replace(/%20/g, " ");
+
+  const [isLoading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState({
     name: "",
@@ -33,24 +38,40 @@ const CreatePlan = () => {
   });
 
   useEffect(() => {
-    const id = pathname?.split("/")[3].replace(/%20/g, " ");
-    const planData = pricingData.filter((item) => item.id === id)[0];
-    const currencySymbol = currencyList.filter(
-      (item) => item.code === planData?.currency
-    )[0];
-
-    setState({
-      name: planData.name,
-      subtitle: planData.subtitle,
-      pricingPlan: planData.paymentMethod,
-      price: planData?.pricing,
-      currency: planData?.currency,
-      currencySymbol: currencySymbol?.symbol_native,
-      subHeading: planData?.subHeading,
-      features: planData.features,
-      badge: planData?.badge,
-    });
+    getPlan();
   }, [pathname]);
+
+  const getPlan = async () => {
+    setLoading(true);
+    try {
+      const response = await ApiCaller.Get(`/plan/${id}`);
+
+      if (response.status === 200) {
+        const planData = response.data?.plan;
+        const currencySymbol = currencyList.filter(
+          (item) => item.code === planData?.pricing?.PricingCurrency
+        )[0];
+
+        setState({
+          name: planData.name,
+          subtitle: planData.subHeading,
+          pricingPlan: planData.pricing?.paymenttype,
+          price: planData?.pricing?.pricingAmount,
+          currency: planData?.pricing?.pricingCurrency,
+          currencySymbol: currencySymbol?.symbol_native,
+          subHeading: planData?.pricing?.pricingSubHeading,
+          features: planData?.whatsIncluded,
+          badge: planData?.badge,
+        });
+        setLoading(false);
+      } else {
+        console.log(response);
+        setLoading(false);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handleAddMorefeatures = () => {
     setState({
@@ -68,8 +89,32 @@ const CreatePlan = () => {
     });
   };
 
-  const handleSubmit = () => {
-    setIsOpen(true);
+  const handleSubmit = async () => {
+    try {
+      const filteredFeatures = state?.features?.filter((item) => item !== "");
+
+      const body = {
+        name: state?.name,
+        subHeading: state?.subtitle,
+        pricing: {
+          pricingType: state?.pricingPlan,
+          pricingCurrency: state?.currency,
+          pricingAmount: state?.price,
+          pricingSubHeading: state?.subHeading,
+        },
+        whatsIncluded: filteredFeatures,
+        badge: state?.badge,
+      };
+
+      const response = await ApiCaller.Post(`/plan/updatePlan/${id}`, body);
+      if (response.status === 200) {
+        setIsOpen(true);
+      } else {
+        console.log(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleMakeActive = () => {
@@ -99,174 +144,186 @@ const CreatePlan = () => {
             Edit your plan details
           </h2>
         </div>
-        {/* name */}
-        <div className="p-6 border-b border-grayBorderDashboard">
-          <h4 className="text-[16px] text-primary font-bold m-0">
-            Name of Plan
-          </h4>
-          <Spacer height="8px" />
-          <p className="text-[14px] text-subtitleText font-normal m-0">
-            Enter the name of plan in 1 or 2 words (e.g. Standard)
-          </p>
-          <Spacer height="16px" />
-          <DefaultInput
-            onChange={(e) => setState({ ...state, name: e.target.value })}
-            value={state?.name}
-          />
-        </div>
-        {/* subheading */}
-        <div className="p-6 border-b border-grayBorderDashboard">
-          <h4 className="text-[16px] text-primary font-bold m-0">
-            Sub-heading
-          </h4>
-          <Spacer height="8px" />
-          <p className="text-[14px] text-subtitleText font-normal m-0">
-            Enter a sub-heading to describe your plan in short
-          </p>
-          <Spacer height="16px" />
-          <DefaultInput
-            onChange={(e) => setState({ ...state, subtitle: e.target.value })}
-            value={state?.subtitle}
-          />
-        </div>
-        {/* pricing */}
-        <div className="p-6 border-b border-grayBorderDashboard">
-          <h4 className="text-[16px] text-primary font-bold m-0">Pricing</h4>
-          <Spacer height="8px" />
-          <p className="text-[14px] text-subtitleText font-normal m-0">
-            Select the type of your pricing and enter the value of price
-          </p>
-          <Spacer height="16px" />
-          <div className="grid grid-cols-3 items-center">
-            <div>
-              <Radio.Group
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            {/* name */}
+            <div className="p-6 border-b border-grayBorderDashboard">
+              <h4 className="text-[16px] text-primary font-bold m-0">
+                Name of Plan
+              </h4>
+              <Spacer height="8px" />
+              <p className="text-[14px] text-subtitleText font-normal m-0">
+                Enter the name of plan in 1 or 2 words (e.g. Standard)
+              </p>
+              <Spacer height="16px" />
+              <DefaultInput
+                onChange={(e) => setState({ ...state, name: e.target.value })}
+                value={state?.name}
+              />
+            </div>
+            {/* subheading */}
+            <div className="p-6 border-b border-grayBorderDashboard">
+              <h4 className="text-[16px] text-primary font-bold m-0">
+                Sub-heading
+              </h4>
+              <Spacer height="8px" />
+              <p className="text-[14px] text-subtitleText font-normal m-0">
+                Enter a sub-heading to describe your plan in short
+              </p>
+              <Spacer height="16px" />
+              <DefaultInput
                 onChange={(e) =>
-                  setState({ ...state, pricingPlan: e.target.value })
+                  setState({ ...state, subtitle: e.target.value })
                 }
-                value={state?.pricingPlan}
-              >
-                <Radio
-                  value={"yearly"}
-                  className="text-[16px] font-medium text-[#434A60]"
-                >
-                  Yearly
-                </Radio>
-                <Radio
-                  value={"monthly"}
-                  className="text-[16px] font-medium text-[#434A60]"
-                >
-                  Monthly
-                </Radio>
-              </Radio.Group>
+                value={state?.subtitle}
+              />
             </div>
-            <div className="col-span-2">
-              <CurrencyDropdownInput state={state} setState={setState} />
-            </div>
-          </div>
-          <Spacer height="24px" />
-          <h4 className="text-[16px] text-primary font-bold m-0">
-            Sub-heading
-          </h4>
-          <Spacer height="8px" />
-          <p className="text-[14px] text-subtitleText font-normal m-0">
-            Enter a sub-heading to describe your pricing in few words
-          </p>
-          <Spacer height="16px" />
-          <DefaultInput
-            onChange={(e) => setState({ ...state, subHeading: e.target.value })}
-            value={state?.subHeading}
-          />
-        </div>
-        {/* whats included */}
-        <div className="p-6 border-b border-grayBorderDashboard">
-          <h4 className="text-[16px] text-primary font-bold m-0">
-            What&apos;s Included
-          </h4>
-          <Spacer height="8px" />
-          <p className="text-[14px] text-subtitleText font-normal m-0">
-            Enter all the information as points in each field and add more
-            fields as you need
-          </p>
-          <Spacer height="16px" />
-          {state?.features?.map((item, index) => (
-            <div key={index}>
-              {index < 3 ? (
-                <DefaultInput
-                  onChange={(e) => {
-                    let newValue = [...state.features];
-                    newValue[index] = e.target.value;
-                    setState({
-                      ...state,
-                      features: newValue,
-                    });
-                  }}
-                  value={item}
-                />
-              ) : (
-                <div className="flex gap-3">
-                  <DefaultInput
-                    onChange={(e) => {
-                      let newValue = [...state.features];
-                      newValue[index] = e.target.value;
-                      setState({
-                        ...state,
-                        features: newValue,
-                      });
-                    }}
-                    value={item}
-                  />
-                  <Image
-                    onClick={() => {
-                      handleRemovefeatures(index);
-                    }}
-                    src={"/images/black-cross.svg"}
-                    height={20}
-                    width={20}
-                    alt=""
-                  />
+            {/* pricing */}
+            <div className="p-6 border-b border-grayBorderDashboard">
+              <h4 className="text-[16px] text-primary font-bold m-0">
+                Pricing
+              </h4>
+              <Spacer height="8px" />
+              <p className="text-[14px] text-subtitleText font-normal m-0">
+                Select the type of your pricing and enter the value of price
+              </p>
+              <Spacer height="16px" />
+              <div className="grid grid-cols-3 items-center">
+                <div>
+                  <Radio.Group
+                    onChange={(e) =>
+                      setState({ ...state, pricingPlan: e.target.value })
+                    }
+                    value={state?.pricingPlan}
+                  >
+                    <Radio
+                      value={"yearly"}
+                      className="text-[16px] font-medium text-[#434A60]"
+                    >
+                      Yearly
+                    </Radio>
+                    <Radio
+                      value={"monthly"}
+                      className="text-[16px] font-medium text-[#434A60]"
+                    >
+                      Monthly
+                    </Radio>
+                  </Radio.Group>
                 </div>
-              )}
-              <Spacer height="12px" />
+                <div className="col-span-2">
+                  <CurrencyDropdownInput state={state} setState={setState} />
+                </div>
+              </div>
+              <Spacer height="24px" />
+              <h4 className="text-[16px] text-primary font-bold m-0">
+                Sub-heading
+              </h4>
+              <Spacer height="8px" />
+              <p className="text-[14px] text-subtitleText font-normal m-0">
+                Enter a sub-heading to describe your pricing in few words
+              </p>
+              <Spacer height="16px" />
+              <DefaultInput
+                onChange={(e) =>
+                  setState({ ...state, subHeading: e.target.value })
+                }
+                value={state?.subHeading}
+              />
             </div>
-          ))}
-          <Spacer height="16px" />
-          <div className="flex justify-center items-center gap-2">
-            <Image
-              src="/images/plus-icon.svg"
-              height={20}
-              width={20}
-              alt=""
-              onClick={handleAddMorefeatures}
-            />
-            <p
-              className="text-[16px] text-subtitleText font-medium m-0"
-              onClick={handleAddMorefeatures}
-            >
-              Add another field
-            </p>
-          </div>
-        </div>
-        {/* badge */}
-        <div className="p-6 border-b border-grayBorderDashboard">
-          <h4 className="text-[16px] text-primary font-bold m-0">Badge</h4>
-          <Spacer height="8px" />
-          <p className="text-[14px] text-subtitleText font-normal m-0">
-            Badge can help to make different this plan from other plans
-          </p>
-          <Spacer height="16px" />
-          <DefaultInput
-            onChange={(e) => setState({ ...state, badge: e.target.value })}
-            value={state?.badge}
-          />
-        </div>
-        {/* button */}
-        <div className="p-6 flex justify-between items-center">
-          <WhiteButton
-            text="Cancel"
-            onClick={() => router.push("/settings?tab=4")}
-          />
-          <YellowButton text="Save Changes" onClick={handleSubmit} />
-        </div>
+            {/* whats included */}
+            <div className="p-6 border-b border-grayBorderDashboard">
+              <h4 className="text-[16px] text-primary font-bold m-0">
+                What&apos;s Included
+              </h4>
+              <Spacer height="8px" />
+              <p className="text-[14px] text-subtitleText font-normal m-0">
+                Enter all the information as points in each field and add more
+                fields as you need
+              </p>
+              <Spacer height="16px" />
+              {state?.features?.map((item, index) => (
+                <div key={index}>
+                  {index < 3 ? (
+                    <DefaultInput
+                      onChange={(e) => {
+                        let newValue = [...state.features];
+                        newValue[index] = e.target.value;
+                        setState({
+                          ...state,
+                          features: newValue,
+                        });
+                      }}
+                      value={item}
+                    />
+                  ) : (
+                    <div className="flex gap-3">
+                      <DefaultInput
+                        onChange={(e) => {
+                          let newValue = [...state.features];
+                          newValue[index] = e.target.value;
+                          setState({
+                            ...state,
+                            features: newValue,
+                          });
+                        }}
+                        value={item}
+                      />
+                      <Image
+                        onClick={() => {
+                          handleRemovefeatures(index);
+                        }}
+                        src={"/images/black-cross.svg"}
+                        height={20}
+                        width={20}
+                        alt=""
+                      />
+                    </div>
+                  )}
+                  <Spacer height="12px" />
+                </div>
+              ))}
+              <Spacer height="16px" />
+              <div className="flex justify-center items-center gap-2">
+                <Image
+                  src="/images/plus-icon.svg"
+                  height={20}
+                  width={20}
+                  alt=""
+                  onClick={handleAddMorefeatures}
+                />
+                <p
+                  className="text-[16px] text-subtitleText font-medium m-0"
+                  onClick={handleAddMorefeatures}
+                >
+                  Add another field
+                </p>
+              </div>
+            </div>
+            {/* badge */}
+            <div className="p-6 border-b border-grayBorderDashboard">
+              <h4 className="text-[16px] text-primary font-bold m-0">Badge</h4>
+              <Spacer height="8px" />
+              <p className="text-[14px] text-subtitleText font-normal m-0">
+                Badge can help to make different this plan from other plans
+              </p>
+              <Spacer height="16px" />
+              <DefaultInput
+                onChange={(e) => setState({ ...state, badge: e.target.value })}
+                value={state?.badge}
+              />
+            </div>
+            {/* button */}
+            <div className="p-6 flex justify-between items-center">
+              <WhiteButton
+                text="Cancel"
+                onClick={() => router.push("/settings?tab=4")}
+              />
+              <YellowButton text="Save Changes" onClick={handleSubmit} />
+            </div>
+          </>
+        )}
       </div>
       {isOpen && (
         <Modal

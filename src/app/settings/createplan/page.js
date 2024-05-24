@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Radio, Modal } from "antd";
+
+import ApiCaller from "@/config/apicaller";
 
 import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
@@ -28,6 +30,23 @@ const CreatePlan = () => {
     features: ["", "", ""],
     badge: "",
   });
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    if (
+      state?.name &&
+      state?.subtitle &&
+      state?.pricingPlan &&
+      state?.price &&
+      state?.currency &&
+      state?.currencySymbol &&
+      state?.subHeading &&
+      state?.features?.length > 0 &&
+      state?.badge
+    ) {
+      setDisabled(false);
+    }
+  }, [state]);
 
   const handleAddMorefeatures = () => {
     setState({
@@ -45,8 +64,32 @@ const CreatePlan = () => {
     });
   };
 
-  const handleSubmit = () => {
-    setIsOpen(true);
+  const handleSubmit = async () => {
+    try {
+      const filteredFeatures = state?.features?.filter((item) => item !== "");
+
+      const body = {
+        name: state?.name,
+        subHeading: state?.subtitle,
+        pricing: {
+          pricingType: state?.pricingPlan,
+          pricingCurrency: state?.currency,
+          pricingAmount: state?.price,
+          pricingSubHeading: state?.subHeading,
+        },
+        whatsIncluded: filteredFeatures,
+        badge: state?.badge,
+      };
+
+      const response = await ApiCaller.Post(`/plan`, body);
+      if (response.status === 200) {
+        setIsOpen(true);
+      } else {
+        console.log(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleMakeActive = () => {
@@ -236,7 +279,11 @@ const CreatePlan = () => {
             text="Cancel"
             onClick={() => router.push("/settings?tab=4")}
           />
-          <YellowButton text="Save Changes" onClick={handleSubmit} />
+          <YellowButton
+            text="Save Changes"
+            onClick={handleSubmit}
+            disabled={disabled}
+          />
         </div>
       </div>
       {isOpen && (

@@ -3,6 +3,8 @@ import { useRouter } from "next/navigation";
 import { Switch } from "antd";
 import Image from "next/image";
 
+import ApiCaller from "@/config/apicaller";
+
 import Spacer from "@/components/spacer/spacer";
 import WhiteButton from "@/components/buttons/whitebutton";
 
@@ -18,6 +20,7 @@ const PricingPlanComponent = (props) => {
           ? "border-b border-grayBorderDashboard"
           : ""
       }`}
+      key={props?.index}
     >
       <div className="p-6 rounded-xl shadow-pricingBox border border-grayBorderDashboard">
         <div className="flex justify-between items-center">
@@ -30,11 +33,13 @@ const PricingPlanComponent = (props) => {
             </p>
           </div>
           <div className="flex gap-4">
-            <button>Delete</button>
+            <button onClick={() => props?.handleDelete(props?.item?._id)}>
+              Delete
+            </button>
             <WhiteButton
               text="Edit"
               onClick={() =>
-                router.push(`/settings/editplan/${props?.item?.id}`)
+                router.push(`/settings/editplan/${props?.item?._id}`)
               }
             />
           </div>
@@ -55,27 +60,27 @@ const PricingPlanComponent = (props) => {
           {props?.item?.name}
         </h2>
         <p className="m-0 text-subtitleText text-[20px] font-normal opacity-80">
-          {props?.item?.subtitle}
+          {props?.item?.subHeading}
         </p>
         <Spacer height="32px" />
         <h2 className="headers text-primary text-[48px] font-bold m-0">
           {
             currencyList.filter(
-              (item) => item.code === props?.item?.currency
+              (item) => item.code === props?.item?.pricing?.pricingCurrency
             )[0]?.symbol_native
           }
-          {parseInt(props?.item?.pricing)?.toLocaleString()}/
-          {props?.item?.paymentMethod === "monthly" ? "m" : "yr"}
+          {parseInt(props?.item?.pricing?.pricingAmount)?.toLocaleString()}/
+          {props?.item?.pricing?.pricingType === "monthly" ? "m" : "yr"}
         </h2>
         <p className="m-0 text-subtitleText text-[24px] font-normal">
-          {props?.item?.subHeading}
+          {props?.item?.pricing?.pricingSubHeading}
         </p>
         <Spacer height="24px" />
         <h2 className="headers text-primary text-[18px] font-bold m-0">
           What&apos;s included:
         </h2>
         <Spacer height="16px" />
-        {props?.item?.features?.map((feature, index) => (
+        {props?.item?.whatsIncluded?.map((feature, index) => (
           <div key={index} className="flex gap-[10px] my-2 items-center">
             <div className="bg-primary h-6 w-6 rounded-full flex items-center justify-center">
               <Image

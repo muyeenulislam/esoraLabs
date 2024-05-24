@@ -1,16 +1,58 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+import ApiCaller from "@/config/apicaller";
 
 import Spacer from "@/components/spacer/spacer";
 import YellowButton from "@/components/buttons/yellowbutton";
-import pricingData from "@/utils/mockdata/pricingdata";
+import Loader from "@/components/loader";
 
 import PricingPlanComponent from "./pricingplancomponent";
 
 const PricingPlan = () => {
   const router = useRouter();
+
+  const [plans, setPlans] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    getAllPlans();
+  }, []);
+
+  const getAllPlans = async () => {
+    setLoading(true);
+    try {
+      const response = await ApiCaller.Get(`/plan`);
+
+      if (response.status === 200) {
+        setPlans(response.data?.plans);
+        setLoading(false);
+      } else {
+        console.log(response);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      console.log(id);
+
+      const response = await ApiCaller.Put(`/plan/${id}`);
+
+      if (response.status === 200) {
+        getAllPlans();
+      } else {
+        console.log(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -30,15 +72,29 @@ const PricingPlan = () => {
             onClick={() => router.push("/settings/createplan")}
           />
         </div>
-
-        {pricingData?.map((item, index) => (
-          <PricingPlanComponent
-            item={item}
-            key={item?.id}
-            index={index}
-            pricingData={pricingData}
-          />
-        ))}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            {plans?.length === 0 ? (
+              <div className="p-4 text-center font-semibold text-[16px]">
+                No Plans
+              </div>
+            ) : (
+              <>
+                {plans?.map((item, index) => (
+                  <PricingPlanComponent
+                    item={item}
+                    key={item?._id}
+                    index={index}
+                    pricingData={plans}
+                    handleDelete={handleDelete}
+                  />
+                ))}
+              </>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
