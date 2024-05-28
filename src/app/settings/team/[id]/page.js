@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import StatusIndicator from "@/components/statusindicator/statusindicator";
 import WhiteButton from "@/components/buttons/whitebutton";
@@ -12,28 +12,67 @@ import PageHeading from "@/components/pageheading/pageheading";
 import WhiteButtonTable from "@/components/buttons/whitebuttontable";
 import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 import Pagination from "@/components/pagination/pagination";
+import ApiCaller from "@/config/apicaller";
 
 const Team = () => {
   const router = useRouter();
-
+  const pathName = usePathname();
   const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState([]);
+  // console.log("pathName", pathName);
+  // Function to get the last segment of the path
+  const getLastSegment = (path) => {
+    const segments = path.split("/");
+    return segments[segments.length - 1];
+  };
+
+  // Get the ID
+  const id = getLastSegment(pathName);
+
+  // console.log("pathName", pathName);
+  // console.log("ID", id);
+
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        const response = await ApiCaller.Post("/admin/getteam", {
+          teamId: id,
+        });
+
+        // Directly use the response if it's already in JSON format
+        setData(response.data.team);
+      } catch (error) {
+        console.error("Error fetching team data:", error);
+      }
+    };
+
+    fetchTeamData();
+  }, [id]);
 
   const handleCancel = () => {
     router.push("/settings");
   };
+
+  const transformedData = data.projects?.map((item) => ({
+    name: item.project.services,
+    tags: item.project.priority,
+    Status: item.project.status,
+    Created: new Date(item.assingedOn).toLocaleDateString(),
+    Due: new Date(item.project.dueDate).toLocaleDateString(),
+    action: item,
+  }));
 
   const columns = [
     {
       title: "Project Name",
       dataIndex: "name",
     },
-
     {
       title: "Priority",
       key: "tags",
       dataIndex: "tags",
       render: (text, record) => (
-        <StatusIndicator text={"High"} className="w-max" />
+        <StatusIndicator text={text || "N/A"} className="w-max" />
       ),
     },
     {
@@ -41,7 +80,7 @@ const Team = () => {
       key: "Status",
       dataIndex: "Status",
       render: (text, record) => (
-        <StatusIndicator text={"High"} className="w-max" />
+        <StatusIndicator text={text} className="w-max" />
       ),
     },
     {
@@ -58,39 +97,44 @@ const Team = () => {
       width: 350,
       render: (text, record) => (
         <div className="flex items-center justify-end gap-3">
-          <p className="m-0 text-subtitleText text-[14px] font-medium">
+          <p className="m-0 text-subtitleText text-[14px] font-medium cursor-pointer">
             Delete
           </p>
-
           <WhiteButtonTable text="View" />
         </div>
       ),
     },
   ];
+  const handleDelete = async () => {
+    try {
+      const response = await ApiCaller.Put(`/admin/teamdelete/${id}`);
+      if (response.status === 200) {
+        router.push("/settings");
+      }
+    } catch (error) {
+      
+    }
+  };
 
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      name: `Edward King ${i}`,
-      address: `London, Park Lane no. ${i}`,
-      tags: ["High"],
-      Status: ["Under Review"],
-      Created: `01/27/2023`,
-      Due: `01/27/2023`,
-    });
-  }
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(date);
+  };
 
   return (
     <div>
       <Spacer height="32px" />
       <div className="flex items-start justify-between">
         <PageHeading
-          heading="Md Mohiuddin"
+          heading={data.name}
           subHeading="Mange your team members right from here."
         />
         <div className="flex space-x-4">
-          <button className="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-xs p-4">
+          <button className="px-4 py-2 bg-white rounded-lg border border-gray-300 shadow-xs p-4"  onClick={handleDelete}>
             <Image height={20} width={20} alt="" src="/images/trash-2.svg" />
           </button>
           <button
@@ -107,7 +151,7 @@ const Team = () => {
         <div className="p-6 bg-primary rounded-t-xl flex justify-between items-center">
           <div className="flex flex-col">
             <h2 className="headers text-white text-[20px] font-bold m-0">
-              Md Mohiuddin
+              {data.name}
             </h2>
             <p className="text-[16px] mt-4 font-normal text-[#FFFFFFCC] m-0">
               Joined at 11 January, 2023
@@ -128,7 +172,7 @@ const Team = () => {
               Role
             </div>
             <div className="overflow-hidden leading-6 truncate font-bold text-black font-sans text-xl">
-              Engineering Lead (Backend)
+              {data.role}
             </div>
           </div>
           <div className="mr-64">
@@ -136,7 +180,7 @@ const Team = () => {
               Email
             </div>
             <div className="overflow-hidden leading-6 truncate font-bold text-black font-sans text-xl">
-              mohiuddin@gmail.com
+              {data.email}
             </div>
           </div>
         </div>
@@ -162,7 +206,7 @@ const Team = () => {
           </h2>
 
           <div className="border border-gray-200 shadow-clientCard rounded-2xl">
-            <TableWithoutCheckbox columns={columns} data={data} />
+            <TableWithoutCheckbox columns={columns} data={transformedData} />
             <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
               <Pagination
                 totalPages={10}

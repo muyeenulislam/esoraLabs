@@ -120,7 +120,7 @@ const Team = () => {
   //  add team member
   const [isAddTeamMemberOpen, setIsAddTeamMemberOpen] = useState(false);
   const [formState, setFormState] = useState({
-    role: undefined,
+    role: "",
     name: "",
     designation: "",
     email: "",
@@ -143,17 +143,24 @@ const Team = () => {
   };
 
   const handleAddTeamMember = async () => {
+    console.log("formState", formState);
+    try {
+      const response = await ApiCaller.Post(`/admin/teamregister`, formState);
 
-    console.log("formState",formState);
-    // try {
-    //   const response = await ApiCaller.Post(`/projects/${companyProjectId}/team-members`, formState);
-    //   console.log("Response:", response);
-    //   setIsAddTeamMemberOpen(false);
-    // } catch (error) {
-    //   console.error("Error adding team member:", error);
-    // }
+    if (response?.status === 200) {
+      message.success("Team member added successfully");
+      // defaultState();
+      // fetchTeamData();
+      window.location.reload();
+    } else {
+      console.log(response);
+      setLoading(false);
+      message.error(response?.message);
+    }
+    } catch (error) {
+      console.error("Error adding team member:", error);
+    }
   };
-
   return (
     <div>
       <Spacer height="32px" />
@@ -268,6 +275,22 @@ const Team = () => {
                 </Select.Option>
               ))}
             </Dropdown> */}
+            <Select
+              
+              defaultValue={formState.role} // Set the default value to the selected role
+              style={{
+                width: 420,
+                height: "600px", // Increase the height as needed
+                // padding:"30px"
+              }}
+              onChange={(value) => handleInputChange("role", value)} // Handle selection change
+            >
+              {roleData.map((role) => (
+                <Select.Option key={role._id} value={role.title}>
+                  {role.title}
+                </Select.Option>
+              ))}
+            </Select>
             <Spacer height="6px" />
             <p className="text-[14px] font-semibold text-[#0B132B] m-0">Member Name</p>
             <Spacer height="6px" />

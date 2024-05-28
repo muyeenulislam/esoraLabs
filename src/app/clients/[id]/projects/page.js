@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
   DatePicker,
   Divider,
@@ -36,7 +37,6 @@ import styles from "@/app/dashboard/styles";
 const ProjectDetails = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const id = pathname?.split("/")[2];
   const projectId = searchParams.get("projectid");
   const [data, setData] = useState({});
@@ -53,8 +53,12 @@ const ProjectDetails = () => {
   const [teams, setTeams] = useState([]);
   const [showButton, setShowButton] = useState(false);
   const [companyProjectId, setCompanyProjectId] = useState("");
-  console.log("projectdata", projectdata);
-  console.log("companyProjectId", companyProjectId);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [isModalOpenInProgress, setIsModalOpenInProgress] = useState(false);
+  const [isModalOpenCompleted, setIsModalOpenCompleted] = useState(false);
+  // console.log("projectdata", projectdata);
+  // console.log("companyProjectId", companyProjectId);
 
   const breadcumbData = [
     { title: "Clients", link: "/clients", active: false },
@@ -180,10 +184,11 @@ const ProjectDetails = () => {
     }, 3000);
   };
 
-  const [selectedDate, setSelectedDate] = useState(null);
+
 
   const onChange = (date, dateString) => {
-    setSelectedDate(date);
+    console.log("data",dateString);
+    setSelectedDate(dateString);
   };
 
   const handleAssign = async (_id) => {
@@ -197,8 +202,7 @@ const ProjectDetails = () => {
     const response = await ApiCaller.Post("/admin/addtoproject", data);
     // Handle response if needed
   };
-  console.log("singleTeamxxxxxxxx", selectedItemId);
-  // console.log("singleTeam", singleTeam);
+
   const handleRemove = async (_id) => {
     setSelectedItemId((prevIds) => prevIds.filter((id) => id !== _id));
     setShowButton(false); // Assuming setShowButton exists and is used for visibility control
@@ -258,7 +262,7 @@ const ProjectDetails = () => {
     },
   ];
 
-  const [showTimeline, setShowTimeline] = useState(false);
+ 
 
   const toggleTimeline = () => {
     setShowTimeline(!showTimeline);
@@ -320,27 +324,23 @@ const ProjectDetails = () => {
   const updatedAtcompleted = projectdata?.project?.completed?.updatedAt;
   const timeElapsedcompleted = calculateTimeElapsed(updatedAtcompleted);
 
-
   const isinProgress = projectdata?.project?.inProgress?.status === true;
   const isDelivered = projectdata?.project?.completed?.status === true;
 
   // in progress modal
-  const [isModalOpenInProgress, setIsModalOpenInProgress] = useState(false);
+  
   const showModalInProgress = () => {
     setIsModalOpenInProgress(true);
   };
   const handleOkInProgress = async () => {
     try {
-      const currentDate = new Date();
-
       // Format the date and time as required (in ISO 8601 format)
-      const formattedDate = currentDate.toISOString();
       // Perform the POST request
       const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
         // Add the data you want to send in the request body
         inProgress: {
           status: true,
-          updatedAt: formattedDate,
+          updatedAt: new Date(),
         },
 
         // Add any other data you need
@@ -366,61 +366,68 @@ const ProjectDetails = () => {
     setIsModalOpenInProgress(false);
   };
 
-// Delivered 
-const [isModalOpenCompleted, setIsModalOpenCompleted] = useState(false);
+  // Delivered
+ 
 
-const showModalCompleted = () => {
-  setIsModalOpenCompleted(true);
-};
+  const showModalCompleted = () => {
+    setIsModalOpenCompleted(true);
+  };
 
-const handleOkCompleted = async () => {
-  setIsModalOpenCompleted(false);
+  const handleOkCompleted = async () => {
+    setIsModalOpenCompleted(false);
 
-  try {
-    const currentDate = new Date();
+    try {
+      const currentDate = new Date();
 
-    // Format the date and time as required (in ISO 8601 format)
-    const formattedDate = currentDate.toISOString();
-    // Perform the POST request
-    const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
-      // Add the data you want to send in the request body
-      completed: {
-        status: true,
-        updatedAt: formattedDate,
-      },
+      // Format the date and time as required (in ISO 8601 format)
+   
+      // Perform the POST request
+      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
+        // Add the data you want to send in the request body
+        completed: {
+          status: true,
+          updatedAt: new Date(),
+        },
 
-      // Add any other data you need
-    });
-    if (response.status === 200) {
-      // Reload the page
-      window.location.reload();
-    } else {
-      // Handle other response statuses if necessary
-      console.log("Unexpected response status:", response.status);
+        // Add any other data you need
+      });
+      if (response.status === 200) {
+        // Reload the page
+        window.location.reload();
+      } else {
+        // Handle other response statuses if necessary
+        console.log("Unexpected response status:", response.status);
+      }
+
+      // Handle the response if needed
+      console.log("POST request response:", response);
+
+      // Close the modal or perform any other actions
+      setIsModalOpenInProgress(false);
+    } catch (error) {
+      // Handle errors
+      console.error("Error while making the POST request:", error);
     }
+    // Add your logic for marking as completed here
+  };
 
-    // Handle the response if needed
-    console.log("POST request response:", response);
-
-    // Close the modal or perform any other actions
-    setIsModalOpenInProgress(false);
-  } catch (error) {
-    // Handle errors
-    console.error("Error while making the POST request:", error);
-  }
-  // Add your logic for marking as completed here
-};
-
-const handleCancelCompleted = () => {
-  setIsModalOpenCompleted(false);
-};
-
-
-
-
-
-
-
+  const handleCancelCompleted = () => {
+    setIsModalOpenCompleted(false);
+  };
+  
+  const handleClick = async (priority) => {
+    try {
+      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
+        priority: priority
+      });
+      if (response.status === 200) {
+        console.log('Response:', response.data);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div>
@@ -541,60 +548,60 @@ const handleCancelCompleted = () => {
                   </Modal>
 
                   <div
-  className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 
+                    className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 
   ${isDelivered ? "bg-green-700 text-white" : "bg-white"}
 `}
-  onClick={showModalCompleted}
->
-  Mark as Delivered
-  <Image
-    height={20}
-    width={20}
-    alt=""
-    src="/images/check.svg"
-  />
-</div>
-<Modal
-  open={isModalOpenCompleted}
-  onOk={handleOkCompleted}
-  centered={true}
-  onCancel={handleCancelCompleted}
-  footer={[
-    <div className="grid grid-cols-2 gap-3" key={1}>
-      <WhiteButton
-        text={"Cancel"}
-        onClick={handleCancelCompleted}
-      />
+                    onClick={showModalCompleted}
+                  >
+                    Mark as Delivered
+                    <Image
+                      height={20}
+                      width={20}
+                      alt=""
+                      src="/images/check.svg"
+                    />
+                  </div>
+                  <Modal
+                    open={isModalOpenCompleted}
+                    onOk={handleOkCompleted}
+                    centered={true}
+                    onCancel={handleCancelCompleted}
+                    footer={[
+                      <div className="grid grid-cols-2 gap-3" key={1}>
+                        <WhiteButton
+                          text={"Cancel"}
+                          onClick={handleCancelCompleted}
+                        />
 
-      <YellowButton
-        text={"Mark as Completed"}
-        onClick={handleOkCompleted}
-      />
-    </div>,
-  ]}
->
-  <div>
-    <div className="rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center">
-      <Image
-        height={24}
-        width={24}
-        alt=""
-        src="/images/eye.svg"
-      />
-    </div>
+                        <YellowButton
+                          text={"Mark as Completed"}
+                          onClick={handleOkCompleted}
+                        />
+                      </div>,
+                    ]}
+                  >
+                    <div>
+                      <div className="rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center">
+                        <Image
+                          height={24}
+                          width={24}
+                          alt=""
+                          src="/images/eye.svg"
+                        />
+                      </div>
 
-    <h1 className="text-[20px] pb-3 mt-4 font-bold m-0">
-      Mark as Completed
-    </h1>
+                      <h1 className="text-[20px] pb-3 mt-4 font-bold m-0">
+                        Mark as Completed
+                      </h1>
 
-    <div>
-      <p className="text-[14px] font-semibold text-[#0B132B]">
-        You’re marking this project as Completed, so clients
-        will be notified about this update.
-      </p>
-    </div>
-  </div>
-</Modal>
+                      <div>
+                        <p className="text-[14px] font-semibold text-[#0B132B]">
+                          You’re marking this project as Completed, so clients
+                          will be notified about this update.
+                        </p>
+                      </div>
+                    </div>
+                  </Modal>
                 </div>
                 <div
                   className="flex px-4 justify-center items-center gap-3 cursor-pointer  bg-gray-100"
@@ -614,17 +621,16 @@ const handleCancelCompleted = () => {
                           <>
                             <div className="flex gap-3">
                               <p>
-                                {projectdata.project.underReview.status===true ? (
+                                {projectdata.project.underReview.status ===
+                                true ? (
                                   <>
-                                  <strong>Marked as Under Review</strong>
-                                  <span className="text-gray-500 ml-4">
-                                {timeElapsedunderReview}
-                              </span>
-                                  
+                                    <strong>Marked as Under Review</strong>
+                                    <span className="text-gray-500 ml-4">
+                                      {timeElapsedunderReview}
+                                    </span>
                                   </>
                                 ) : null}
                               </p>
-                              
                             </div>
                           </>
                         ),
@@ -635,18 +641,16 @@ const handleCancelCompleted = () => {
                           <>
                             <div className="flex gap-3">
                               <p>
-                                {projectdata.project.inProgress.status===true ? (
+                                {projectdata.project.inProgress.status ===
+                                true ? (
                                   <>
-                                  
-                                  <strong>Marked as In Progress</strong>
-                                  <span className="text-gray-500 ml-4">
-                                {timeElapsedinProgress}
-                              </span>
+                                    <strong>Marked as In Progress</strong>
+                                    <span className="text-gray-500 ml-4">
+                                      {timeElapsedinProgress}
+                                    </span>
                                   </>
-                                  
                                 ) : null}
                               </p>
-                              
                             </div>
                           </>
                         ),
@@ -657,16 +661,16 @@ const handleCancelCompleted = () => {
                           <>
                             <div className="flex gap-3">
                               <p>
-                                {projectdata.project.completed.status===true ? (
+                                {projectdata.project.completed.status ===
+                                true ? (
                                   <>
-                                  <strong>Marked as Completed</strong>
-                                  <span className="text-gray-500 ml-4">
-                                {timeElapsedcompleted}
-                              </span>
+                                    <strong>Marked as Completed</strong>
+                                    <span className="text-gray-500 ml-4">
+                                      {timeElapsedcompleted}
+                                    </span>
                                   </>
                                 ) : null}
                               </p>
-                              
                             </div>
                           </>
                         ),
@@ -745,7 +749,7 @@ const handleCancelCompleted = () => {
                     />
                     <div className=" flex gap-4">
                       {projectdata?.project?.priority === "low" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-green-600 bg-green-700">
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 text-white rounded-full border border-green-600 bg-green-700">
                           low
                           <Image
                             height={20}
@@ -755,7 +759,10 @@ const handleCancelCompleted = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#027948] bg-[#ECFDF3] text-[#027948]">
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#027948] bg-[#ECFDF3] text-[#027948] cursor-pointer"
+                        
+                        onClick={() => handleClick('low')}
+                        >
                           Low
                           <Image
                             height={20}
@@ -766,7 +773,7 @@ const handleCancelCompleted = () => {
                         </div>
                       )}
                       {projectdata?.project?.priority === "medium" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-orange-600 bg-orange-700">
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full text-white border border-orange-600 bg-orange-700">
                           Medium
                           <Image
                             height={20}
@@ -776,7 +783,9 @@ const handleCancelCompleted = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#B54708] bg-[#FFFAEB] text-[#B54708]">
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#B54708] bg-[#FFFAEB] text-[#B54708] cursor-pointer"
+                        onClick={() => handleClick('medium')}
+                        >
                           Medium
                           <Image
                             height={20}
@@ -787,7 +796,9 @@ const handleCancelCompleted = () => {
                         </div>
                       )}
                       {projectdata?.project?.priority === "high" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-700 text-white">
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-700 text-white"
+                       
+                        >
                           High
                           <Image
                             height={20}
@@ -797,7 +808,9 @@ const handleCancelCompleted = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-200 text-red-600">
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-200 text-red-600 cursor-pointer"
+                        onClick={() => handleClick('high')}
+                        >
                           High
                           <Image
                             height={20}
@@ -835,14 +848,20 @@ const handleCancelCompleted = () => {
                             </button>
                           </div>
                         )}
-                        // onChange={onChange}
+                        onChange={onChange}
                         placeholder="Select Due Date"
                         className="w-64"
                         needConfirm
                       />
                       {selectedDate && isBefore(selectedDate, new Date()) && (
-        <div>overtime</div>
-      )}
+                        <div><Alert
+                        message="Overtime"
+                        // description="This is a warning notice about copywriting."
+                        type="warning"
+                        showIcon
+                        // closable
+                      /></div>
+                      )}
                     </div>
                   </div>
                 </div>
