@@ -527,7 +527,7 @@ const Requirements = () => {
                       className="text-primary text-[14px] font-semibold mb-2"
                       title={item?.name}
                     >
-                      {truncateString(item?.name)}
+                      {/* {truncateString(item?.name)} */}
                     </p>
 
                     <p className="text-subtitleText text-[14px] font-normal m-0">

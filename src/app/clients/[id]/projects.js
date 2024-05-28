@@ -110,14 +110,21 @@ const ProfileDetailsProjects = () => {
     },
     {
       title: "Priority",
-      key: "tags",
-      dataIndex: "tags",
+      key: "priority",
+      dataIndex: "priority",
       width: 100,
-      render: (text, record) => (
-        <>
-          <StatusIndicator text={"High"} className="w-max" />
-        </>
-      ),
+      render: (text, record) => 
+        {
+          console.log("record",record);
+return(
+  <>
+  <StatusIndicator text={record?.priority} className="w-max" />
+</>
+)
+
+        }
+       
+      ,
     },
     {
       title: "Status",
