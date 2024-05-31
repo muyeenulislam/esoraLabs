@@ -6,7 +6,11 @@ const WhiteButtonTable = (props) => {
       {props.image && props.imagealign === "left" && (
         <img src={props.image} alt="upload" className="mr-2" />
       )}
-      <span className="text-subtitleText" style={styles.fontStyle}>
+      <span
+        className="text-subtitleText"
+        style={styles.fontStyle}
+        title={props.text}
+      >
         {props.text}
       </span>
       {props.image && props.imagealign === "right" && (

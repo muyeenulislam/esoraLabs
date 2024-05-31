@@ -11,8 +11,6 @@ import PrimaryButton from "@/components/buttons/primarybutton";
 import StatusIndicator from "@/components/statusindicator/statusindicator";
 import PageHeading from "@/components/pageheading/pageheading";
 
-import { RecentProjectsData } from "@/utils/mockdata/recentprojectsdata";
-
 import ApiCaller from "@/config/apicaller";
 
 import styles from "./styles";
@@ -32,71 +30,63 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    const fetchActivityData = async () => {
-      try {
-        setActivityLoading(true);
-        const response = await ApiCaller.Get("/admin/activity");
-        if (response?.status === 200) {
-          setActivityData(response?.data?.activity);
-          setActivityLoading(false);
-        } else {
-          setActivityLoading(false);
-          console.log(response);
-        }
-      } catch (error) {
-        setActivityLoading(false);
-        console.error("Error fetching activity data:", error);
-      }
-    };
-
     fetchActivityData();
   }, []);
 
   useEffect(() => {
-    const fetchRecentProjects = async () => {
-      try {
-        setRecentProjectsLoading(true);
-        const response = await ApiCaller.Get("/projects/recent-projects");
-        if (response?.status === 200) {
-          setRecentProjectsData(response?.data?.projects);
-          setRecentProjectsLoading(false);
-        } else {
-          setRecentProjectsLoading(false);
-          console.log(response);
-        }
-      } catch (error) {
-        setRecentProjectsLoading(false);
-        console.error("Error fetching activity data:", error);
-      }
-    };
-
     fetchRecentProjects();
   }, []);
 
-  console.log(recentProjectsData);
-
   useEffect(() => {
-    const fetchOverview = async () => {
-      try {
-        const response = await ApiCaller.Get("/admin/overview");
-
-        if (response?.status === 200) {
-          setState({
-            totalClient: response?.data?.data.totalClient,
-            newClient: response?.data?.data.newClient,
-            activeProject: response?.data?.data.activeProject,
-            totalRevenue: response?.data?.data.totalRevenue,
-          });
-        } else {
-          console.log(response);
-        }
-      } catch (error) {
-        console.error("Error fetching activity data:", error);
-      }
-    };
-
     fetchOverview();
   }, []);
+
+  const fetchOverview = async () => {
+    try {
+      const response = await ApiCaller.Get("/admin/overview");
+      console.log(response);
+      if (response?.status === 200) {
+        setState({
+          totalClient: response?.data?.data.totalClient,
+          newClient: response?.data?.data.newClient,
+          activeProject: response?.data?.data.activeProject,
+          totalRevenue: response?.data?.data.totalRevenue,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  const fetchRecentProjects = async () => {
+    try {
+      setRecentProjectsLoading(true);
+      const response = await ApiCaller.Get("/projects/recent-projects");
+      console.log(response);
+      if (response?.status === 200) {
+        setRecentProjectsData(response?.data?.projects);
+      }
+      setRecentProjectsLoading(false);
+    } catch (error) {
+      setRecentProjectsLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  const fetchActivityData = async () => {
+    try {
+      setActivityLoading(true);
+      const response = await ApiCaller.Get("/admin/activity");
+      console.log(response);
+      if (response?.status === 200) {
+        setActivityData(response?.data?.activity);
+      }
+      setActivityLoading(false);
+    } catch (error) {
+      setActivityLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
 
   const boxData = [
     { text: "Total Clients", value: state?.totalClient },
@@ -151,112 +141,141 @@ const Dashboard = () => {
           </div>
           <div>
             <div className={styles.smallTitle}>Recent Projects</div>
-            {recentProjectsData?.map((item, index) => (
-              <div style={styles.recentContainer} key={index}>
-                <div style={styles.recentLeftSide}>
-                  <div className="flex flex-col gap-2">
-                    <div className={styles.recentTitle}>{item?.services}</div>
-                    <div className={styles.recentDescription}>
-                      {item?.description?.length > 200
-                        ? `${item?.description?.slice(0, 200)}...`
-                        : item?.description}
-                    </div>
-                  </div>
-                  <div className="flex mb-3">
-                    <div className="mr-4 max-w-[20%]">
-                      <div className={styles.smallHeadings}>Priority</div>
-                      <div>
-                        <StatusIndicator text={"low"} />
-                      </div>
-                    </div>
-                    <div className="mr-4 max-w-[20%]">
-                      <div className={styles.smallHeadings}>Status</div>
-                      <div>
-                        <StatusIndicator text={item?.status} />
-                      </div>
-                    </div>
-                    <div className="mr-4 max-w-[60%] ">
-                      {item?.teams?.length === 0 ? (
-                        <>
-                          <div className={styles.smallHeadings}>Assignee</div>
-                          <StatusIndicator text={"Not Assigned"} />
-                        </>
-                      ) : (
-                        <div>
-                          {item?.teams?.length === 1 ? (
-                            <div>
+            {recentProjectsLoading ? (
+              <Loader />
+            ) : (
+              <>
+                {recentProjectsData?.length === 0 ? (
+                  <>No Data</>
+                ) : (
+                  <>
+                    {recentProjectsData?.map((item, index) => (
+                      <div style={styles.recentContainer} key={index}>
+                        <div style={styles.recentLeftSide}>
+                          <div className="flex flex-col gap-2">
+                            <div className={styles.recentTitle}>
+                              {item?.services}
+                            </div>
+                            <div className={styles.recentDescription}>
+                              {item?.description?.length > 200
+                                ? `${item?.description?.slice(0, 200)}...`
+                                : item?.description}
+                            </div>
+                          </div>
+                          <div className="flex mb-3">
+                            <div className="mr-4 max-w-[20%]">
                               <div className={styles.smallHeadings}>
-                                Assignee
+                                Priority
                               </div>
                               <div>
-                                <div className={styles.assigneeName}>
-                                  {item.teams[0].name}
-                                </div>
-                                <div className={styles.assigneeDesignation}>
-                                  {item.teams[0].designation}
-                                </div>
+                                <StatusIndicator text={"low"} />
                               </div>
                             </div>
-                          ) : (
-                            <div className="flex overflow-auto overflow-y-hidden">
-                              {item?.teams?.map((item, index) => (
-                                <div key={index} className="mr-6">
-                                  <div className={styles.smallHeadings}>
-                                    Assignee {index + 1}
-                                  </div>
-                                  <div>
-                                    <div className={styles.assigneeName}>
-                                      {item.name}
-                                    </div>
-                                    <div className={styles.assigneeDesignation}>
-                                      {item.designation}
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
+                            <div className="mr-4 max-w-[20%]">
+                              <div className={styles.smallHeadings}>Status</div>
+                              <div>
+                                <StatusIndicator text={item?.status} />
+                              </div>
                             </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {item?.whenProjectComplete && (
-                    <div>
-                      <div className={styles.dueDateHeading}>Due by</div>
-                      <div className={styles.itemsCenter}>
-                        <div className={styles.dueDateValue}>
-                          {/* {moment(item.dueDate).format("DD MMMM YYYY")} */}
-                          {item?.whenProjectComplete}
-                        </div>
+                            <div className="mr-4 max-w-[60%] ">
+                              {item?.teams?.length === 0 ? (
+                                <>
+                                  <div className={styles.smallHeadings}>
+                                    Assignee
+                                  </div>
+                                  <StatusIndicator text={"Not Assigned"} />
+                                </>
+                              ) : (
+                                <div>
+                                  {item?.teams?.length === 1 ? (
+                                    <div>
+                                      <div className={styles.smallHeadings}>
+                                        Assignee
+                                      </div>
+                                      <div>
+                                        <div className={styles.assigneeName}>
+                                          {item.teams[0].name}
+                                        </div>
+                                        <div
+                                          className={styles.assigneeDesignation}
+                                        >
+                                          {item.teams[0].designation}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="flex overflow-auto overflow-y-hidden">
+                                      {item?.teams?.map((item, index) => (
+                                        <div key={index} className="mr-6">
+                                          <div className={styles.smallHeadings}>
+                                            Assignee {index + 1}
+                                          </div>
+                                          <div>
+                                            <div
+                                              className={styles.assigneeName}
+                                            >
+                                              {item.name}
+                                            </div>
+                                            <div
+                                              className={
+                                                styles.assigneeDesignation
+                                              }
+                                            >
+                                              {item.designation}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          {item?.whenProjectComplete && (
+                            <div>
+                              <div className={styles.dueDateHeading}>
+                                Due by
+                              </div>
+                              <div className={styles.itemsCenter}>
+                                <div className={styles.dueDateValue}>
+                                  {/* {moment(item.dueDate).format("DD MMMM YYYY")} */}
+                                  {item?.whenProjectComplete}
+                                </div>
 
-                        {/* {new Date(item.dueDate) < new Date() && (
+                                {/* {new Date(item.dueDate) < new Date() && (
                           <StatusIndicator
                             text={"Overdue"}
                             icon={"/images/overdue-icon.svg"}
                           />
                         )} */}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        <div style={styles.recentRightSide}>
+                          <div className={styles.recentCreatedDate}>
+                            Created on{" "}
+                            {moment(item.createdAt).format("MM/DD/YYYY")}
+                          </div>
+                          <div>
+                            <PrimaryButton
+                              text={"Start Briefing"}
+                              image={"/images/arrow-right-white.svg"}
+                              onClick={() =>
+                                router.push(
+                                  `/clients/${item?.companyId}/projects?projectid=${item?._id}`
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-                <div style={styles.recentRightSide}>
-                  <div className={styles.recentCreatedDate}>
-                    Created on {moment(item.createdAt).format("MM/DD/YYYY")}
-                  </div>
-                  <div>
-                    <PrimaryButton
-                      text={"Start Briefing"}
-                      image={"/images/arrow-right-white.svg"}
-                      onClick={() =>
-                        router.push(
-                          `/clients/${item?.companyId}/projects?projectid=${item?._id}`
-                        )
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+                    ))}
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
         <div className="col-span-1">
@@ -272,30 +291,36 @@ const Dashboard = () => {
               {activityLoading ? (
                 <Loader />
               ) : (
-                <div style={styles.activityContainer}>
-                  {activityData?.map((item, index) => (
-                    <div
-                      style={{
-                        padding: "16px",
-                        background: index % 2 === 0 ? "#F9FAFB" : "white",
-                      }}
-                      className="flex flex-col gap-2"
-                      key={index}
-                    >
-                      <div className={styles.justifyBetween}>
-                        <div className={styles.activityUpperText}>
-                          {item.title}
+                <>
+                  {activityData?.length === 0 ? (
+                    <>No data</>
+                  ) : (
+                    <div style={styles.activityContainer}>
+                      {activityData?.map((item, index) => (
+                        <div
+                          style={{
+                            padding: "16px",
+                            background: index % 2 === 0 ? "#F9FAFB" : "white",
+                          }}
+                          className="flex flex-col gap-2"
+                          key={index}
+                        >
+                          <div className={styles.justifyBetween}>
+                            <div className={styles.activityUpperText}>
+                              {item.title}
+                            </div>
+                            <div className={styles.activityDate}>
+                              {moment(item.createdAt).format("DD MMM YYYY")}
+                            </div>
+                          </div>
+                          <div className={styles.activityBottomText}>
+                            {item.description}
+                          </div>
                         </div>
-                        <div className={styles.activityDate}>
-                          {moment(item.createdAt).format("DD MMM YYYY")}
-                        </div>
-                      </div>
-                      <div className={styles.activityBottomText}>
-                        {item.description}
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
             </div>
           </div>

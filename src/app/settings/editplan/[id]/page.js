@@ -21,7 +21,7 @@ const CreatePlan = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const id = pathname?.split("/")[3].replace(/%20/g, " ");
+  const id = pathname?.split("/")[3];
 
   const [isLoading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -45,7 +45,7 @@ const CreatePlan = () => {
     setLoading(true);
     try {
       const response = await ApiCaller.Get(`/plan/${id}`);
-
+      console.log(response);
       if (response.status === 200) {
         const planData = response.data?.plan;
         const currencySymbol = currencyList.filter(
@@ -55,7 +55,7 @@ const CreatePlan = () => {
         setState({
           name: planData.name,
           subtitle: planData.subHeading,
-          pricingPlan: planData.pricing?.paymenttype,
+          pricingPlan: planData.pricing?.pricingType,
           price: planData?.pricing?.pricingAmount,
           currency: planData?.pricing?.pricingCurrency,
           currencySymbol: currencySymbol?.symbol_native,
@@ -63,12 +63,10 @@ const CreatePlan = () => {
           features: planData?.whatsIncluded,
           badge: planData?.badge,
         });
-        setLoading(false);
-      } else {
-        console.log(response);
-        setLoading(false);
       }
+      setLoading(false);
     } catch (e) {
+      setLoading(false);
       console.log(e);
     }
   };
@@ -107,18 +105,29 @@ const CreatePlan = () => {
       };
 
       const response = await ApiCaller.Post(`/plan/updatePlan/${id}`, body);
+      console.log(response);
       if (response.status === 200) {
         setIsOpen(true);
-      } else {
-        console.log(response);
       }
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleMakeActive = () => {
-    router.push("/settings?tab=4");
+  const handleMakeActive = async () => {
+    try {
+      const payload = {
+        planId: id,
+        makeActive: true,
+      };
+      const response = await ApiCaller.Post(`/plan/activatePlan`, payload);
+      console.log(response);
+      if (response.status === 200) {
+        router.push("/settings?tab=4");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (

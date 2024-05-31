@@ -13,7 +13,11 @@ const YellowButton = (props) => {
       {props.image && props.imagealign === "left" && (
         <img src={props.image} alt="upload" className="mr-2" />
       )}
-      <span className="text-primary" style={styles.fontStyle}>
+      <span
+        className="text-primary"
+        style={styles.fontStyle}
+        title={props.text}
+      >
         {props.text}
       </span>
       {props.image && props.imagealign === "right" && (

@@ -28,12 +28,12 @@ const PricingPlan = () => {
         makeActive: value,
       };
       const response = await ApiCaller.Post(`/plan/activatePlan`, payload);
+      console.log(response);
       if (response.status === 200) {
         getAllPlans();
-      } else {
-        console.log(response);
       }
     } catch (e) {
+      setLoading(false);
       console.log(e);
     }
   };
@@ -42,29 +42,24 @@ const PricingPlan = () => {
     setLoading(true);
     try {
       const response = await ApiCaller.Get(`/plan`);
-
+      console.log(response);
       if (response.status === 200) {
         setPlans(response.data?.plans);
-        setLoading(false);
-      } else {
-        console.log(response);
-        setLoading(false);
       }
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       console.log(err);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      console.log(id);
-
       const response = await ApiCaller.Put(`/plan/${id}`);
+      console.log(response);
 
       if (response.status === 200) {
         getAllPlans();
-      } else {
-        console.log(response);
       }
     } catch (err) {
       console.log(err);

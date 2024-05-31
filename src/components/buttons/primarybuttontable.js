@@ -6,7 +6,11 @@ const PrimaryButtonTable = (props) => {
       style={{ ...styles.primaryButtonTableStyle, ...props?.style }}
       {...props}
     >
-      <span className="text-white mr-2" style={styles.fontStyle}>
+      <span
+        className="text-white mr-2"
+        style={styles.fontStyle}
+        title={props.text}
+      >
         {props.text}
       </span>
       {props.image && <img src={props.image} alt="upload" />}

@@ -43,7 +43,7 @@ const Login = () => {
         message.success("Logged in successfully!");
         router.push("/dashboard");
       } else {
-        message.error(response?.data?.message);
+        console.error(response?.data?.message);
       }
     }
   };

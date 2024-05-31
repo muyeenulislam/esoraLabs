@@ -23,7 +23,6 @@ import ProfileDetailsProjects from "./projects";
 
 const ProfileDetails = () => {
   const pathname = usePathname();
-  const router = useRouter();
 
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);

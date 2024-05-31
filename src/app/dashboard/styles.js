@@ -15,8 +15,10 @@ const styles = {
   leftSideBoxes:
     "px-6 py-5 border-2 border-grayBorderDashboard rounded-2xl shadow-sm flex flex-col gap-2",
 
-  boxUpperText: "text-subtitleText text-[16px] font-normal",
-  boxLowerText: "headers text-headerText text-[32px] font-bold",
+  boxUpperText:
+    "text-subtitleText text-[16px] font-normal whitespace-nowrap overflow-hidden text-ellipsis",
+  boxLowerText:
+    "headers text-headerText text-[32px] font-bold whitespace-nowrap overflow-hidden text-ellipsis",
 
   smallTitle: "headers text-[20px] mb-6",
 

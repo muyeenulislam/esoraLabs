@@ -16,67 +16,37 @@ import { useRouter } from "next/navigation";
 const Members = (props) => {
   const route = useRouter();
 
-  const [search, setSearch] = useState("");
-
-  const [data, setData] = useState([]);
-  const [teamsCount, setTeamsCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
 
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   useEffect(() => {
-    fetchTeamData();
-  }, [search]);
+    props?.fetchTeamData();
+  }, [props?.search]);
 
   const handleView = (id) => {
     route.push(`/settings/team/${id}`);
   };
 
-  const fetchTeamData = async () => {
-    try {
-      setLoading(true);
-
-      const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=0`
-      );
-
-      if (response?.status === 200) {
-        setData(response.data.teams);
-        setTeamsCount(response.data.teamsCount);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("Error fetching activity data:", error);
-    }
-  };
-
   const handlePagination = async (pageNumber) => {
-    const offset = (pageNumber - 1) * limit;
+    const offset = (pageNumber - 1) * 10;
 
     try {
-      setLoading(true);
+      props?.setLoading(true);
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+        `/admin/getteams?name=${props?.search}&limit=10&offset=${offset}`
       );
+      console.log(response);
       if (response?.status === 200) {
-        setData(response.data.teams);
-        setTeamsCount(response.data.teamsCount);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
+        props?.setData(response.data.teams);
+        props?.setTeamsCount(response.data.teamsCount);
       }
+      props?.setLoading(false);
+
       setOffset(offset);
     } catch (error) {
-      setLoading(false);
+      props?.setLoading(false);
       console.error("Error fetching activity data:", error);
     }
   };
@@ -86,7 +56,7 @@ const Members = (props) => {
   };
 
   const handleRoleChange = async (role, team) => {
-    setLoading(true);
+    props?.setLoading(true);
     const payload = { role };
 
     const response = await ApiCaller.Post(
@@ -95,40 +65,36 @@ const Members = (props) => {
     );
     if (response.status === 200) {
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+        `/admin/getteams?name=${props?.search}&limit=10&offset=${offset}`
       );
+      console.log(response);
       if (response?.status === 200) {
-        setData(response.data.teams);
-        setTeamsCount(response.data.teamsCount);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
+        props?.setData(response.data.teams);
+        props?.setTeamsCount(response.data.teamsCount);
       }
+      props?.setLoading(false);
     } else {
-      setLoading(false);
+      props?.setLoading(false);
       console.log(response);
     }
   };
 
   const handleDeleteTeam = async (teamId) => {
-    setLoading(true);
+    props?.setLoading(true);
 
     const response = await ApiCaller.Put(`/admin/teamdelete/${teamId}`);
     if (response.status === 200) {
       const response = await ApiCaller.Get(
-        `/admin/getteams?name=${search}&limit=${limit}&offset=${offset}`
+        `/admin/getteams?name=${props?.search}&limit=10&offset=${offset}`
       );
+      console.log(response);
       if (response?.status === 200) {
-        setData(response.data.teams);
-        setTeamsCount(response.data.teamsCount);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
+        props?.setData(response.data.teams);
+        props?.setTeamsCount(response.data.teamsCount);
       }
+      props?.setLoading(false);
     } else {
-      setLoading(false);
+      props?.setLoading(false);
       console.log(response);
     }
   };
@@ -207,21 +173,24 @@ const Members = (props) => {
   return (
     <div>
       <SearchBar
-        value={search || undefined}
-        onChange={(e) => setSearch(e.target.value)}
+        value={props?.search || undefined}
+        onChange={(e) => props?.setSearch(e.target.value)}
       />
       <div className="h-[1px] bg-grayBorderDashboard my-4"></div>
       <div className="border border-gray-200 shadow-clientCard rounded-2xl">
         <TableWithoutCheckbox
           rowKey={(record) => record._id}
           columns={columns}
-          data={data}
-          loading={loading || props?.roleLoading}
+          data={props?.data}
+          loading={props?.loading || props?.roleLoading}
+          scroll={{
+            x: 500,
+          }}
         />
         <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
           <Pagination
-            totalPages={teamsCount}
-            limit={limit}
+            totalPages={props?.teamsCount}
+            limit={10}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
             onChange={handlePagination}

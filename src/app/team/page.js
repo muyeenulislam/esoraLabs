@@ -19,8 +19,6 @@ import Spacer from "@/components/spacer/spacer";
 import TeamCard from "@/components/cards/teamcard";
 import DefaultInput from "@/components/inputs/defaultinput";
 
-import roleData from "@/utils/mockdata/roledata";
-
 const breadcumbData = [{ title: "Team", link: "/team", active: true }];
 
 const Team = () => {
@@ -33,11 +31,12 @@ const Team = () => {
   const [data, setData] = useState([]);
   const [teamsCount, setTeamsCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [roleLoading, setRoleLoading] = useState(false);
 
   const [offset, setOffset] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(9);
-
+  const [role, setRole] = useState([]);
   const [state, setState] = useState({
     role: "",
     name: "",
@@ -46,6 +45,14 @@ const Team = () => {
     email: "",
   });
 
+  useEffect(() => {
+    fetchTeamData();
+  }, [search, sortFilter]);
+
+  useEffect(() => {
+    fetchRoleData();
+  }, []);
+
   const fetchTeamData = async () => {
     try {
       setLoading(true);
@@ -53,48 +60,34 @@ const Team = () => {
       const response = await ApiCaller.Get(
         `/admin/getteams?name=${search}&limit=${limit}&offset=0&sort=${sortFilter}`
       );
-
+      console.log(response);
       if (response?.status === 200) {
         setData(response.data.teams);
         setTeamsCount(response.data.teamsCount);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
       }
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.error("Error fetching activity data:", error);
     }
   };
-  const [role, setRole] = useState()
 
   const fetchRoleData = async () => {
     try {
-      setLoading(true);
+      setRoleLoading(true);
 
-      const response = await ApiCaller.Get(
-        `/roles`
-      );
+      const response = await ApiCaller.Get(`/roles`);
 
+      console.log(response);
       if (response?.status === 200) {
         setRole(response.data.roles);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
       }
+      setRoleLoading(false);
     } catch (error) {
-      setLoading(false);
+      setRoleLoading(false);
       console.error("Error fetching activity data:", error);
     }
   };
-// console.log("role", role);
-
-  useEffect(() => {
-    fetchTeamData();
-    fetchRoleData()
-  }, [search, sortFilter]);
 
   const defaultState = () => {
     setState({
@@ -105,6 +98,7 @@ const Team = () => {
       email: "",
     });
   };
+
   const handlePagination = async (pageNumber) => {
     const offset = (pageNumber - 1) * limit;
 
@@ -142,17 +136,16 @@ const Team = () => {
       role: state?.role,
       designation: state?.designation,
     };
-
     const response = await ApiCaller.Post(`/admin/teamregister`, data);
+    console.log(response);
 
     if (response?.status === 200) {
       message.success("Team member added successfully");
       defaultState();
       fetchTeamData();
     } else {
-      console.log(response);
       setLoading(false);
-      message.error(response?.message);
+      console.error(response?.message);
     }
   };
 
@@ -175,7 +168,7 @@ const Team = () => {
         </div>
       </div>
       <Spacer height="32px" />
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-5">
         <div style={{ width: "460px" }}>
           <SearchBar onChange={(e) => setSearch(e.target.value)} />
         </div>
@@ -191,29 +184,37 @@ const Team = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="grid grid-cols-3 gap-6">
-          {data?.map((item, index) => (
-            <TeamCard
-              data={item}
-              key={index}
-              onClick={() => router.push(`/team/${item._id}`)}
-            >
-              <div>Assign</div>
-              <Link href={`/team/${item._id}`}>View Details</Link>
-            </TeamCard>
-          ))}
-        </div>
+        <>
+          {data?.length === 0 ? (
+            <div className="text-center">No Data</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {data?.map((item, index) => (
+                <TeamCard
+                  data={item}
+                  key={index}
+                  onClick={() => router.push(`/team/${item._id}`)}
+                >
+                  <div>Assign</div>
+                  <Link href={`/team/${item._id}`}>View Details</Link>
+                </TeamCard>
+              ))}
+            </div>
+          )}
+        </>
       )}
       <Spacer height="32px" />
-      <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
-        <Pagination
-          totalPages={teamsCount}
-          limit={limit}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          onChange={handlePagination}
-        />
-      </div>
+      {data?.length > 0 && (
+        <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
+          <Pagination
+            totalPages={teamsCount}
+            limit={limit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onChange={handlePagination}
+          />
+        </div>
+      )}
       {isOpen && (
         <Modal
           open={isOpen}
@@ -244,7 +245,7 @@ const Team = () => {
                 onChange={(e) => setState({ ...state, role: e })}
               >
                 {role?.map((item, index) => (
-                  <Select.Option value={item._id} key={index}>
+                  <Select.Option value={item?.title} key={index}>
                     {item?.title}
                   </Select.Option>
                 ))}

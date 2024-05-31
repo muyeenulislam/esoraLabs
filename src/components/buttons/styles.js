@@ -51,6 +51,10 @@ const styles = {
   fontStyle: {
     fontSize: "16px",
     fontWeight: "500",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: "100%",
   },
 };
 export default styles;

@@ -3,7 +3,6 @@ import Image from "next/image";
 import styles from "./styles";
 
 const StatusIndicator = (props) => {
-
   let style = "";
   if (props?.text?.toLowerCase() === "high") {
     style = styles.statusHigh;
@@ -22,8 +21,26 @@ const StatusIndicator = (props) => {
   }
 
   return (
-    <div style={{ ...style, ...styles.container, ...props?.style, padding:!props?.text?"0px":" 6px 12px" }} {...props}>
-      <span>{props?.text}</span>
+    <div
+      style={{
+        ...style,
+        ...styles.container,
+        ...props?.style,
+        padding: !props?.text ? "0px" : " 6px 12px",
+      }}
+      {...props}
+    >
+      <span
+        style={{
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          maxWidth: "100%",
+        }}
+        title={props?.text}
+      >
+        {props?.text}
+      </span>
       {props?.icon && (
         <Image
           src={props?.icon}

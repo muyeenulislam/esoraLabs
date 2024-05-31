@@ -6,6 +6,8 @@ import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
+import { FaRegTrashAlt } from "react-icons/fa";
+
 import ApiCaller from "@/config/apicaller";
 
 import Loader from "@/components/loader";
@@ -14,7 +16,6 @@ import PageHeading from "@/components/pageheading/pageheading";
 import WhiteButton from "@/components/buttons/whitebutton";
 import YellowButton from "@/components/buttons/yellowbutton";
 import Spacer from "@/components/spacer/spacer";
-import { FaRegTrashAlt } from "react-icons/fa";
 
 import ProfileDetailsMessages from "./messages";
 import ProfileDetailsOverview from "./overview";

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Tabs } from "antd";
 
 import Breadcrumb from "@/components/breadcumb/breadcrumb";
@@ -15,8 +15,18 @@ import PricingPlan from "./pricingplan";
 
 const Settings = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [activeKey, setActivekey] = useState(searchParams.get("tab") ?? "1");
+  const [activeKey, setActiveKey] = useState(searchParams.get("tab") ?? "1");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") !== activeKey) {
+      params.set("tab", activeKey);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [activeKey, router]);
 
   const breadcumbData = [
     { title: "Settings", link: "/settings", active: true },
@@ -44,8 +54,9 @@ const Settings = () => {
       children: <PricingPlan />,
     },
   ];
-  const changeTab = (e) => {
-    setActivekey(e);
+
+  const changeTab = (key) => {
+    setActiveKey(key);
   };
 
   return (
@@ -55,10 +66,10 @@ const Settings = () => {
       <PageHeading heading="Settings" subHeading="Manage your settings here" />
       <Spacer height="32px" />
       <Tabs
-        defaultActiveKey={"1"}
+        defaultActiveKey="1"
         activeKey={activeKey}
-        items={items}
         onChange={changeTab}
+        items={items}
       />
     </div>
   );

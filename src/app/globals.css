@@ -38,6 +38,7 @@ input[type="number"] {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
   background: #e4e7ec;
   border-radius: 5px;
   background: transparent;
@@ -212,4 +213,23 @@ input[type="number"] {
 }
 .ant-switch .ant-switch-inner {
   background: #f2f4f7 !important;
+}
+
+/* dropdwon */
+.role-dropdown.ant-select-single {
+  height: 47px !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  border: 1px solid #d0d5dd !important;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+.role-dropdown:where(
+    .css-dev-only-do-not-override-1qhpsh8
+  ).ant-select-outlined:not(.ant-select-customize-input)
+  .ant-select-selector {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0px !important;
 }

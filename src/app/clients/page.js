@@ -30,7 +30,7 @@ const Clients = () => {
   const [clientLoading, setClientLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(9);
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
@@ -40,14 +40,13 @@ const Clients = () => {
         const response = await ApiCaller.Get(
           `/auth/company?name=${search}&limit=${limit}&offset=0&sort=${sortFilter}`
         );
+        console.log(response);
         if (response?.status === 200) {
           setClientData(response?.data?.company);
           setClientCount(response?.data?.companyCount);
           setClientLoading(false);
-        } else {
-          setClientLoading(false);
-          console.log(response);
         }
+        setClientLoading(false);
         setCurrentPage(1);
       } catch (error) {
         setClientLoading(false);
@@ -62,18 +61,15 @@ const Clients = () => {
     setOffset(offset);
     try {
       setClientLoading(true);
-
       const response = await ApiCaller.Get(
         `/auth/company?name=${search}&limit=${limit}&offset=${offset}&sort=${sortFilter}`
       );
+      console.log(response);
       if (response?.status === 200) {
         setClientData(response?.data?.company);
         setClientCount(response?.data?.companyCount);
-        setClientLoading(false);
-      } else {
-        setClientLoading(false);
-        console.log(response);
       }
+      setClientLoading(false);
     } catch (error) {
       setClientLoading(false);
       console.error("Error fetching data:", error);
@@ -86,7 +82,6 @@ const Clients = () => {
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
-  console.log("client data",clientData);
 
   return (
     <div>
@@ -117,7 +112,7 @@ const Clients = () => {
         </div>
       </div>
       <Spacer height="32px" />
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-5">
         <div style={{ width: "460px" }}>
           <SearchBar onChange={(e) => handleSearch(e)} />
         </div>
@@ -132,28 +127,36 @@ const Clients = () => {
       {clientLoading ? (
         <Loader />
       ) : (
-        <div className="grid grid-cols-3 gap-6">
-          {clientData?.map((item, index) => (
-            <ClientCard
-              data={item}
-              key={index}
-              onClick={() => router.push(`/clients/${item._id}`)}
-            >
-              <Link href={`/clients/${item._id}`}>View Details</Link>
-            </ClientCard>
-          ))}
-        </div>
+        <>
+          {clientData?.length === 0 ? (
+            <div className="text-center">No Data</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {clientData?.map((item, index) => (
+                <ClientCard
+                  data={item}
+                  key={index}
+                  onClick={() => router.push(`/clients/${item._id}`)}
+                >
+                  <Link href={`/clients/${item._id}`}>View Details</Link>
+                </ClientCard>
+              ))}
+            </div>
+          )}
+        </>
       )}
       <Spacer height="32px" />
-      <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
-        <Pagination
-          totalPages={clientCount}
-          limit={limit}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          onChange={handlePagination}
-        />
-      </div>
+      {clientData?.length > 0 && (
+        <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder">
+          <Pagination
+            totalPages={clientCount}
+            limit={limit}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onChange={handlePagination}
+          />
+        </div>
+      )}
     </div>
   );
 };

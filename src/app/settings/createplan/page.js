@@ -31,6 +31,7 @@ const CreatePlan = () => {
     badge: "",
   });
   const [disabled, setDisabled] = useState(true);
+  const [id, setId] = useState(null);
 
   useEffect(() => {
     if (
@@ -82,7 +83,9 @@ const CreatePlan = () => {
       };
 
       const response = await ApiCaller.Post(`/plan`, body);
+      console.log(response);
       if (response.status === 200) {
+        setId(response.data.createPlan._id);
         setIsOpen(true);
       } else {
         console.log(response);
@@ -92,8 +95,20 @@ const CreatePlan = () => {
     }
   };
 
-  const handleMakeActive = () => {
-    router.push("/settings?tab=4");
+  const handleMakeActive = async () => {
+    try {
+      const payload = {
+        planId: id,
+        makeActive: true,
+      };
+      const response = await ApiCaller.Post(`/plan/activatePlan`, payload);
+      console.log(response);
+      if (response.status === 200) {
+        router.push("/settings?tab=4");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (

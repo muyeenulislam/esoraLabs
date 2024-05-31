@@ -9,10 +9,9 @@ import Loader from "@/components/loader";
 const Role = (props) => {
   const handleDelete = async (item) => {
     const response = await ApiCaller.Put(`/roles/${item._id}`);
+    console.log(response);
     if (response.status === 200) {
       props.getAllRoles();
-    } else {
-      console.log(response);
     }
   };
 
@@ -22,24 +21,30 @@ const Role = (props) => {
         <Loader />
       ) : (
         <>
-          {props?.roleData?.map((item, index) => (
-            <div
-              key={index}
-              className={`px-6 py-4 flex justify-between items-center ${
-                index === roleData?.length - 1
-                  ? ""
-                  : "border-b border-grayBorderDashboard"
-              }`}
-            >
-              <p className="text-[16px] font-bold text-primary m-0">
-                {item?.title}
-              </p>
-              <WhiteButtonTable
-                text="Delete"
-                onClick={() => handleDelete(item)}
-              />
-            </div>
-          ))}
+          {props?.roleData?.length === 0 ? (
+            <div className="text-center font-semibold">No Data</div>
+          ) : (
+            <>
+              {props?.roleData?.map((item, index) => (
+                <div
+                  key={index}
+                  className={`px-6 py-4 flex justify-between items-center ${
+                    index === roleData?.length - 1
+                      ? ""
+                      : "border-b border-grayBorderDashboard"
+                  }`}
+                >
+                  <p className="text-[16px] font-bold text-primary m-0">
+                    {item?.title}
+                  </p>
+                  <WhiteButtonTable
+                    text="Delete"
+                    onClick={() => handleDelete(item)}
+                  />
+                </div>
+              ))}
+            </>
+          )}
         </>
       )}
     </div>

@@ -103,7 +103,7 @@ const Services = () => {
   return (
     <div>
       <Spacer height="32px" />
-      <div className="w-[70%] m-auto flex flex-col rounded-xl shadow-md">
+      <div className="w-[90%]  lg:w-[70%] m-auto flex flex-col rounded-xl shadow-md">
         <div className="p-6 bg-primary rounded-t-xl flex justify-between items-center">
           <div className="flex flex-col">
             <h2 className="headers text-white text-[20px] font-bold m-0">
@@ -120,33 +120,43 @@ const Services = () => {
           <Loader />
         ) : (
           <>
-            {data?.map((item) => (
-              <div
-                key={item?.title}
-                className="px-6 py-4 flex justify-between items-center border-b border-grayBorderDashboard"
-              >
-                <p className="text-[16px] font-bold text-primary m-0">
-                  {item?.title}
-                </p>
-                <Image
-                  src="./images/arrow-half-right.svg"
-                  height={24}
-                  width={24}
-                  alt=""
-                />
+            {data?.length === 0 ? (
+              <div className="p-2 text-center text-[18px] font-semibold">
+                No Data
               </div>
-            ))}
+            ) : (
+              <>
+                {data?.map((item) => (
+                  <div
+                    key={item?.title}
+                    className="px-6 py-4 flex justify-between items-center border-b border-grayBorderDashboard"
+                  >
+                    <p className="text-[16px] font-bold text-primary m-0">
+                      {item?.title}
+                    </p>
+                    <Image
+                      src="./images/arrow-half-right.svg"
+                      height={24}
+                      width={24}
+                      alt=""
+                    />
+                  </div>
+                ))}
+              </>
+            )}
           </>
         )}
-        <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
-          <Pagination
-            totalPages={servicesCount}
-            currentPage={currentPage}
-            limit={limit}
-            setCurrentPage={setCurrentPage}
-            onChange={handlePagination}
-          />
-        </div>
+        {data?.length > 0 && (
+          <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
+            <Pagination
+              totalPages={servicesCount}
+              currentPage={currentPage}
+              limit={limit}
+              setCurrentPage={setCurrentPage}
+              onChange={handlePagination}
+            />
+          </div>
+        )}
       </div>
       {isOpen && (
         <Modal

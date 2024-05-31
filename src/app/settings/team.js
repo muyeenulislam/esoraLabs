@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Tabs, Modal, Dropdown, Select } from "antd";
+import { Tabs, Modal, Select, message } from "antd";
 
 import ApiCaller from "@/config/apicaller";
 
@@ -11,17 +11,47 @@ import WhiteButton from "@/components/buttons/whitebutton";
 import DefaultInput from "@/components/inputs/defaultinput";
 import YellowButton from "@/components/buttons/yellowbutton";
 
-import roleDatas from "@/utils/mockdata/roledata";
 import Members from "./members";
 import Role from "./role";
 
 const Team = () => {
   const [activeKey, setActivekey] = useState("1");
+
+  const [roleData, setRoleData] = useState([]);
+
   const [isOpen, setIsOpen] = useState(false);
   const [roles, setRoles] = useState([{ label: "", value: "" }]);
-  const [roleData, setRoleData] = useState([]);
   const [roleLoading, setRoleLoading] = useState(false);
+
+  const [search, setSearch] = useState("");
+  const [data, setData] = useState([]);
+  const [teamsCount, setTeamsCount] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  const [isAddTeamMemberOpen, setIsAddTeamMemberOpen] = useState(false);
+  const [state, setState] = useState({
+    role: "",
+    name: "",
+    phoneNumber: "",
+    designation: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    getAllRoles();
+    fetchTeamData();
+  }, []);
+
+  const defaultState = () => {
+    setState({
+      role: "",
+      name: "",
+      phoneNumber: "",
+      designation: "",
+      email: "",
+    });
+  };
+
   const changeTab = (e) => {
     setActivekey(e);
   };
@@ -29,34 +59,6 @@ const Team = () => {
   const handleAddMoreRoles = () => {
     setRoles([...roles, { label: "", value: "" }]);
   };
-
-  const [role, setRole] = useState()
-
-  const fetchRoleData = async () => {
-    try {
-      setLoading(true);
-
-      const response = await ApiCaller.Get(
-        `/roles`
-      );
-
-      if (response?.status === 200) {
-        setRole(response.data.roles);
-        setLoading(false);
-      } else {
-        setLoading(false);
-        console.log(response);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.error("Error fetching activity data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRoleData()
-    getAllRoles();
-  }, []);
 
   const getAllRoles = async () => {
     try {
@@ -81,20 +83,60 @@ const Team = () => {
       const payload = { roles: filteredRoles };
 
       const response = await ApiCaller.Post(`/roles`, payload);
-
+      console.log(response);
       if (response?.status === 200) {
         setTimeout(() => {
           getAllRoles();
         }, 2000);
-      } else {
-        setRoleLoading(false);
-        console.log(response);
       }
+      setRoleLoading(false);
       setIsOpen(false);
       setRoles([{ label: "", value: "" }]);
     } catch (error) {
-      setLoading(false);
       console.error("Error adding role data:", error);
+    }
+  };
+
+  const fetchTeamData = async () => {
+    try {
+      setLoading(true);
+
+      const response = await ApiCaller.Get(
+        `/admin/getteams?name=${search}&limit=10&offset=0`
+      );
+
+      console.log(response);
+      if (response?.status === 200) {
+        setData(response.data.teams);
+        setTeamsCount(response.data.teamsCount);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching team data:", error);
+    }
+  };
+
+  const handleAddTeamMember = async () => {
+    try {
+      setIsAddTeamMemberOpen(false);
+      const data = {
+        name: state?.name,
+        email: state?.email,
+        phoneNumber: state?.phoneNumber,
+        role: state?.role,
+        designation: state?.designation,
+      };
+      const response = await ApiCaller.Post(`/admin/teamregister`, data);
+      console.log(response);
+
+      if (response?.status === 200) {
+        message.success("Team member added successfully");
+        defaultState();
+        fetchTeamData();
+      }
+    } catch (error) {
+      console.error("Error adding team member:", error);
     }
   };
 
@@ -102,7 +144,21 @@ const Team = () => {
     {
       key: "1",
       label: "Members",
-      children: <Members roleData={roleData} roleLoading={roleLoading} />,
+      children: (
+        <Members
+          roleData={roleData}
+          roleLoading={roleLoading}
+          fetchTeamData={fetchTeamData}
+          data={data}
+          setData={setData}
+          teamsCount={teamsCount}
+          setTeamsCount={setTeamsCount}
+          loading={loading}
+          setLoading={setLoading}
+          search={search}
+          setSearch={setSearch}
+        />
+      ),
     },
     {
       key: "2",
@@ -117,55 +173,11 @@ const Team = () => {
     },
   ];
 
-  //  add team member
-  const [isAddTeamMemberOpen, setIsAddTeamMemberOpen] = useState(false);
-  const [formState, setFormState] = useState({
-    role: "",
-    name: "",
-    designation: "",
-    email: "",
-    phoneNumber: "",
-  });
-
-  const showAddTeamMemberModal = () => {
-    setIsAddTeamMemberOpen(true);
-  };
-
-  const handleAddTeamMemberCancel = () => {
-    setIsAddTeamMemberOpen(false);
-  };
-
-  const handleInputChange = (field, value) => {
-    setFormState({
-      ...formState,
-      [field]: value,
-    });
-  };
-
-  const handleAddTeamMember = async () => {
-    console.log("formState", formState);
-    try {
-      const response = await ApiCaller.Post(`/admin/teamregister`, formState);
-
-    if (response?.status === 200) {
-      message.success("Team member added successfully");
-      // defaultState();
-      // fetchTeamData();
-      window.location.reload();
-    } else {
-      console.log(response);
-      setLoading(false);
-      message.error(response?.message);
-    }
-    } catch (error) {
-      console.error("Error adding team member:", error);
-    }
-  };
   return (
     <div>
       <Spacer height="32px" />
       <div className="w-[70%] m-auto flex flex-col rounded-xl shadow-md">
-        <div className="p-6 bg-primary rounded-t-xl flex justify-between items-center">
+        <div className="p-6 bg-primary rounded-t-xl flex justify-between gap-2 flex-wrap items-center">
           <div className="flex flex-col">
             <h2 className="headers text-white text-[20px] font-bold m-0">
               Team
@@ -178,7 +190,7 @@ const Team = () => {
             <WhiteButton text="Add Role" onClick={() => setIsOpen(true)} />
             <YellowButton
               text="Add Team Member"
-              onClick={showAddTeamMemberModal}
+              onClick={() => setIsAddTeamMemberOpen(true)}
             />
           </div>
         </div>
@@ -243,93 +255,97 @@ const Team = () => {
           </div>
         </Modal>
       )}
-      <Modal
-        open={isAddTeamMemberOpen}
-        centered={true}
-        onCancel={handleAddTeamMemberCancel}
-        closeIcon={false}
-        footer={[
-          <div className="grid grid-cols-2 gap-3" key={1}>
-            <WhiteButton text={"Cancel"} onClick={handleAddTeamMemberCancel} />
-            <YellowButton text={"Add Member"} onClick={handleAddTeamMember} />
-          </div>,
-        ]}
-        className="add-team-member"
-      >
-        <div>
-          <h1 className="headers text-headerText text-[20px] font-bold m-0">
-            Add Team Member
-          </h1>
-          <Spacer height="32px" />
+      {isAddTeamMemberOpen && (
+        <Modal
+          open={isAddTeamMemberOpen}
+          centered={true}
+          onCancel={() => setIsAddTeamMemberOpen(false)}
+          closeIcon={false}
+          footer={[
+            <div className="grid grid-cols-2 gap-3" key={1}>
+              <WhiteButton
+                text={"Cancel"}
+                onClick={() => setIsAddTeamMemberOpen(false)}
+              />
+              <YellowButton text={"Add Member"} onClick={handleAddTeamMember} />
+            </div>,
+          ]}
+          className="add-team-member"
+        >
           <div>
-            <p className="text-[14px] font-semibold text-[#0B132B] m-0">Role</p>
-            <Spacer height="6px" />
-            {/* <Dropdown
-              placeholder="Select Role"
-              // value={state?.role || undefined}
-              // onChange={(e) => setState({ ...state, role: e })}
-            >
-              {roleDatas?.map((item, index) => (
-                <Select.Option value={item.value} key={index}>
-                  {item?.title}
-                </Select.Option>
-              ))}
-            </Dropdown> */}
-            <Select
-              
-              defaultValue={formState.role} // Set the default value to the selected role
-              style={{
-                width: 420,
-                height: "600px", // Increase the height as needed
-                // padding:"30px"
-              }}
-              onChange={(value) => handleInputChange("role", value)} // Handle selection change
-            >
-              {roleData.map((role) => (
-                <Select.Option key={role._id} value={role.title}>
-                  {role.title}
-                </Select.Option>
-              ))}
-            </Select>
-            <Spacer height="6px" />
-            <p className="text-[14px] font-semibold text-[#0B132B] m-0">Member Name</p>
-            <Spacer height="6px" />
-            <DefaultInput
-              placeholder="Enter member name"
-              value={formState.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-            />
-            <Spacer height="6px" />
-            <p className="text-[14px] font-semibold text-[#0B132B] m-0">Designation</p>
-            <Spacer height="6px" />
-            <DefaultInput
-              placeholder="Enter Designation"
-              value={formState.designation}
-              onChange={(e) => handleInputChange("designation", e.target.value)}
-            />
-            <Spacer height="6px" />
-            <p className="text-[14px] font-semibold text-[#0B132B] m-0">Email</p>
-            <Spacer height="6px" />
-            <DefaultInput
-              placeholder="Enter email"
-              value={formState.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-            />
-            <Spacer height="6px" />
-            <p className="text-[14px] font-semibold text-[#0B132B] m-0">
-              Phone Number
-            </p>
-            <Spacer height="6px" />
-            <DefaultInput
-              placeholder="Enter phone number"
-              value={formState.phoneNumber}
-              onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-              type="number"
-            />
+            <h1 className="headers text-headerText text-[20px] font-bold m-0">
+              Add Team Member
+            </h1>
             <Spacer height="32px" />
+            <div>
+              <p className="text-[14px] font-semibold text-[#0B132B] m-0">
+                Role
+              </p>
+              <Spacer height="6px" />
+              <Select
+                placeholder="Select Role"
+                value={state?.role || undefined}
+                onChange={(e) => setState({ ...state, role: e })}
+                showSearch
+                style={{ width: "100%" }}
+                className="role-dropdown"
+              >
+                {roleData?.map((item, index) => (
+                  <Select.Option value={item?.title} key={index}>
+                    {item?.title}
+                  </Select.Option>
+                ))}
+              </Select>
+              <Spacer height="6px" />
+              <p className="text-[14px] font-semibold text-[#0B132B] m-0">
+                Member Name
+              </p>
+              <Spacer height="6px" />
+              <DefaultInput
+                value={state.name}
+                placeholder="Enter member name"
+                onChange={(e) => setState({ ...state, name: e.target.value })}
+              />
+              <Spacer height="6px" />
+              <p className="text-[14px] font-semibold text-[#0B132B] m-0">
+                Designation
+              </p>
+              <Spacer height="6px" />
+              <DefaultInput
+                value={state.designation}
+                placeholder="Enter Designation"
+                onChange={(e) =>
+                  setState({ ...state, designation: e.target.value })
+                }
+              />
+              <Spacer height="6px" />
+              <p className="text-[14px] font-semibold text-[#0B132B] m-0">
+                Email
+              </p>
+              <Spacer height="6px" />
+              <DefaultInput
+                value={state.email}
+                placeholder="Enter email"
+                onChange={(e) => setState({ ...state, email: e.target.value })}
+              />
+              <Spacer height="6px" />
+              <p className="text-[14px] font-semibold text-[#0B132B] m-0">
+                Phone Number
+              </p>
+              <Spacer height="6px" />
+              <DefaultInput
+                value={state.phoneNumber}
+                placeholder="Enter phone number"
+                onChange={(e) =>
+                  setState({ ...state, phoneNumber: e.target.value })
+                }
+                type="number"
+              />
+              <Spacer height="32px" />
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+      )}
     </div>
   );
 };
