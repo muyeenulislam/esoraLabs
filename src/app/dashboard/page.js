@@ -168,7 +168,9 @@ const Dashboard = () => {
                                 Priority
                               </div>
                               <div>
-                                <StatusIndicator text={"low"} />
+                                <StatusIndicator
+                                  text={item?.priority ?? "N/A"}
+                                />
                               </div>
                             </div>
                             <div className="mr-4 max-w-[20%]">
@@ -232,23 +234,23 @@ const Dashboard = () => {
                               )}
                             </div>
                           </div>
-                          {item?.whenProjectComplete && (
+
+                          {item?.dueDate && (
                             <div>
                               <div className={styles.dueDateHeading}>
                                 Due by
                               </div>
                               <div className={styles.itemsCenter}>
                                 <div className={styles.dueDateValue}>
-                                  {/* {moment(item.dueDate).format("DD MMMM YYYY")} */}
-                                  {item?.whenProjectComplete}
+                                  {moment(item.dueDate).format("DD MMMM YYYY")}
                                 </div>
 
-                                {/* {new Date(item.dueDate) < new Date() && (
-                          <StatusIndicator
-                            text={"Overdue"}
-                            icon={"/images/overdue-icon.svg"}
-                          />
-                        )} */}
+                                {new Date(item.dueDate) < new Date() && (
+                                  <StatusIndicator
+                                    text={"Overdue"}
+                                    icon={"/images/overdue-icon.svg"}
+                                  />
+                                )}
                               </div>
                             </div>
                           )}

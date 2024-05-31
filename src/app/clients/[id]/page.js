@@ -36,9 +36,9 @@ const ProfileDetails = () => {
       try {
         setLoading(true);
         const response = await ApiCaller.Get(`/auth/company/${id}`);
-        const data = response?.data?.data;
+        console.log(response);
         if (response?.status === 200) {
-          setData(data);
+          setData(response?.data?.data);
         }
         setLoading(false);
       } catch (error) {
@@ -82,6 +82,7 @@ const ProfileDetails = () => {
   const changeTab = (e) => {
     setActivekey(e);
   };
+
   const handleNextTab = () => {
     if (activeKey === "1") setActivekey("2");
     else if (activeKey === "2") setActivekey("3");
@@ -144,7 +145,7 @@ const ProfileDetails = () => {
             activeKey={activeKey}
             items={items}
             onChange={changeTab}
-          />{" "}
+          />
         </>
       )}
     </div>

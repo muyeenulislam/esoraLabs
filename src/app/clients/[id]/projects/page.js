@@ -184,10 +184,8 @@ const ProjectDetails = () => {
     }, 3000);
   };
 
-
-
   const onChange = (date, dateString) => {
-    console.log("data",dateString);
+    console.log("data", dateString);
     setSelectedDate(dateString);
   };
 
@@ -262,8 +260,6 @@ const ProjectDetails = () => {
     },
   ];
 
- 
-
   const toggleTimeline = () => {
     setShowTimeline(!showTimeline);
   };
@@ -328,7 +324,7 @@ const ProjectDetails = () => {
   const isDelivered = projectdata?.project?.completed?.status === true;
 
   // in progress modal
-  
+
   const showModalInProgress = () => {
     setIsModalOpenInProgress(true);
   };
@@ -367,7 +363,6 @@ const ProjectDetails = () => {
   };
 
   // Delivered
- 
 
   const showModalCompleted = () => {
     setIsModalOpenCompleted(true);
@@ -380,7 +375,7 @@ const ProjectDetails = () => {
       const currentDate = new Date();
 
       // Format the date and time as required (in ISO 8601 format)
-   
+
       // Perform the POST request
       const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
         // Add the data you want to send in the request body
@@ -414,18 +409,18 @@ const ProjectDetails = () => {
   const handleCancelCompleted = () => {
     setIsModalOpenCompleted(false);
   };
-  
+
   const handleClick = async (priority) => {
     try {
       const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
-        priority: priority
+        priority: priority,
       });
       if (response.status === 200) {
-        console.log('Response:', response.data);
+        console.log("Response:", response.data);
         window.location.reload();
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
@@ -451,7 +446,7 @@ const ProjectDetails = () => {
                 />
               </Link>
               <PageHeading
-                heading="Websites"
+                heading={projectdata?.project?.services}
                 subHeading="Mange your clients right from here."
               />
             </div>
@@ -759,9 +754,9 @@ const ProjectDetails = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#027948] bg-[#ECFDF3] text-[#027948] cursor-pointer"
-                        
-                        onClick={() => handleClick('low')}
+                        <div
+                          className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#027948] bg-[#ECFDF3] text-[#027948] cursor-pointer"
+                          onClick={() => handleClick("low")}
                         >
                           Low
                           <Image
@@ -783,8 +778,9 @@ const ProjectDetails = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#B54708] bg-[#FFFAEB] text-[#B54708] cursor-pointer"
-                        onClick={() => handleClick('medium')}
+                        <div
+                          className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#B54708] bg-[#FFFAEB] text-[#B54708] cursor-pointer"
+                          onClick={() => handleClick("medium")}
                         >
                           Medium
                           <Image
@@ -796,9 +792,7 @@ const ProjectDetails = () => {
                         </div>
                       )}
                       {projectdata?.project?.priority === "high" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-700 text-white"
-                       
-                        >
+                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-700 text-white">
                           High
                           <Image
                             height={20}
@@ -808,8 +802,9 @@ const ProjectDetails = () => {
                           />
                         </div>
                       ) : (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-200 text-red-600 cursor-pointer"
-                        onClick={() => handleClick('high')}
+                        <div
+                          className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-200 text-red-600 cursor-pointer"
+                          onClick={() => handleClick("high")}
                         >
                           High
                           <Image
@@ -854,13 +849,15 @@ const ProjectDetails = () => {
                         needConfirm
                       />
                       {selectedDate && isBefore(selectedDate, new Date()) && (
-                        <div><Alert
-                        message="Overtime"
-                        // description="This is a warning notice about copywriting."
-                        type="warning"
-                        showIcon
-                        // closable
-                      /></div>
+                        <div>
+                          <Alert
+                            message="Overtime"
+                            // description="This is a warning notice about copywriting."
+                            type="warning"
+                            showIcon
+                            // closable
+                          />
+                        </div>
                       )}
                     </div>
                   </div>

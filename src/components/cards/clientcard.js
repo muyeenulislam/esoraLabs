@@ -60,9 +60,9 @@ const ClientCard = (props) => {
         <div>
           <div
             className="bg-fadedYellow2 text-primary text-[16px] headers py-3 text-center bottomSection whitespace-nowrap overflow-hidden text-ellipsis"
-            title={props?.data?.project?.length ?? 0}
+            title={props?.data?.project ?? 0}
           >
-            {props?.data?.project?.length ?? 0}
+            {props?.data?.project ?? 0}
           </div>
           <div className="bg-primary text-white text-[12px] py-[6px] text-center rounded-bl-2xl">
             Projects

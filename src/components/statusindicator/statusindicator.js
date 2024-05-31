@@ -36,6 +36,7 @@ const StatusIndicator = (props) => {
           overflow: "hidden",
           textOverflow: "ellipsis",
           maxWidth: "100%",
+          textTransform: "capitalize",
         }}
         title={props?.text}
       >

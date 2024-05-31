@@ -8,7 +8,7 @@ const styles = {
   subHeader: "text-[24px] text-white font-normal text-center",
 
   formContainer:
-    "w-[40%] h-full p-[48px] pb-[0px] bg-white rounded-t-[48px] flex flex-col justify-between overflow-auto",
+    "w-[530px] h-full p-[48px] pb-[0px] bg-white rounded-t-[48px] flex flex-col justify-between overflow-auto z-[1000]",
 
   labelStyle: `text-[14px] font-medium mb-[6px] text-primary`,
 

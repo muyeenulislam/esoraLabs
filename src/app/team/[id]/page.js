@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Tabs } from "antd";
-import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -23,36 +22,76 @@ import ProfileDetailsProjects from "./projects";
 
 const ProfileDetails = () => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
-  const [activeKey, setActivekey] = useState("1");
+  const [activeKey, setActiveKey] = useState(searchParams.get("tab") ?? "1");
 
   const id = pathname?.split("/")[2];
 
   useEffect(() => {
-    const fetchTeamData = async () => {
-      try {
-        setLoading(true);
-        const payload = {
-          teamId: id,
-        };
-        const response = await ApiCaller.Post(`/admin/getteam`, payload);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") !== activeKey) {
+      params.set("tab", activeKey);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [activeKey, router]);
 
-        if (response?.status === 200) {
-          setData(response.data.team);
-          setLoading(false);
-        } else {
-          setLoading(false);
-          console.log(response);
-        }
-      } catch (error) {
-        setLoading(false);
-        console.error("Error fetching activity data:", error);
-      }
-    };
+  useEffect(() => {
     fetchTeamData();
   }, []);
+
+  const fetchTeamData = async () => {
+    try {
+      setLoading(true);
+      const payload = {
+        teamId: id,
+      };
+      const response = await ApiCaller.Post(`/admin/getteam`, payload);
+      console.log(response);
+
+      if (response?.status === 200) {
+        setData(response.data.team);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching activity data:", error);
+    }
+  };
+
+  const handleRemove = async (projectId) => {
+    try {
+      const data = {
+        teamId: id,
+        projectId: projectId,
+      };
+      const response = await ApiCaller.Put("/admin/removetoproject", data);
+      console.log(response);
+      if (response?.status === 200) {
+        fetchTeamData();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const changeTab = (e) => {
+    setActiveKey(e);
+  };
+  const handleNextTab = () => {
+    if (activeKey === "1") setActiveKey("2");
+    else if (activeKey === "2") setActiveKey("3");
+    else return;
+  };
+
+  const handlePrevTab = () => {
+    if (activeKey === "3") setActiveKey("2");
+    else if (activeKey === "2") setActiveKey("1");
+    else return;
+  };
 
   const breadcumbData = [
     { title: "Team", link: "/team", active: false },
@@ -68,7 +107,9 @@ const ProfileDetails = () => {
     {
       key: "2",
       label: "Assigned Projects",
-      children: <ProfileDetailsProjects data={data} />,
+      children: (
+        <ProfileDetailsProjects data={data} handleRemove={handleRemove} />
+      ),
     },
     {
       key: "3",
@@ -83,20 +124,6 @@ const ProfileDetails = () => {
       children: <ProfileDetailsMessages data={data} />,
     },
   ];
-  const changeTab = (e) => {
-    setActivekey(e);
-  };
-  const handleNextTab = () => {
-    if (activeKey === "1") setActivekey("2");
-    else if (activeKey === "2") setActivekey("3");
-    else return;
-  };
-
-  const handlePrevTab = () => {
-    if (activeKey === "3") setActivekey("2");
-    else if (activeKey === "2") setActivekey("1");
-    else return;
-  };
 
   return (
     <>

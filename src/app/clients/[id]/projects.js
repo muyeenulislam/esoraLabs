@@ -34,15 +34,12 @@ const ProfileDetailsProjects = () => {
         const response = await ApiCaller.Get(
           `/projects/company/?id=${id}&limit=${limit}&offset=${offset}`
         );
-
+        console.log(response);
         if (response?.status === 200) {
           setProject(response?.data?.projects);
           setProjectCount(response?.data?.projectsCount);
-          setIsLoading(false);
-        } else {
-          message.error(response?.data?.message);
-          setIsLoading(false);
         }
+        setIsLoading(false);
       } catch (e) {
         console.log(e);
         setIsLoading(false);
@@ -52,24 +49,20 @@ const ProfileDetailsProjects = () => {
     fetchData();
   }, [id]);
 
-  console.log(project);
-
   const handlePagination = async (pageNumber) => {
     const offset = (pageNumber - 1) * limit;
 
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const response = await ApiCaller.Get(
         `/projects/company/?id=${id}&limit=${limit}&offset=${offset}`
       );
+      console.log(response);
       if (response?.status === 200) {
         setProject(response?.data?.projects);
         setProjectCount(response?.data?.projectsCount);
-        setIsLoading(false);
-      } else {
-        setIsLoading(false);
-        console.log(response);
       }
+      setIsLoading(false);
       setOffset(offset);
     } catch (error) {
       setIsLoading(false);
@@ -113,18 +106,9 @@ const ProfileDetailsProjects = () => {
       key: "priority",
       dataIndex: "priority",
       width: 100,
-      render: (text, record) => 
-        {
-          console.log("record",record);
-return(
-  <>
-  <StatusIndicator text={record?.priority} className="w-max" />
-</>
-)
-
-        }
-       
-      ,
+      render: (text, record) => (
+        <StatusIndicator text={record?.priority} className="w-max" />
+      ),
     },
     {
       title: "Status",
@@ -132,9 +116,7 @@ return(
       dataIndex: "Status",
       width: 100,
       render: (text, record) => (
-        <>
-          <StatusIndicator text={record?.status} className="w-max" />
-        </>
+        <StatusIndicator text={record?.status} className="w-max" />
       ),
     },
     {
@@ -174,16 +156,21 @@ return(
         columns={columns}
         data={project}
         loading={isLoading}
+        scroll={{
+          x: 700,
+        }}
       />
-      <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
-        <Pagination
-          limit={limit}
-          totalPages={projectCount}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          onChange={handlePagination}
-        />
-      </div>
+      {project?.length > 0 && (
+        <div className="pt-[11px] pb-4 px-6 flex items-center justify-between border-t border-t-grayBorder radius-b-l-2">
+          <Pagination
+            limit={limit}
+            totalPages={projectCount}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            onChange={handlePagination}
+          />
+        </div>
+      )}
     </div>
   );
 };
