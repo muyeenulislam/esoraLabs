@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import moment from "moment";
+import dayjs from "dayjs";
 import {
-  Alert,
   DatePicker,
   Divider,
   Input,
@@ -15,9 +15,9 @@ import {
   Timeline,
   message,
 } from "antd";
-import { isBefore } from "date-fns";
 
 import { FaAngleDown, FaSearch } from "react-icons/fa";
+import { CiCircleCheck } from "react-icons/ci";
 
 import ApiCaller from "@/config/apicaller";
 
@@ -36,6 +36,9 @@ import ProfileDetailsProjects from "../projects";
 import WebsiteOverview from "./websiteoverview";
 import Requirements from "./requirements";
 
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
 const ProjectDetails = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -43,8 +46,9 @@ const ProjectDetails = () => {
   const id = pathname?.split("/")[2];
   const projectId = searchParams.get("projectid");
 
-  const [data, setData] = useState({});
+  const [companyData, setCompanyData] = useState({});
   const [isLoading, setLoading] = useState(false);
+  const [isTeamLoading, setTeamLoading] = useState(false);
   const [projectdata, setProjectData] = useState({});
   const [isProjectLoading, setProjectLoading] = useState(false);
   const [activeKey, setActivekey] = useState("1");
@@ -62,90 +66,81 @@ const ProjectDetails = () => {
 
   const [status, setStatus] = useState({ title: "", value: "" });
 
+  const timeElapsedunderReview = moment(
+    projectdata?.underReview?.updatedAt
+  )?.fromNow();
+  const timeElapsedinProgress = moment(
+    projectdata?.inProgress?.updatedAt
+  )?.fromNow();
+  const timeElapsedcompleted = moment(
+    projectdata?.completed?.updatedAt
+  )?.fromNow();
+
+  const isUnderReview = projectdata?.underReview?.status === true;
+  const isinProgress = projectdata?.inProgress?.status === true;
+  const isDelivered = projectdata?.completed?.status === true;
+
   const breadcumbData = [
     { title: "Clients", link: "/clients", active: false },
-    { title: `${data?.name}`, link: `/clients/${data?._id}`, active: false },
-    { title: "Project", link: `/clients/${data?._id}?tab=2`, active: false },
+    {
+      title: `${companyData?.name}`,
+      link: `/clients/${companyData?._id}`,
+      active: false,
+    },
+    {
+      title: "Project",
+      link: `/clients/${companyData?._id}?tab=2`,
+      active: false,
+    },
     { title: projectdata?.services, link: "#", active: true },
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await ApiCaller.Get(`/admin/getteams`);
-        const data = response?.data?.teams;
-        setTeam(data);
-        if (response?.status === 200) {
-        }
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
+    fetchTeamData();
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await ApiCaller.Get(`/auth/company/${id}`);
-        const data = response?.data?.data;
-        if (response?.status === 200) {
-          setData(data);
-        }
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
+    fetchCompanyData();
   }, [id]);
 
   useEffect(() => {
     fetchProjectData();
   }, [projectId, selectedItemId]);
 
-  const items = [
-    {
-      key: "1",
-      label: "Overview",
-      children: <WebsiteOverview projectdata={projectdata} />,
-    },
-    {
-      key: "2",
-      label: "Requirements",
-      children: <Requirements data={data} />,
-    },
-    {
-      key: "3",
-      label: "Files",
-      children: <ProfileDetailsProjects data={data} />,
-    },
-    {
-      key: "4",
-      label: (
-        <div>
-          Messages{" "}
-          <span className="bg-fadedYellow px-2 rounded-xl text-[12px] font-medium">
-            2
-          </span>
-        </div>
-      ),
-      children: <ProfileDetailsMessages data={data} />,
-    },
-  ];
+  const fetchCompanyData = async () => {
+    try {
+      setLoading(true);
+      const response = await ApiCaller.Get(`/auth/company/${id}`);
+      if (response?.status === 200) {
+        setCompanyData(response?.data?.data);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchTeamData = async () => {
+    try {
+      setTeamLoading(true);
+      const response = await ApiCaller.Get(`/admin/getteams`);
+      console.log("team data", response);
+      if (response?.status === 200) {
+        setTeam(response?.data?.teams);
+      }
+      setTeamLoading(false);
+    } catch (error) {
+      setTeamLoading(false);
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const fetchProjectData = async () => {
     try {
       setProjectLoading(true);
       const response = await ApiCaller.Get(`/projects/${projectId}`);
-      console.log(response);
+      console.log("project data", response);
       if (response?.status === 200) {
         setProjectData(response?.data?.data?.project);
         setCompanyProjectId(response?.data?.data?.project._id);
@@ -161,6 +156,7 @@ const ProjectDetails = () => {
   const changeTab = (e) => {
     setActivekey(e);
   };
+
   const handleNextTab = () => {
     if (activeKey === "1") setActivekey("2");
     else if (activeKey === "2") setActivekey("3");
@@ -173,14 +169,6 @@ const ProjectDetails = () => {
     else return;
   };
 
-  const handleAssignOk = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setAssignOpen(false);
-    }, 3000);
-  };
-
   const handleAssign = async (_id) => {
     setSelectedItemId((prevIds) => [...prevIds, _id]);
     setShowButton(true);
@@ -190,6 +178,7 @@ const ProjectDetails = () => {
     };
     setShowRemoveButton(true);
     const response = await ApiCaller.Post("/admin/addtoproject", data);
+    console.log("handle assign", response);
     if (response.status === 200) {
       fetchProjectData();
     }
@@ -203,6 +192,7 @@ const ProjectDetails = () => {
       projectId: projectdata._id,
     };
     const response = await ApiCaller.Put("/admin/removetoproject", data);
+    console.log("handle remove", response);
     if (response.status === 200) {
       fetchProjectData();
     }
@@ -221,8 +211,8 @@ const ProjectDetails = () => {
       const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
         dueDate: selectedDate,
       });
-      console.log(response);
-      if (response.status === 2000) {
+      console.log("handle due date", response);
+      if (response.status === 200) {
         message.success("Due date updated successfully");
         fetchProjectData();
       }
@@ -230,17 +220,6 @@ const ProjectDetails = () => {
       console.error("Error posting selected date:", error);
     }
   };
-
-  const updatedAtunderReview = projectdata?.underReview?.updatedAt;
-  const timeElapsedunderReview = moment(updatedAtunderReview)?.fromNow();
-  const updatedAtinProgress = projectdata?.inProgress?.updatedAt;
-  const timeElapsedinProgress = moment(updatedAtinProgress)?.fromNow();
-  const updatedAtcompleted = projectdata?.completed?.updatedAt;
-  const timeElapsedcompleted = moment(updatedAtcompleted)?.fromNow();
-
-  const isUnderReview = projectdata?.underReview?.status === true;
-  const isinProgress = projectdata?.inProgress?.status === true;
-  const isDelivered = projectdata?.completed?.status === true;
 
   const handleProjectStatus = async (status) => {
     try {
@@ -250,18 +229,34 @@ const ProjectDetails = () => {
       const payload = {
         underReview: {
           status: true,
-          updatedAt: currentDate,
-          updatedBy: user,
+          updatedAt:
+            status === "Under Review"
+              ? currentDate
+              : projectdata?.underReview?.updatedAt,
+          updatedBy:
+            status === "Under Review"
+              ? user
+              : projectdata?.underReview?.updatedBy,
         },
         inProgress: {
           status: status !== "Under Review",
-          updatedAt: currentDate,
-          updatedBy: user,
+          updatedAt:
+            status === "In Progress"
+              ? currentDate
+              : projectdata?.inProgress?.updatedAt,
+          updatedBy:
+            status === "In Progress"
+              ? user
+              : projectdata?.inProgress?.updatedBy,
         },
         completed: {
           status: status === "Delivered",
-          updatedAt: currentDate,
-          updatedBy: user,
+          updatedAt:
+            status === "Delivered"
+              ? currentDate
+              : projectdata?.completed?.updatedAt,
+          updatedBy:
+            status === "Delivered" ? user : projectdata?.completed?.updatedBy,
         },
         status:
           status === "Under Review"
@@ -289,7 +284,7 @@ const ProjectDetails = () => {
     }
   };
 
-  const handleClick = async (priority) => {
+  const handlePriority = async (priority) => {
     try {
       const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
         priority: priority,
@@ -303,6 +298,42 @@ const ProjectDetails = () => {
       console.error("Error:", error);
     }
   };
+
+  const disabledDate = (current) => {
+    return current < dayjs().startOf("day");
+  };
+
+  const items = [
+    {
+      key: "1",
+      label: "Overview",
+      children: (
+        <WebsiteOverview projectdata={projectdata} companyData={companyData} />
+      ),
+    },
+    {
+      key: "2",
+      label: "Requirements",
+      children: <Requirements companyData={companyData} />,
+    },
+    {
+      key: "3",
+      label: "Files",
+      children: <ProfileDetailsProjects companyData={companyData} />,
+    },
+    {
+      key: "4",
+      label: (
+        <div>
+          Messages{" "}
+          <span className="bg-fadedYellow px-2 rounded-xl text-[12px] font-medium">
+            2
+          </span>
+        </div>
+      ),
+      children: <ProfileDetailsMessages data={companyData} />,
+    },
+  ];
 
   const columns = [
     {
@@ -535,111 +566,108 @@ const ProjectDetails = () => {
                   />
                 </div>
               </div>
-              <>
-                <Divider />
-                {teams.map((teamMember, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between mb-3"
-                    >
-                      <div className="flex items-center justify-center">
-                        <div className="rounded-full bg-yellow-200 flex items-center w-[48px] h-[48px] justify-center">
-                          <Image
-                            height={28}
-                            width={28}
-                            alt=""
-                            src="/images/user.svg"
-                          />
-                        </div>
-                        <div className="ml-4 flex flex-col justify-center">
-                          <h3 className="font-semibold text-lg">
-                            {teamMember?.name}
-                          </h3>
-                          <p className="text-gray-700 font-normal">
-                            {teamMember?.designation}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-center">
-                        <button
-                          className="flex items-center justify-center text-black rounded-md border bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2 me-2 mb-2"
-                          onClick={() => handleRemove(teamMember._id)}
-                        >
-                          remove
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-                <Divider />
-                <div className="flex items-center p-2">
-                  <div className="w-full flex justify-between items-center gap-2 flex-wrap">
-                    <PageHeading
-                      heading="Priority"
-                      subHeading="Set task priority"
-                    />
-                    <div className=" flex gap-4">
-                      {priorityData?.map((item, index) => (
-                        <div
-                          className={item?.styling}
-                          onClick={() =>
-                            projectdata?.priority !== item?.title &&
-                            handleClick(item?.title)
-                          }
-                          key={index}
-                        >
-                          <span className="capitalize">{item?.title}</span>
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle.svg"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <Divider type="vertical" className="h-[50px]" />
-                  <div className="flex justify-between w-full items-center gap-2 flex-wrap">
-                    <div>
-                      <PageHeading heading="Due By" subHeading="Set due date" />
-                    </div>
-                    <div className="flex gap-3">
-                      <DatePicker
-                        renderExtraFooter={() => (
-                          <div className="flex justify-center items-center m-2 gap-3">
-                            <button
-                              className="rounded-md border  px-9"
-                              onClick={() => console.log("Cancelled")}
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              className="mr-4 px-10 bg-yellow-400 hover:bg-yellow-500 rounded-md"
-                              onClick={handleDueDate}
-                            >
-                              Apply
-                            </button>
-                          </div>
-                        )}
-                        onChange={(date, dateString) =>
-                          setSelectedDate(dateString)
-                        }
-                        placeholder="Select Due Date"
-                        className="w-64"
-                        needConfirm
-                      />
-                      {new Date(projectdata?.dueDate) < new Date() && (
-                        <StatusIndicator
-                          text={"Overdue"}
-                          icon={"/images/overdue-icon.svg"}
+
+              <Divider />
+              {teams.map((teamMember, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between mb-3"
+                  >
+                    <div className="flex items-center justify-center">
+                      <div className="rounded-full bg-yellow-200 flex items-center w-[48px] h-[48px] justify-center">
+                        <Image
+                          height={28}
+                          width={28}
+                          alt=""
+                          src="/images/user.svg"
                         />
-                      )}
+                      </div>
+                      <div className="ml-4 flex flex-col justify-center">
+                        <h3 className="font-semibold text-lg m-0">
+                          {teamMember?.name}
+                        </h3>
+                        <p className="text-gray-700 font-normal m-0">
+                          {teamMember?.designation}
+                        </p>
+                      </div>
                     </div>
+
+                    <button
+                      className="flex items-center justify-center text-black rounded-md border bg-white  font-medium px-5 py-2"
+                      onClick={() => handleRemove(teamMember._id)}
+                    >
+                      remove
+                    </button>
+                  </div>
+                );
+              })}
+              <Divider />
+              <div className="flex items-center p-2 gap-2">
+                <div className="w-full flex justify-between items-center gap-2 flex-wrap">
+                  <PageHeading
+                    heading="Priority"
+                    subHeading="Set task priority"
+                  />
+                  <div className=" flex gap-4">
+                    {priorityData?.map((item, index) => (
+                      <div
+                        className={item?.styling}
+                        onClick={() =>
+                          projectdata?.priority !== item?.title &&
+                          handlePriority(item?.title)
+                        }
+                        key={index}
+                      >
+                        <span className="capitalize font-semibold">
+                          {item?.title}
+                        </span>
+                        <CiCircleCheck fontSize={20} />
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </>
+                <Divider type="vertical" className="h-[50px]" />
+                <div className="flex justify-between w-full items-center gap-2 flex-wrap">
+                  <div>
+                    <PageHeading heading="Due By" subHeading="Set due date" />
+                  </div>
+                  <div className="flex gap-3">
+                    <DatePicker
+                      defaultValue={dayjs(projectdata?.dueDate, "YYYY-MM-DD")}
+                      renderExtraFooter={() => (
+                        <div className="flex justify-center items-center m-2 gap-3">
+                          <button
+                            className="rounded-md border  px-9"
+                            onClick={() => console.log("Cancelled")}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            className="mr-4 px-10 bg-yellow-400 hover:bg-yellow-500 rounded-md"
+                            onClick={handleDueDate}
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      )}
+                      onChange={(date, dateString) =>
+                        setSelectedDate(dateString)
+                      }
+                      placeholder="Select Due Date"
+                      className="w-64"
+                      allowClear={false}
+                      disabledDate={disabledDate}
+                    />
+                    {new Date(projectdata?.dueDate) < new Date() && (
+                      <StatusIndicator
+                        text={"Overdue"}
+                        icon={"/images/overdue-icon.svg"}
+                      />
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -656,7 +684,6 @@ const ProjectDetails = () => {
         <Modal
           open={isAssignOpen}
           centered
-          onOk={handleAssignOk}
           width={800}
           onCancel={() => {
             setAssignOpen(false);
@@ -689,7 +716,9 @@ const ProjectDetails = () => {
           />
           <Divider />
           <TableWithoutCheckbox
+            rowKey={(record) => record._id}
             dataSource={team}
+            loading={isTeamLoading}
             pagination={false}
             columns={columns}
             scroll={{ y: 300 }}
