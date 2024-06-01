@@ -1,9 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import moment from "moment";
 import {
   Alert,
-  Button,
   DatePicker,
   Divider,
   Input,
@@ -12,10 +15,9 @@ import {
   Timeline,
   message,
 } from "antd";
-import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { FaAngleDown, FaAngleUp, FaArrowRight, FaSearch } from "react-icons/fa";
+import { isBefore } from "date-fns";
+
+import { FaAngleDown, FaSearch } from "react-icons/fa";
 
 import ApiCaller from "@/config/apicaller";
 
@@ -26,19 +28,21 @@ import YellowButton from "@/components/buttons/yellowbutton";
 import PageHeading from "@/components/pageheading/pageheading";
 import Spacer from "@/components/spacer/spacer";
 import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
-import { isBefore } from "date-fns";
+import PrimaryButton from "@/components/buttons/primarybutton";
+import StatusIndicator from "@/components/statusindicator/statusindicator";
+
 import ProfileDetailsMessages from "../messages";
 import ProfileDetailsProjects from "../projects";
 import WebsiteOverview from "./websiteoverview";
 import Requirements from "./requirements";
-import StatusIndicator from "@/components/statusindicator/statusindicator";
-import styles from "@/app/dashboard/styles";
 
 const ProjectDetails = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
   const id = pathname?.split("/")[2];
   const projectId = searchParams.get("projectid");
+
   const [data, setData] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [projectdata, setProjectData] = useState({});
@@ -48,23 +52,21 @@ const ProjectDetails = () => {
   const [showRemoveButton, setShowRemoveButton] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState([]);
   const [isAssignOpen, setAssignOpen] = useState(false);
-  const [markedAsUnderReview, setMarkedAsUnderReview] = useState(false);
+
   const [team, setTeam] = useState([]);
   const [teams, setTeams] = useState([]);
   const [showButton, setShowButton] = useState(false);
   const [companyProjectId, setCompanyProjectId] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [showTimeline, setShowTimeline] = useState(false);
-  const [isModalOpenInProgress, setIsModalOpenInProgress] = useState(false);
-  const [isModalOpenCompleted, setIsModalOpenCompleted] = useState(false);
-  // console.log("projectdata", projectdata);
-  // console.log("companyProjectId", companyProjectId);
+
+  const [status, setStatus] = useState({ title: "", value: "" });
 
   const breadcumbData = [
     { title: "Clients", link: "/clients", active: false },
     { title: `${data?.name}`, link: `/clients/${data?._id}`, active: false },
     { title: "Project", link: `/clients/${data?._id}?tab=2`, active: false },
-    { title: projectdata?.project?.services, link: "#", active: true },
+    { title: projectdata?.services, link: "#", active: true },
   ];
 
   useEffect(() => {
@@ -106,23 +108,6 @@ const ProjectDetails = () => {
   }, [id]);
 
   useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        setProjectLoading(true);
-        const response = await ApiCaller.Get(`/projects/${projectId}`);
-        setTeams(response?.data?.data?.teams);
-        const data = response?.data?.data;
-        if (response?.status === 200) {
-          setProjectData(data);
-          setCompanyProjectId(data?.project._id);
-        }
-        setProjectLoading(false);
-      } catch (error) {
-        setProjectLoading(false);
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchProjectData();
   }, [projectId, selectedItemId]);
 
@@ -156,6 +141,23 @@ const ProjectDetails = () => {
     },
   ];
 
+  const fetchProjectData = async () => {
+    try {
+      setProjectLoading(true);
+      const response = await ApiCaller.Get(`/projects/${projectId}`);
+      console.log(response);
+      if (response?.status === 200) {
+        setProjectData(response?.data?.data?.project);
+        setCompanyProjectId(response?.data?.data?.project._id);
+        setTeams(response?.data?.data?.teams);
+      }
+      setProjectLoading(false);
+    } catch (error) {
+      setProjectLoading(false);
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const changeTab = (e) => {
     setActivekey(e);
   };
@@ -171,11 +173,6 @@ const ProjectDetails = () => {
     else return;
   };
 
-  const handleAdd = () => {
-    setOpen(false);
-    setMarkedAsUnderReview(true);
-  };
-
   const handleAssignOk = () => {
     setLoading(true);
     setTimeout(() => {
@@ -184,36 +181,127 @@ const ProjectDetails = () => {
     }, 3000);
   };
 
-  const onChange = (date, dateString) => {
-    console.log("data", dateString);
-    setSelectedDate(dateString);
-  };
-
   const handleAssign = async (_id) => {
     setSelectedItemId((prevIds) => [...prevIds, _id]);
-    setShowButton(true); // Assuming setShowButton exists and is used for visibility control
+    setShowButton(true);
     const data = {
       teamId: _id,
-      projectId: projectdata.project._id,
+      projectId: projectdata._id,
     };
-    setShowRemoveButton(true); // Assuming setShowRemoveButton exists and is used for visibility control
+    setShowRemoveButton(true);
     const response = await ApiCaller.Post("/admin/addtoproject", data);
-    // Handle response if needed
+    if (response.status === 200) {
+      fetchProjectData();
+    }
   };
 
   const handleRemove = async (_id) => {
     setSelectedItemId((prevIds) => prevIds.filter((id) => id !== _id));
-    setShowButton(false); // Assuming setShowButton exists and is used for visibility control
+    setShowButton(false);
     const data = {
       teamId: _id,
-      projectId: projectdata.project._id,
+      projectId: projectdata._id,
     };
     const response = await ApiCaller.Put("/admin/removetoproject", data);
-    // Handle response if needed
+    if (response.status === 200) {
+      fetchProjectData();
+    }
   };
 
   const isAssigned = (_id) => {
     return selectedItemId.includes(_id);
+  };
+
+  const toggleTimeline = () => {
+    setShowTimeline(!showTimeline);
+  };
+
+  const handleDueDate = async () => {
+    try {
+      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
+        dueDate: selectedDate,
+      });
+      console.log(response);
+      if (response.status === 2000) {
+        message.success("Due date updated successfully");
+        fetchProjectData();
+      }
+    } catch (error) {
+      console.error("Error posting selected date:", error);
+    }
+  };
+
+  const updatedAtunderReview = projectdata?.underReview?.updatedAt;
+  const timeElapsedunderReview = moment(updatedAtunderReview)?.fromNow();
+  const updatedAtinProgress = projectdata?.inProgress?.updatedAt;
+  const timeElapsedinProgress = moment(updatedAtinProgress)?.fromNow();
+  const updatedAtcompleted = projectdata?.completed?.updatedAt;
+  const timeElapsedcompleted = moment(updatedAtcompleted)?.fromNow();
+
+  const isUnderReview = projectdata?.underReview?.status === true;
+  const isinProgress = projectdata?.inProgress?.status === true;
+  const isDelivered = projectdata?.completed?.status === true;
+
+  const handleProjectStatus = async (status) => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"))?.name;
+      const currentDate = new Date();
+
+      const payload = {
+        underReview: {
+          status: true,
+          updatedAt: currentDate,
+          updatedBy: user,
+        },
+        inProgress: {
+          status: status !== "Under Review",
+          updatedAt: currentDate,
+          updatedBy: user,
+        },
+        completed: {
+          status: status === "Delivered",
+          updatedAt: currentDate,
+          updatedBy: user,
+        },
+        status:
+          status === "Under Review"
+            ? "Under Review"
+            : status === "In Progress"
+            ? "In Progress"
+            : status === "Delivered"
+            ? "Completed"
+            : "Under Review",
+      };
+
+      const response = await ApiCaller.Put(
+        `/projects/${companyProjectId}`,
+        payload
+      );
+      console.log(response);
+      if (response.status === 200) {
+        fetchProjectData();
+      }
+      setOpen(false);
+      setStatus({ title: "", value: "" });
+    } catch (error) {
+      setStatus({ title: "", value: "" });
+      console.error("Error while making the POST request:", error);
+    }
+  };
+
+  const handleClick = async (priority) => {
+    try {
+      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
+        priority: priority,
+      });
+      console.log(response);
+      if (response.status === 200) {
+        message.success("Project updated successfully");
+        fetchProjectData();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const columns = [
@@ -232,13 +320,13 @@ const ProjectDetails = () => {
       dataIndex: "action",
       width: 350,
       render: (text, record) => {
-        const isMatch = teams.find((team) => team._id === record._id); // Replace YOUR_ID_TO_MATCH with the ID you want to match
+        const isMatch = teams.find((team) => team._id === record._id);
         return (
           <div className="flex items-center justify-end gap-3">
             {(isMatch || isAssigned(record._id)) && (
               <button
-                type="button"
-                className="flex items-center text-black border bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2 me-2 mb-2"
+                text="Remove"
+                className="flex items-center justify-center text-black border bg-white font-medium rounded-lg w-[105px] px-[14px] py-[6px]"
                 onClick={() => handleRemove(record._id)}
               >
                 Remove
@@ -246,13 +334,11 @@ const ProjectDetails = () => {
             )}
 
             {!isMatch && !isAssigned(record._id) && (
-              <button
-                type="button"
-                className="flex items-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+              <PrimaryButton
+                text={"Assign"}
+                image={"/images/arrow-right-white.svg"}
                 onClick={() => handleAssign(record._id)}
-              >
-                Assign <FaArrowRight className="ml-1" />
-              </button>
+              />
             )}
           </div>
         );
@@ -260,169 +346,47 @@ const ProjectDetails = () => {
     },
   ];
 
-  const toggleTimeline = () => {
-    setShowTimeline(!showTimeline);
-  };
+  const statusData = [
+    {
+      title: "Mark as Under Review",
+      value: "Under Review",
+      styling: isUnderReview ? "bg-black text-white" : "bg-white",
+    },
+    {
+      title: "Mark as In Progress",
+      value: "In Progress",
+      styling: isinProgress ? "bg-inProgressText text-white" : "bg-white",
+    },
+    {
+      title: "Mark as Delivered",
+      value: "Delivered",
+      styling: isDelivered ? "bg-green-700 text-white" : "bg-white",
+    },
+  ];
 
-  const handleApply = async () => {
-    // Handle apply button click
-    console.log("Selected Date:", selectedDate);
-
-    if (projectdata.project.dueDate && isBefore(selectedDate, new Date())) {
-      console.log("Selected date is after today. No need to post.");
-      message.error("Selected date is before the current due date");
-      return; // Exit function early
-    } else {
-      try {
-        // Post selectedDate using Axios
-        const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
-          dueDate: selectedDate,
-        });
-
-        // Handle response if needed
-        console.log("Post response:", response);
-      } catch (error) {
-        // Handle error
-        console.error("Error posting selected date:", error);
-      }
-    }
-  };
-
-  const handleCancel = () => {
-    // Handle cancel button click
-    console.log("Cancelled");
-  };
-
-  const calculateTimeElapsed = (updatedAt) => {
-    const now = new Date();
-    const updated = new Date(updatedAt);
-    const difference = now - updated;
-    const seconds = Math.floor(difference / 1000);
-
-    if (seconds < 60) {
-      return `${seconds} seconds ago`;
-    } else if (seconds < 3600) {
-      const minutes = Math.floor(seconds / 60);
-      return `${minutes} minutes ago`;
-    } else if (seconds < 86400) {
-      const hours = Math.floor(seconds / 3600);
-      return `${hours} hours ago`;
-    } else {
-      const days = Math.floor(seconds / 86400);
-      return `${days} days ago`;
-    }
-  };
-  const updatedAtunderReview = projectdata?.project?.underReview?.updatedAt;
-  const timeElapsedunderReview = calculateTimeElapsed(updatedAtunderReview);
-  const updatedAtinProgress = projectdata?.project?.inProgress?.updatedAt;
-  const timeElapsedinProgress = calculateTimeElapsed(updatedAtinProgress);
-
-  const updatedAtcompleted = projectdata?.project?.completed?.updatedAt;
-  const timeElapsedcompleted = calculateTimeElapsed(updatedAtcompleted);
-
-  const isinProgress = projectdata?.project?.inProgress?.status === true;
-  const isDelivered = projectdata?.project?.completed?.status === true;
-
-  // in progress modal
-
-  const showModalInProgress = () => {
-    setIsModalOpenInProgress(true);
-  };
-  const handleOkInProgress = async () => {
-    try {
-      // Format the date and time as required (in ISO 8601 format)
-      // Perform the POST request
-      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
-        // Add the data you want to send in the request body
-        inProgress: {
-          status: true,
-          updatedAt: new Date(),
-        },
-
-        // Add any other data you need
-      });
-      if (response.status === 200) {
-        // Reload the page
-        window.location.reload();
-      } else {
-        // Handle other response statuses if necessary
-        console.log("Unexpected response status:", response.status);
-      }
-      // Handle the response if needed
-      console.log("POST request response:", response);
-
-      // Close the modal or perform any other actions
-      setIsModalOpenInProgress(false);
-    } catch (error) {
-      // Handle errors
-      console.error("Error while making the POST request:", error);
-    }
-  };
-  const handleCancelInProgress = () => {
-    setIsModalOpenInProgress(false);
-  };
-
-  // Delivered
-
-  const showModalCompleted = () => {
-    setIsModalOpenCompleted(true);
-  };
-
-  const handleOkCompleted = async () => {
-    setIsModalOpenCompleted(false);
-
-    try {
-      const currentDate = new Date();
-
-      // Format the date and time as required (in ISO 8601 format)
-
-      // Perform the POST request
-      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
-        // Add the data you want to send in the request body
-        completed: {
-          status: true,
-          updatedAt: new Date(),
-        },
-
-        // Add any other data you need
-      });
-      if (response.status === 200) {
-        // Reload the page
-        window.location.reload();
-      } else {
-        // Handle other response statuses if necessary
-        console.log("Unexpected response status:", response.status);
-      }
-
-      // Handle the response if needed
-      console.log("POST request response:", response);
-
-      // Close the modal or perform any other actions
-      setIsModalOpenInProgress(false);
-    } catch (error) {
-      // Handle errors
-      console.error("Error while making the POST request:", error);
-    }
-    // Add your logic for marking as completed here
-  };
-
-  const handleCancelCompleted = () => {
-    setIsModalOpenCompleted(false);
-  };
-
-  const handleClick = async (priority) => {
-    try {
-      const response = await ApiCaller.Put(`/projects/${companyProjectId}`, {
-        priority: priority,
-      });
-      if (response.status === 200) {
-        console.log("Response:", response.data);
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  const priorityData = [
+    {
+      title: "low",
+      styling:
+        projectdata?.priority === "low"
+          ? "flex items-center justify-center gap-2 p-3 pl-5 text-white rounded-full border border-green-600 bg-green-700"
+          : "flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-green-600 bg-[#ECFDF3] text-green-700 cursor-pointer",
+    },
+    {
+      title: "medium",
+      styling:
+        projectdata?.priority === "medium"
+          ? "flex items-center justify-center gap-2 p-3 pl-5 rounded-full text-white border border-orange-600 bg-orange-700"
+          : "flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-orange-600 bg-[#FFFAEB] text-orange-600 cursor-pointer",
+    },
+    {
+      title: "high",
+      styling:
+        projectdata?.priority === "high"
+          ? "flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-700 text-white"
+          : "flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-200 text-red-600 cursor-pointer",
+    },
+  ];
 
   return (
     <div>
@@ -446,7 +410,7 @@ const ProjectDetails = () => {
                 />
               </Link>
               <PageHeading
-                heading={projectdata?.project?.services}
+                heading={projectdata?.services}
                 subHeading="Mange your clients right from here."
               />
             </div>
@@ -467,143 +431,41 @@ const ProjectDetails = () => {
           </div>
           <div>
             <div className="rounded-xl shadow border mt-9 my-auto border-gray-300 p-4">
-              <div className="flex  justify-between">
-                <div className="flex gap-5 mt-2 ">
-                  <div
-                    className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 ${
-                      markedAsUnderReview ||
-                      projectdata?.project?.underReview?.status === true
-                        ? "bg-black text-white"
-                        : "bg-white"
-                    }`}
-                    onClick={() => setOpen(true)}
-                  >
-                    Mark as Under Review{" "}
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
-                  <div
-                    className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 
-  ${isinProgress ? "bg-[#175CD3] text-white" : "bg-white"}
-`}
-                    onClick={showModalInProgress}
-                  >
-                    Mark as In Progress
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
-                  <Modal
-                    open={isModalOpenInProgress}
-                    onOk={handleOkInProgress}
-                    centered={true}
-                    onCancel={handleCancelInProgress}
-                    footer={[
-                      <div className="grid grid-cols-2 gap-3" key={1}>
-                        <WhiteButton
-                          text={"Cancel"}
-                          onClick={handleCancelInProgress}
-                        />
-
-                        <YellowButton
-                          text={"Mark as In Progress"}
-                          onClick={handleOkInProgress}
-                        />
-                      </div>,
-                    ]}
-                  >
-                    <div>
-                      <div className="rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center">
-                        <Image
-                          height={24}
-                          width={24}
-                          alt=""
-                          src="/images/eye.svg"
-                        />
-                      </div>
-
-                      <h1 className="  text-[20px] pb-3 mt-4 font-bold m-0">
-                        Mark as In Progress
-                      </h1>
-
-                      <div>
-                        <p className="text-[14px] font-semibold text-[#0B132B]">
-                          You’re marking this project as In Progress, so clients
-                          will be notified about this update.
-                        </p>
-                      </div>
+              <div className="flex justify-between items-center">
+                <div className="flex gap-5 mt-2 flex-wrap">
+                  {statusData?.map((item, index) => (
+                    <div
+                      className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 ${item?.styling}`}
+                      onClick={() => {
+                        setStatus({
+                          title: item.title,
+                          value: item.value,
+                        });
+                        setOpen(true);
+                      }}
+                      key={index}
+                    >
+                      <span className="whitespace-nowrap text-ellipsis overflow-hidden ">
+                        {item?.title}
+                      </span>
+                      <Image
+                        height={20}
+                        width={20}
+                        alt=""
+                        src="/images/check.svg"
+                      />
                     </div>
-                  </Modal>
-
-                  <div
-                    className={`flex p-3 pl-5 justify-center cursor-pointer items-center gap-3 rounded-full border border-gray-300 
-  ${isDelivered ? "bg-green-700 text-white" : "bg-white"}
-`}
-                    onClick={showModalCompleted}
-                  >
-                    Mark as Delivered
-                    <Image
-                      height={20}
-                      width={20}
-                      alt=""
-                      src="/images/check.svg"
-                    />
-                  </div>
-                  <Modal
-                    open={isModalOpenCompleted}
-                    onOk={handleOkCompleted}
-                    centered={true}
-                    onCancel={handleCancelCompleted}
-                    footer={[
-                      <div className="grid grid-cols-2 gap-3" key={1}>
-                        <WhiteButton
-                          text={"Cancel"}
-                          onClick={handleCancelCompleted}
-                        />
-
-                        <YellowButton
-                          text={"Mark as Completed"}
-                          onClick={handleOkCompleted}
-                        />
-                      </div>,
-                    ]}
-                  >
-                    <div>
-                      <div className="rounded-full h-[48px] w-[48px] bg-black flex items-center justify-center">
-                        <Image
-                          height={24}
-                          width={24}
-                          alt=""
-                          src="/images/eye.svg"
-                        />
-                      </div>
-
-                      <h1 className="text-[20px] pb-3 mt-4 font-bold m-0">
-                        Mark as Completed
-                      </h1>
-
-                      <div>
-                        <p className="text-[14px] font-semibold text-[#0B132B]">
-                          You’re marking this project as Completed, so clients
-                          will be notified about this update.
-                        </p>
-                      </div>
-                    </div>
-                  </Modal>
+                  ))}
                 </div>
                 <div
-                  className="flex px-4 justify-center items-center gap-3 cursor-pointer  bg-gray-100"
+                  className="flex h-[48px] w-[48px] justify-center items-center cursor-pointer bg-gray-100 rounded-full"
                   onClick={toggleTimeline}
-                  style={{ borderRadius: "50%" }}
                 >
-                  {showTimeline ? <FaAngleUp /> : <FaAngleDown />}
+                  <FaAngleDown
+                    className={`transition-transform duration-300 ${
+                      showTimeline ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
               </div>
               {showTimeline && (
@@ -612,63 +474,39 @@ const ProjectDetails = () => {
                     items={[
                       {
                         color: "gray",
-                        children: (
-                          <>
-                            <div className="flex gap-3">
-                              <p>
-                                {projectdata.project.underReview.status ===
-                                true ? (
-                                  <>
-                                    <strong>Marked as Under Review</strong>
-                                    <span className="text-gray-500 ml-4">
-                                      {timeElapsedunderReview}
-                                    </span>
-                                  </>
-                                ) : null}
-                              </p>
-                            </div>
-                          </>
-                        ),
+                        children:
+                          projectdata.underReview.status === true ? (
+                            <p className="flex gap-3">
+                              <strong>Marked as Under Review</strong>
+                              <span className="text-gray-500 ml-4">
+                                {timeElapsedunderReview}
+                              </span>
+                            </p>
+                          ) : null,
                       },
                       {
                         color: "gray",
-                        children: (
-                          <>
-                            <div className="flex gap-3">
-                              <p>
-                                {projectdata.project.inProgress.status ===
-                                true ? (
-                                  <>
-                                    <strong>Marked as In Progress</strong>
-                                    <span className="text-gray-500 ml-4">
-                                      {timeElapsedinProgress}
-                                    </span>
-                                  </>
-                                ) : null}
-                              </p>
-                            </div>
-                          </>
-                        ),
+                        children:
+                          projectdata.inProgress.status === true ? (
+                            <p className="flex gap-3">
+                              <strong>Marked as In Progress</strong>
+                              <span className="text-gray-500 ml-4">
+                                {timeElapsedinProgress}
+                              </span>
+                            </p>
+                          ) : null,
                       },
                       {
                         color: "gray",
-                        children: (
-                          <>
-                            <div className="flex gap-3">
-                              <p>
-                                {projectdata.project.completed.status ===
-                                true ? (
-                                  <>
-                                    <strong>Marked as Completed</strong>
-                                    <span className="text-gray-500 ml-4">
-                                      {timeElapsedcompleted}
-                                    </span>
-                                  </>
-                                ) : null}
-                              </p>
-                            </div>
-                          </>
-                        ),
+                        children:
+                          projectdata.completed.status === true ? (
+                            <p className="flex gap-3">
+                              <strong>Marked as Completed</strong>
+                              <span className="text-gray-500 ml-4">
+                                {timeElapsedcompleted}
+                              </span>
+                            </p>
+                          ) : null,
                       },
                     ]}
                   />
@@ -697,7 +535,6 @@ const ProjectDetails = () => {
                   />
                 </div>
               </div>
-              {/* {showRemoveButton && ( */}
               <>
                 <Divider />
                 {teams.map((teamMember, index) => {
@@ -706,8 +543,8 @@ const ProjectDetails = () => {
                       key={index}
                       className="flex items-center justify-between mb-3"
                     >
-                      <div className="flex items-center">
-                        <div className="rounded-full bg-yellow-200 flex items-center w-[48px] h-[48px] justify-center ">
+                      <div className="flex items-center justify-center">
+                        <div className="rounded-full bg-yellow-200 flex items-center w-[48px] h-[48px] justify-center">
                           <Image
                             height={28}
                             width={28}
@@ -715,16 +552,16 @@ const ProjectDetails = () => {
                             src="/images/user.svg"
                           />
                         </div>
-                        <div className="ml-4">
+                        <div className="ml-4 flex flex-col justify-center">
                           <h3 className="font-semibold text-lg">
                             {teamMember?.name}
                           </h3>
-                          <p className="text-gray-700 font-plus-jakarta-sans font-normal text-base leading-5">
+                          <p className="text-gray-700 font-normal">
                             {teamMember?.designation}
                           </p>
                         </div>
                       </div>
-                      <div>
+                      <div className="flex items-center justify-center">
                         <button
                           className="flex items-center justify-center text-black rounded-md border bg-white focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium text-sm px-5 py-2 me-2 mb-2"
                           onClick={() => handleRemove(teamMember._id)}
@@ -737,28 +574,22 @@ const ProjectDetails = () => {
                 })}
                 <Divider />
                 <div className="flex items-center p-2">
-                  <div className="w-full flex justify-between items-center">
+                  <div className="w-full flex justify-between items-center gap-2 flex-wrap">
                     <PageHeading
                       heading="Priority"
                       subHeading="Set task priority"
                     />
                     <div className=" flex gap-4">
-                      {projectdata?.project?.priority === "low" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 text-white rounded-full border border-green-600 bg-green-700">
-                          low
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle-2.svg"
-                          />
-                        </div>
-                      ) : (
+                      {priorityData?.map((item, index) => (
                         <div
-                          className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#027948] bg-[#ECFDF3] text-[#027948] cursor-pointer"
-                          onClick={() => handleClick("low")}
+                          className={item?.styling}
+                          onClick={() =>
+                            projectdata?.priority !== item?.title &&
+                            handleClick(item?.title)
+                          }
+                          key={index}
                         >
-                          Low
+                          <span className="capitalize">{item?.title}</span>
                           <Image
                             height={20}
                             width={20}
@@ -766,62 +597,11 @@ const ProjectDetails = () => {
                             src="/images/check-circle.svg"
                           />
                         </div>
-                      )}
-                      {projectdata?.project?.priority === "medium" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full text-white border border-orange-600 bg-orange-700">
-                          Medium
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle-2.svg"
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-[#B54708] bg-[#FFFAEB] text-[#B54708] cursor-pointer"
-                          onClick={() => handleClick("medium")}
-                        >
-                          Medium
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle.svg"
-                          />
-                        </div>
-                      )}
-                      {projectdata?.project?.priority === "high" ? (
-                        <div className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-700 text-white">
-                          High
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle-2.svg"
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className="flex items-center justify-center gap-2 p-3 pl-5 rounded-full border border-red-600 bg-red-200 text-red-600 cursor-pointer"
-                          onClick={() => handleClick("high")}
-                        >
-                          High
-                          <Image
-                            height={20}
-                            width={20}
-                            alt=""
-                            src="/images/check-circle.svg"
-                          />
-                        </div>
-                      )}
+                      ))}
                     </div>
-                    {/* <div>
-      <StatusIndicator text={"high"} />
-    </div> */}
                   </div>
                   <Divider type="vertical" className="h-[50px]" />
-                  <div className="flex justify-between w-full items-center">
+                  <div className="flex justify-between w-full items-center gap-2 flex-wrap">
                     <div>
                       <PageHeading heading="Due By" subHeading="Set due date" />
                     </div>
@@ -831,39 +611,35 @@ const ProjectDetails = () => {
                           <div className="flex justify-center items-center m-2 gap-3">
                             <button
                               className="rounded-md border  px-9"
-                              onClick={handleCancel}
+                              onClick={() => console.log("Cancelled")}
                             >
                               Cancel
                             </button>
                             <button
                               className="mr-4 px-10 bg-yellow-400 hover:bg-yellow-500 rounded-md"
-                              onClick={handleApply}
+                              onClick={handleDueDate}
                             >
                               Apply
                             </button>
                           </div>
                         )}
-                        onChange={onChange}
+                        onChange={(date, dateString) =>
+                          setSelectedDate(dateString)
+                        }
                         placeholder="Select Due Date"
                         className="w-64"
                         needConfirm
                       />
-                      {selectedDate && isBefore(selectedDate, new Date()) && (
-                        <div>
-                          <Alert
-                            message="Overtime"
-                            // description="This is a warning notice about copywriting."
-                            type="warning"
-                            showIcon
-                            // closable
-                          />
-                        </div>
+                      {new Date(projectdata?.dueDate) < new Date() && (
+                        <StatusIndicator
+                          text={"Overdue"}
+                          icon={"/images/overdue-icon.svg"}
+                        />
                       )}
                     </div>
                   </div>
                 </div>
               </>
-              {/* )} */}
             </div>
           </div>
 
@@ -884,7 +660,6 @@ const ProjectDetails = () => {
           width={800}
           onCancel={() => {
             setAssignOpen(false);
-            window.location.reload(); // Reload the page when the modal is closed
           }}
           footer={[
             <button
@@ -892,7 +667,6 @@ const ProjectDetails = () => {
               key="back"
               onClick={() => {
                 setAssignOpen(false);
-                window.location.reload(); // Reload the page when the modal is closed
               }}
             >
               Close
@@ -904,7 +678,7 @@ const ProjectDetails = () => {
           </h1>
           <div>
             <p className="text-[14px] font-semibold text-[#0B132B]">
-              Assign team member to this “Websites” project.
+              Assign team member to this {projectdata?.services} project.
             </p>
           </div>
           <Input
@@ -918,6 +692,7 @@ const ProjectDetails = () => {
             dataSource={team}
             pagination={false}
             columns={columns}
+            scroll={{ y: 300 }}
           />
         </Modal>
       )}
@@ -925,13 +700,24 @@ const ProjectDetails = () => {
         <Modal
           open={isOpen}
           centered={true}
-          onCancel={() => setOpen(false)}
+          onCancel={() => {
+            setOpen(false);
+            setStatus({ title: "", value: "" });
+          }}
           closeIcon={false}
           footer={[
             <div className="grid grid-cols-2 gap-3" key={1}>
-              <WhiteButton text={"Cancel"} onClick={() => setOpen(false)} />
-
-              <YellowButton text={"Mark as Under Review"} onClick={handleAdd} />
+              <WhiteButton
+                text="Cancel"
+                onClick={() => {
+                  setOpen(false);
+                  setStatus({ title: "", value: "" });
+                }}
+              />
+              <YellowButton
+                text={status?.title}
+                onClick={() => handleProjectStatus(status?.value)}
+              />
             </div>,
           ]}
         >
@@ -941,13 +727,13 @@ const ProjectDetails = () => {
             </div>
 
             <h1 className="  text-[20px] pb-3 mt-4 font-bold m-0">
-              Mark as Under Review
+              {status?.title}
             </h1>
 
             <div>
               <p className="text-[14px] font-semibold text-[#0B132B]">
-                You’re marking this project as Under Review, so clients will be
-                notified about this update.
+                You’re marking this project as {status?.value}, so clients will
+                be notified about this update.
               </p>
             </div>
           </div>
