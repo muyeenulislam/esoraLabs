@@ -1,74 +1,109 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Input, Radio, Space, Typography, message, Upload } from "antd";
-
-import truncateString from "@/utils/truncatestring";
+import { Radio, Space, message, Upload, Progress, ConfigProvider } from "antd";
 
 import Spacer from "@/components/spacer/spacer";
 import YellowButton from "@/components/buttons/yellowbutton";
 import WhiteButton from "@/components/buttons/whitebutton";
-import { useSearchParams } from "next/navigation";
+import truncateString from "@/utils/truncatestring";
 
 import ApiCaller from "@/config/apicaller";
+import TextBox from "@/components/textbox/textbox";
+import DefaultInput from "@/components/inputs/defaultinput";
 
-const { TextArea } = Input;
-const { Text } = Typography;
+const geographicalOptions = ["Local", "Regional", "National", "International"];
+const targetAudienceOptions = [
+  "Business to Business (B2B)",
+  "Business to Consumer (B2C)",
+  "Business to Government (B2G)",
+];
+const projectStartOptions = [
+  "As soon as possible",
+  "2-4 week",
+  "More than 1 month",
+  "More than 3 months",
+  "I do not have any start date",
+];
+const projectEndOptions = [
+  "Less than a month ",
+  "1 - 3 months",
+  "3 - 6 months",
+  "6 - 12 months",
+  "More than 12 months",
+];
+const mediaCostOptions = [
+  "Yes",
+  "no",
+  "There is no media costs for this project",
+];
 
-const Requirements = () => {
-  const searchParams = useSearchParams();
-  const projectId = searchParams.get("projectid");
-  const [projectdata, setProjectData] = useState({});
-  const [Targetvalue, setTargetValue] = useState("");
-  const [showTargetValue, setShowTargetValue] = useState(false);
-  const [save, setSave] = useState(false);
+const Requirements = ({ projectdata, fetchProjectData }) => {
   const [fileInfoList, setFileInfoList] = useState([]);
-  const [showFile, setShowFile] = useState(false);
-  const [geographicalvalue, setGeographicalValue] = useState("");
-  const [showGeographical, setShowGeographical] = useState(false);
-  const [maturityProject, setMaturityProject] = useState("");
-  const [showMaturity, setShowMaturity] = useState(false);
-  const [startvalue, setStartValue] = useState("");
-  const [showStartDate, setShowStartDate] = useState(false);
-  const [completedvalue, setCompletedValue] = useState("");
-  const [showCompletionTime, setShowCompletionTime] = useState(false);
-  const [mediavalue, setMediaValue] = useState(1);
-  const [showMediaCost, setShowMediaCost] = useState(false);
-  const [isEditing, setIsEditing] = useState(true);
-  const [textValue, setTextValue] = useState("");
-  const [id,setId] = useState("")
 
-  // console.log("projectId",projectId);
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Get project api call
+  const [state, setState] = useState({
+    goals: projectdata?.goals,
+    description: projectdata?.description,
+    document: projectdata?.document,
+    geographicalScope: projectdata?.geographicalScope,
+    maturityProjects: projectdata?.maturityProjects,
+    targetAudience: projectdata?.targetAudience,
+    whenProjectComplete: projectdata?.whenProjectComplete,
+    whenProjectStart: projectdata?.whenProjectStart,
+    mediaCosts: projectdata?.mediaCosts,
+  });
+  const [isOtherstate, setIsOtherState] = useState({
+    geographicalScope: false,
+    targetAudience: false,
+    whenProjectComplete: false,
+    whenProjectStart: false,
+    mediaCosts: false,
+  });
+  const [completed, setCompleted] = useState(0);
+  const [percentage, setPercentage] = useState(0);
+
   useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        const response = await ApiCaller.Get(`/projects/${projectId}`);
-        const data = response?.data?.data?.project;
-        // setTeams(response?.data?.data?.teams);
-        if (response?.status === 200) {
-          setId(data?._id)
-          setProjectData(data);
-          setTargetValue(data.targetAudience);
-          setGeographicalValue(data.geographicalScope);
-          setMaturityProject(data.maturityProjects);
-          setStartValue(data?.whenProjectStart);
-          setCompletedValue(data?.whenProjectComplete);
-          setTextValue(data?.goals);
-          setPassValue(data?.description);
-          setFileInfoList(data?.document)
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    let count = 0;
+    if (projectdata?.goals) count += 1;
+    if (projectdata?.description) count += 1;
+    if (projectdata?.document?.length > 0) count += 1;
+    if (projectdata?.geographicalScope) count += 1;
+    if (projectdata?.maturityProjects) count += 1;
+    if (projectdata?.targetAudience) count += 1;
+    if (projectdata?.whenProjectComplete) count += 1;
+    if (projectdata?.whenProjectStart) count += 1;
+    if (projectdata?.mediaCosts) count += 1;
+    setCompleted(count);
 
-    fetchProjectData();
-  }, [projectId]);
+    const percentageCompleted = parseInt((count / 9) * 100);
+    setPercentage(percentageCompleted);
+  }, [projectdata]);
 
-  console.log("projectdata", projectdata);
+  useEffect(() => {
+    const istargetAudienceOther = !targetAudienceOptions.includes(
+      state?.targetAudience
+    );
+    const isgeographicalOther = !geographicalOptions.includes(
+      state?.geographicalScope
+    );
+    const isProjectStartOther = !projectStartOptions.includes(
+      state?.whenProjectStart
+    );
+    const isProjectEndOther = !projectEndOptions.includes(
+      state?.whenProjectComplete
+    );
+    const isMediaCostOther = !mediaCostOptions.includes(state?.mediaCosts);
 
-  // console.log("fileInfoList",fileInfoList);
+    setIsOtherState({
+      ...isOtherstate,
+      geographicalScope: isgeographicalOther,
+      targetAudience: istargetAudienceOther,
+      whenProjectComplete: isProjectEndOther,
+      whenProjectStart: isProjectStartOther,
+      mediaCosts: isMediaCostOther,
+    });
+  }, [projectdata, state]);
 
   const onChange = ({ fileList: newFileList }) => {
     setFileInfoList(newFileList);
@@ -79,401 +114,513 @@ const Requirements = () => {
     setFileInfoList(newFileList);
   };
 
-  const handleTextChange = (event) => {
-    const newTextValue = event.target.value;
-    console.log("Text entered:", newTextValue);
-    setTextValue(newTextValue);
-  };
-  const [passValue, setPassValue] = useState("");
-  const [showInfo, setShowInfo] = useState(false);
-
-  const handlePassTextChange = (event) => {
-    const newTextValue = event.target.value;
-    console.log("Pass Text entered:", newTextValue);
-    setPassValue(newTextValue);
-  };
-  const onTargetChange = (e) => {
-    console.log("Target checked", e.target.value);
-    setTargetValue(e.target.value);
-  };
-  const onGeographicalChange = (e) => {
-    console.log("Geographical checked", e.target.value);
-    setGeographicalValue(e.target.value);
-  };
-  const onMaturityProjectChange = (e) => {
-    console.log("Geographical checked", e.target.value);
-    setMaturityProject(e.target.value);
-  };
-  const onStartProjectChange = (e) => {
-    console.log("Geographical checked", e.target.value);
-    setStartValue(e.target.value);
-  };
-  const onCompletedProjectChange = (e) => {
-    console.log("Geographical checked", e.target.value);
-    setCompletedValue(e.target.value);
-  };
-  const onMediaProjectChange = (e) => {
-    console.log("Geographical checked", e.target.value);
-    setMediaValue(e.target.value);
+  const removeFileDocument = (file) => {
+    const newFileList = state?.document?.filter(
+      (item) => item._id !== file._id
+    );
+    setState({ ...state, document: newFileList });
   };
 
   const handleSave = async () => {
-    setSave(true);
-    setShowTargetValue(true);
-    setShowGeographical(true);
-    setShowMaturity(true);
-    setShowStartDate(true);
-    setShowCompletionTime(true);
-    setShowInfo(true);
-    setShowMediaCost(true);
-    setShowFile(true);
-    setIsEditing(false);
-
-
     try {
-      // Assuming you have a URL for your API endpoint
-      const url = `/projects/${id}`;
-      
-      // Prepare the data object with the state values
-      const postData = {
-        targetAudience: Targetvalue,
-        geographicalScope: geographicalvalue,
-        maturityProjects: maturityProject,
-        whenProjectStart: startvalue,
-        whenProjectComplete: completedvalue,
-        goals: textValue,
-        description: passValue,
-        document: fileInfoList,
-        mediavalue:mediavalue
-        // Add any other data fields you want to include in the post request
-      };
-      console.log("postData",postData);
-  
-      // Perform the POST request
-      const response = await  ApiCaller.Put(url, postData);
-      
-      // Handle the response as needed
-      console.log('PUT request response:', response.data);
-  
-      // Set editing state or any other logic here
-      setIsEditing(false);
-    } catch (error) {
-      // Handle errors
-      console.error('Error while making POST request:', error);
+      const formData = new FormData();
+
+      formData.append("goals", state?.goals);
+      formData.append("description", state?.description);
+      formData.append("targetAudience", state?.targetAudience);
+      formData.append("geographicalScope", state?.geographicalScope);
+      formData.append("maturityProjects", state?.maturityProjects);
+      formData.append("whenProjectStart", state?.whenProjectStart);
+      formData.append("mediaCosts", state?.mediaCosts);
+      formData.append("document", JSON.stringify(state?.document));
+      formData.append("whenProjectComplete", state?.whenProjectComplete);
+
+      if (fileInfoList && fileInfoList?.length > 0) {
+        fileInfoList.forEach((file) => {
+          formData.append("files", file.originFileObj);
+        });
+      }
+
+      const response = await ApiCaller.Put(
+        `/projects/${projectdata?._id}`,
+        formData
+      );
+
+      if (response?.status === 200) {
+        message.success("Project updated successfully");
+        fetchProjectData();
+        setIsEditing(false);
+      }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
-
-
-
-
-
+  const handleCancel = () => {
+    setIsEditing(false);
+    fetchProjectData();
   };
 
   const handleEdit = () => {
-    setSave(false);
-    setShowTargetValue(false);
-    setShowGeographical(false);
-    setShowMaturity(false);
-    setShowStartDate(false);
-    setShowCompletionTime(false);
-    setShowInfo(false);
-    setShowMediaCost(false);
-    setShowFile(false);
     setIsEditing(true);
   };
 
-
-
-
-
-
-
-
-
-
-
-
   return (
-    <div className="border h-auto mx-[200px] mt-[24px] rounded-2xl shadow-md">
-      <div className=" p-[24px] bg-[#0B132B] rounded-t-2xl"></div>
-      <div className="flex justify-between px-[24px] pb-[24px]  bg-[#0B132B] ">
-        <div className=" text-[#FFFFFF]">
-          <div className="text-[24px] font-bold">Project Overview</div>
-          <div className="text-[16px] font-normal">3 revisions remaining</div>
+    <div className="border h-auto mx-[100px] lg:mx-[120px] mt-[24px] rounded-2xl shadow-md">
+      <div className="flex justify-between items-center flex-wrap gap-2 p-[24px] bg-primary rounded-t-2xl ">
+        <div className=" text-white flex items-center gap-2">
+          <ConfigProvider
+            theme={{
+              components: {
+                Progress: {
+                  circleTextColor: "white",
+                  remainingColor: "#333E60",
+                  circleIconFontSize: "16px",
+                },
+              },
+            }}
+          >
+            <Progress
+              type="circle"
+              percent={percentage}
+              size="small"
+              strokeColor={"#F7D046"}
+              strokeWidth={12}
+            />
+          </ConfigProvider>
+          <div>
+            <div className="text-[24px] font-bold">Project Overview</div>
+            <div className="text-[16px] font-normal">
+              {completed}/9 completed
+            </div>
+          </div>
         </div>
         {isEditing ? (
           <div className="flex gap-4">
-            <WhiteButton text={"Cancel"} onClick={() => setIsEditing(false)} />
+            <WhiteButton text={"Cancel"} onClick={handleCancel} />
             <YellowButton text={"Save"} onClick={handleSave} />
           </div>
         ) : (
           <div className="flex gap-4">
-            <WhiteButton text={"Ask to Update"} />
-            <WhiteButton text={"Edit"} onClick={handleEdit} />
+            <WhiteButton
+              text={"Ask to Update"}
+              imagealign={"left"}
+              image={"/images/exclamation.svg"}
+            />
+            <WhiteButton
+              text={"Edit"}
+              imagealign={"left"}
+              image={"/images/edit-pencil.svg"}
+              onClick={handleEdit}
+            />
           </div>
         )}
       </div>
-      <div className="px-[24px] pt-[24px] pb-[24px] text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           What are the goals of the project?
         </div>
-        <div className="truncate text-black font-sans text-xl font-bold leading-6">
-          {save ? ( // Conditionally render the text content after saving
-            <div className="truncate text-black font-sans text-xl font-bold leading-6">
-              {textValue}
-            </div>
+        <Spacer height="8px" />
+        <div className="text-subtitleText text-[16px]">
+          {!isEditing ? (
+            <div>{state?.goals ?? "-"}</div>
           ) : (
-            <TextArea
+            <TextBox
               rows={4}
               placeholder="Write something......."
-              onChange={handleTextChange}
-              value={textValue}
+              onChange={(e) => setState({ ...state, goals: e.target.value })}
+              value={state?.goals}
             />
           )}
         </div>
       </div>
 
-      <div className="px-[24px] pt-[24px] pb-[24px] text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           What is the target audience?
         </div>
-        <div className="truncate text-black font-sans text-xl font-bold leading-6">
-          {showTargetValue ? (
-            <div className="truncate text-black font-sans text-xl font-bold leading-6">
-              {Targetvalue}
-            </div>
-          ) : (
-            <>
-              <Radio.Group onChange={onTargetChange} value={Targetvalue}>
-                <Space direction="vertical">
-                  <Radio value="Business to Business (B2B)">
-                    Business to Business (B2B)
-                  </Radio>
-                  <Radio value="Business to Consumer (B2C)">
-                    Business to Consumer (B2C)
-                  </Radio>
-                  <Radio value="Business to Government (B2G)">
-                    Business to Government (B2G)
-                  </Radio>
-                  <Radio value={4}>
-                    <Input
-                      style={{
-                        width: 300,
-                      }}
-                      placeholder="Other (please specify)"
-                    />
-                  </Radio>
-                </Space>
-              </Radio.Group>
-            </>
-          )}
-        </div>
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.targetAudience ?? "-"}
+          </div>
+        ) : (
+          <Radio.Group
+            onChange={(e) =>
+              setState({ ...state, targetAudience: e.target.value })
+            }
+            value={state?.targetAudience}
+            style={{ width: "100%" }}
+          >
+            <Space direction="vertical">
+              {targetAudienceOptions.map((option) => (
+                <Radio
+                  key={option}
+                  value={option}
+                  className={`${
+                    state?.targetAudience === option
+                      ? "text-[16px] text-primary font-semibold"
+                      : "text-[16px] text-subtitleText font-medium"
+                  }`}
+                >
+                  {option}
+                </Radio>
+              ))}
+              <Radio
+                value={
+                  isOtherstate?.targetAudience ? state?.targetAudience : ""
+                }
+                className={`${
+                  isOtherstate?.targetAudience
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                }`}
+              >
+                <DefaultInput
+                  placeholder="Others (Please Specify)"
+                  onChange={(e) =>
+                    setState({ ...state, targetAudience: e.target.value })
+                  }
+                  value={
+                    isOtherstate?.targetAudience ? state?.targetAudience : ""
+                  }
+                />
+              </Radio>
+            </Space>
+          </Radio.Group>
+        )}
       </div>
-      <div className="px-[24px] pt-[24px] pb-[24px] bg-gray-50 text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           What is the geographical scope?
         </div>
-        {showGeographical ? (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {geographicalvalue}
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.geographicalScope ?? "-"}
           </div>
         ) : (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            <Radio.Group
-              onChange={onGeographicalChange}
-              value={geographicalvalue}
-            >
-              <Space direction="vertical">
-                <Radio value="Local">Local</Radio>
-                <Radio value="Regional">Regional</Radio>
-                <Radio value="National">National</Radio>
-                <Radio value="International">International</Radio>
-                <Radio value={4}>
-                  <Input
-                    style={{
-                      width: 300,
-                    }}
-                    placeholder="Other (please specify)"
-                  />
+          <Radio.Group
+            onChange={(e) =>
+              setState({ ...state, geographicalScope: e.target.value })
+            }
+            value={state?.geographicalScope}
+            style={{ width: "100%" }}
+          >
+            <Space direction="vertical">
+              {geographicalOptions.map((option) => (
+                <Radio
+                  key={option}
+                  value={option}
+                  className={`${
+                    state?.geographicalScope === option
+                      ? "text-[16px] text-primary font-semibold"
+                      : "text-[16px] text-subtitleText font-medium"
+                  }`}
+                >
+                  {option}
                 </Radio>
-              </Space>
-            </Radio.Group>
-          </div>
+              ))}
+              <Radio
+                value={
+                  isOtherstate?.geographicalScope
+                    ? state?.geographicalScope
+                    : ""
+                }
+                className={`${
+                  isOtherstate?.geographicalScope
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                }`}
+              >
+                <DefaultInput
+                  placeholder="Others (Please Specify)"
+                  onChange={(e) =>
+                    setState({ ...state, geographicalScope: e.target.value })
+                  }
+                  value={
+                    isOtherstate?.geographicalScope
+                      ? state?.geographicalScope
+                      : ""
+                  }
+                />
+              </Radio>
+            </Space>
+          </Radio.Group>
         )}
       </div>
 
-      <div className="px-[24px] pt-[24px] pb-[24px] text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           What is the maturity of your project?
         </div>
-        {showMaturity ? (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {maturityProject}
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.maturityProjects ?? "-"}
           </div>
         ) : (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            <Radio.Group
-              onChange={onMaturityProjectChange}
-              value={maturityProject}
-            >
-              <Space direction="vertical">
-                <Radio value="Concept and initiation">
-                  Concept and initiation <br />{" "}
-                  <Text type="secondary">
-                    I am still defining the project idea and main concepts
-                  </Text>{" "}
-                </Radio>
-                <Radio value="Planning">
-                  Planning <br />{" "}
-                  <Text type="secondary">
-                    {" "}
-                    I am defining the project planning, scope and budget{" "}
-                  </Text>
-                </Radio>
-                <Radio value="Execution">
-                  Execution <br />{" "}
-                  <Text type="secondary">
-                    {" "}
-                    I am ready to start the execution of the project{" "}
-                  </Text>
-                </Radio>
-                <Radio value="Monitoring and update">
-                  Monitoring and update <br />{" "}
-                  <Text type="secondary">
-                    {" "}
-                    The project already started and I need extra resources{" "}
-                  </Text>
-                </Radio>
-              </Space>
-            </Radio.Group>
-          </div>
+          <Radio.Group
+            onChange={(e) =>
+              setState({ ...state, maturityProjects: e.target.value })
+            }
+            value={state?.maturityProjects}
+          >
+            <Space direction="vertical">
+              <Radio
+                value={"Concept and initiation"}
+                className={`${
+                  state?.maturityProjects === "Concept and initiation"
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                } `}
+              >
+                Concept and initiation
+                <br></br>
+                <span className="text-[14px] text-subtitleText font-normal">
+                  I&apos;m still defining the project idea and main concepts
+                </span>
+              </Radio>
+              <Radio
+                value={"Planning"}
+                className={`${
+                  state?.maturityProjects === "Planning"
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                } `}
+              >
+                Planning
+                <br></br>
+                <span className="text-[14px] text-subtitleText font-normal">
+                  I&apos;m defining the project planning, scope and budget
+                </span>
+              </Radio>
+              <Radio
+                value={"Execution"}
+                className={`${
+                  state?.maturityProjects === "Execution"
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                } `}
+              >
+                Execution
+                <br></br>
+                <span className="text-[14px] text-subtitleText font-normal">
+                  I&apos;m ready to start the execution of the project
+                </span>
+              </Radio>
+              <Radio
+                value={"Monitoring and update"}
+                className={`${
+                  state?.maturityProjects === "Monitoring and update"
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                } `}
+              >
+                Monitoring and update
+                <br></br>
+                <span className="text-[14px] text-subtitleText font-normal">
+                  The project already started and I need extra ressources
+                </span>
+              </Radio>
+            </Space>
+          </Radio.Group>
         )}
       </div>
 
-      <div className="px-[24px] pt-[24px] pb-[24px] bg-gray-50 text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           When should the project start?
         </div>
-
-        {showStartDate ? (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {startvalue}
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.whenProjectStart ?? "-"}
           </div>
         ) : (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            <Radio.Group onChange={onStartProjectChange} value={startvalue}>
-              <Space direction="vertical">
-                <Radio value="As soon as possible">As soon as possible</Radio>
-                <Radio value="2-4 weeks">2-4 weeks</Radio>
-                <Radio value="More than 1 month">More than 1 month</Radio>
-                <Radio value="More than 3 months">More than 3 months</Radio>
-                <Radio value="I do not have any start date">
-                  I do not have any start date
+          <Radio.Group
+            onChange={(e) =>
+              setState({ ...state, whenProjectStart: e.target.value })
+            }
+            value={state?.whenProjectStart}
+            style={{ width: "100%" }}
+          >
+            <Space direction="vertical">
+              {projectStartOptions.map((option) => (
+                <Radio
+                  key={option}
+                  value={option}
+                  className={`${
+                    state?.whenProjectStart === option
+                      ? "text-[16px] text-primary font-semibold"
+                      : "text-[16px] text-subtitleText font-medium"
+                  }`}
+                >
+                  {option}
                 </Radio>
-                <Radio value="Other">
-                  <Input
-                    style={{
-                      width: 300,
-                    }}
-                    placeholder="Other (please specify)"
-                  />
-                </Radio>
-              </Space>
-            </Radio.Group>
-          </div>
+              ))}
+              <Radio
+                value={
+                  isOtherstate?.whenProjectStart ? state?.whenProjectStart : ""
+                }
+                className={`${
+                  isOtherstate?.whenProjectStart
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                }`}
+              >
+                <DefaultInput
+                  placeholder="Others (Please Specify)"
+                  onChange={(e) =>
+                    setState({ ...state, whenProjectStart: e.target.value })
+                  }
+                  value={
+                    isOtherstate?.whenProjectStart
+                      ? state?.whenProjectStart
+                      : ""
+                  }
+                />
+              </Radio>
+            </Space>
+          </Radio.Group>
         )}
       </div>
-      <div className="px-[24px] pt-[24px] pb-[24px] text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           When does your project need to be completed?
         </div>
-        {showCompletionTime ? (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {" "}
-            {completedvalue}{" "}
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.whenProjectComplete ?? "-"}
           </div>
         ) : (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            <Radio.Group
-              onChange={onCompletedProjectChange}
-              value={completedvalue}
-            >
-              <Space direction="vertical">
-                <Radio value="Less than a month">Less than a month</Radio>
-                <Radio value="1 - 3 months">1 - 3 months</Radio>
-                <Radio value="3 - 6 months">3 - 6 months</Radio>
-                <Radio value="6 - 12 months">6 - 12 months</Radio>
-                <Radio value="More than 12 months">More than 12 months</Radio>
-                <Radio value="Other">
-                  <Input
-                    style={{
-                      width: 300,
-                    }}
-                    placeholder="Other (please specify)"
-                  />
+          <Radio.Group
+            onChange={(e) =>
+              setState({ ...state, whenProjectComplete: e.target.value })
+            }
+            value={state?.whenProjectComplete}
+            style={{ width: "100%" }}
+          >
+            <Space direction="vertical">
+              {projectEndOptions.map((option) => (
+                <Radio
+                  key={option}
+                  value={option}
+                  className={`${
+                    state?.whenProjectComplete === option
+                      ? "text-[16px] text-primary font-semibold"
+                      : "text-[16px] text-subtitleText font-medium"
+                  }`}
+                >
+                  {option}
                 </Radio>
-              </Space>
-            </Radio.Group>
-          </div>
+              ))}
+              <Radio
+                value={
+                  isOtherstate?.whenProjectComplete
+                    ? state?.whenProjectComplete
+                    : ""
+                }
+                className={`${
+                  isOtherstate?.whenProjectComplete
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                }`}
+              >
+                <DefaultInput
+                  placeholder="Others (Please Specify)"
+                  onChange={(e) =>
+                    setState({ ...state, whenProjectComplete: e.target.value })
+                  }
+                  value={
+                    isOtherstate?.whenProjectComplete
+                      ? state?.whenProjectComplete
+                      : ""
+                  }
+                />
+              </Radio>
+            </Space>
+          </Radio.Group>
         )}
       </div>
 
-      <div className="px-[24px] pt-[24px] pb-[24px] bg-gray-50 text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           Does the budget cover the media costs
-        </div>
-        {showMediaCost ? (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {mediavalue}
+        </div>{" "}
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.mediaCosts ?? "-"}
           </div>
         ) : (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            <Radio.Group onChange={onMediaProjectChange} value={mediavalue}>
-              <Space direction="vertical">
-                <Radio value="Yes">Yes</Radio>
-                <Radio value="No">No</Radio>
-                <Radio value="There is no media costs for this project">
-                  There is no media costs for this project
+          <Radio.Group
+            onChange={(e) => setState({ ...state, mediaCosts: e.target.value })}
+            value={state?.mediaCosts}
+            style={{ width: "100%" }}
+          >
+            <Space direction="vertical">
+              {mediaCostOptions.map((option) => (
+                <Radio
+                  key={option}
+                  value={option}
+                  className={`${
+                    state?.mediaCosts === option
+                      ? "text-[16px] text-primary font-semibold"
+                      : "text-[16px] text-subtitleText font-medium"
+                  }`}
+                >
+                  {option}
                 </Radio>
-                <Radio value="Other">
-                  <Input
-                    style={{
-                      width: 300,
-                    }}
-                    placeholder="Other (please specify)"
-                  />
-                </Radio>
-              </Space>
-            </Radio.Group>
-          </div>
+              ))}
+              <Radio
+                value={isOtherstate?.mediaCosts ? state?.mediaCosts : ""}
+                className={`${
+                  isOtherstate?.mediaCosts
+                    ? "text-[16px] text-primary font-semibold"
+                    : "text-[16px] text-subtitleText font-medium"
+                }`}
+              >
+                <DefaultInput
+                  placeholder="Others (Please Specify)"
+                  onChange={(e) =>
+                    setState({ ...state, mediaCosts: e.target.value })
+                  }
+                  value={isOtherstate?.mediaCosts ? state?.mediaCosts : ""}
+                />
+              </Radio>
+            </Space>
+          </Radio.Group>
         )}
       </div>
-      <div className="px-[24px] pt-[24px] pb-[24px] text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           What other info should we pass along?
-        </div>
-        {showInfo ? (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            {" "}
-            {passValue}{" "}
+        </div>{" "}
+        <Spacer height="8px" />
+        {!isEditing ? (
+          <div className="text-subtitleText text-[16px]">
+            {state?.description ?? "-"}
           </div>
         ) : (
-          <div className="truncate text-black font-sans text-xl font-bold leading-6">
-            <TextArea
-              rows={4}
-              placeholder="Enter Info here......."
-              onChange={handlePassTextChange}
-              value={passValue}
-            />
-          </div>
+          <TextBox
+            rows={4}
+            placeholder="Enter Info here......."
+            onChange={(e) =>
+              setState({ ...state, description: e.target.value })
+            }
+            value={state?.description}
+          />
         )}
       </div>
-      <div className="px-[24px] pt-[24px] pb-[24px] bg-gray-50 text-[20px] font-bold">
-        <div className="text-black font-sans pb-[12px] text-base font-normal leading-5">
+      <div className="p-6">
+        <div className="text-primary text-[16px] font-bold">
           Do you have any briefing or relevant documents to share?
         </div>
-        <div className="truncate text-black font-sans text-xl font-bold leading-6">
-          <div>
+        <Spacer height="8px" />
+        <div>
+          {isEditing && (
             <Upload
               accept={".pdf, .doc, .docx, .png, .jpg, .gif"}
               listType="picture"
@@ -506,37 +653,42 @@ const Requirements = () => {
                 </p>
               </div>
             </Upload>
-            <Spacer height="12px" />
+          )}
+          <Spacer height="12px" />
 
-            {fileInfoList?.length > 0 &&
-              fileInfoList?.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-row gap-3 items-center border border-primary rounded-lg p-4 mb-3"
-                >
-                  <div className="p-2 flex justify-center items-center rounded-full bg-white border-4 border-solid border-grayBorder">
-                    <Image
-                      src={"/images/upload-file-icon.svg"}
-                      alt={item.name}
-                      height={20}
-                      width={20}
-                    />
-                  </div>
-                  <div className="flex flex-col w-full">
-                    <p
-                      className="text-primary text-[14px] font-semibold mb-2"
-                      title={item?.name}
+          {fileInfoList?.length > 0 &&
+            fileInfoList?.map((item, index) => (
+              <div
+                key={index}
+                className="flex flex-row gap-3 items-center border border-primary rounded-lg p-4 mb-3"
+              >
+                <div className="p-2 flex justify-center items-center rounded-full bg-white border-4 border-solid border-grayBorder">
+                  <Image
+                    src={"/images/upload-file-icon.svg"}
+                    alt={item.name}
+                    height={20}
+                    width={20}
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <p
+                    className="text-primary text-[14px] font-semibold mb-2"
+                    title={item?.name}
+                  >
+                    {truncateString(item?.name)}
+                  </p>
+
+                  <p className="text-subtitleText text-[14px] font-normal m-0">
+                    {(item.size / 1024).toFixed(2)} KB - {item?.percent}%
+                    Uploaded
+                  </p>
+                </div>
+                <div className="flex  gap-2">
+                  {!isEditing && (
+                    <div
+                      className="p-[6px] flex justify-center items-center rounded-full bg-grayBorder cursor-pointer"
+                      onClick={() => window.open(item?.url, "_blank")}
                     >
-                      {/* {truncateString(item?.name)} */}
-                    </p>
-
-                    <p className="text-subtitleText text-[14px] font-normal m-0">
-                      {(item.size / 1024).toFixed(2)} KB - {item?.percent}%
-                      Uploaded
-                    </p>
-                  </div>
-                  <div className="flex  gap-2">
-                    <div className="p-[6px] flex justify-center items-center rounded-full bg-grayBorder">
                       <Image
                         src={"/images/download-icon.svg"}
                         alt={item.name}
@@ -544,20 +696,75 @@ const Requirements = () => {
                         width={26}
                       />
                     </div>
-                    <div className="p-[6px] flex justify-center items-center rounded-full bg-grayBorder">
+                  )}
+                  <div className="p-[6px] flex justify-center items-center rounded-full bg-grayBorder cursor-pointer">
+                    <Image
+                      src={"/images/trash-2.svg"}
+                      alt={item.name}
+                      height={26}
+                      width={26}
+                      onClick={() => removeFile(item)}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          {state?.document?.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="flex flex-row gap-3 items-center border border-primary rounded-lg p-4 mb-3"
+              >
+                <div className="p-2 flex justify-center items-center rounded-full bg-white border-4 border-solid border-grayBorder">
+                  <Image
+                    src={"/images/upload-file-icon.svg"}
+                    alt={item.name}
+                    height={20}
+                    width={20}
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <p
+                    className="text-primary text-[14px] font-semibold mb-2"
+                    title={item?.name}
+                  >
+                    {truncateString(item?.name)}
+                  </p>
+
+                  <p className="text-subtitleText text-[14px] font-normal m-0">
+                    {(item.size / 1024).toFixed(2)} KB
+                  </p>
+                </div>
+                <div className="flex  gap-2">
+                  {!isEditing && (
+                    <div
+                      className="p-[6px] flex justify-center items-center rounded-full bg-grayBorder cursor-pointer"
+                      onClick={() => window.open(item?.url, "_blank")}
+                    >
+                      <Image
+                        src={"/images/download-icon.svg"}
+                        alt={item.name}
+                        height={26}
+                        width={26}
+                      />
+                    </div>
+                  )}
+                  {isEditing && (
+                    <div className="p-[6px] flex justify-center items-center rounded-full bg-grayBorder cursor-pointer">
                       <Image
                         src={"/images/trash-2.svg"}
                         alt={item.name}
                         height={26}
                         width={26}
-                        onClick={() => removeFile(item)}
+                        onClick={() => removeFileDocument(item)}
                       />
                     </div>
-                  </div>
+                  )}
                 </div>
-              ))}
-             
-          </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

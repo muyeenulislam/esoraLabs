@@ -274,6 +274,7 @@ const ProjectDetails = () => {
       );
       console.log(response);
       if (response.status === 200) {
+        message.success(`Project marked as ${status}`);
         fetchProjectData();
       }
       setOpen(false);
@@ -314,7 +315,12 @@ const ProjectDetails = () => {
     {
       key: "2",
       label: "Requirements",
-      children: <Requirements companyData={companyData} />,
+      children: (
+        <Requirements
+          fetchProjectData={fetchProjectData}
+          projectdata={projectdata}
+        />
+      ),
     },
     {
       key: "3",
@@ -442,7 +448,7 @@ const ProjectDetails = () => {
               </Link>
               <PageHeading
                 heading={projectdata?.services}
-                subHeading="Mange your clients right from here."
+                subHeading="Mange your project right from here."
               />
             </div>
             <div className="flex justify-between items-center gap-2">
@@ -503,43 +509,40 @@ const ProjectDetails = () => {
                 <div className="mt-6 mb-[-40px]">
                   <Timeline
                     items={[
-                      {
+                      projectdata.underReview.status === true && {
                         color: "gray",
-                        children:
-                          projectdata.underReview.status === true ? (
-                            <p className="flex gap-3">
-                              <strong>Marked as Under Review</strong>
-                              <span className="text-gray-500 ml-4">
-                                {timeElapsedunderReview}
-                              </span>
-                            </p>
-                          ) : null,
+                        children: (
+                          <p className="flex gap-3">
+                            <strong>Marked as Under Review</strong>
+                            <span className="text-gray-500 ml-4">
+                              {timeElapsedunderReview}
+                            </span>
+                          </p>
+                        ),
                       },
-                      {
+                      projectdata.inProgress.status === true && {
                         color: "gray",
-                        children:
-                          projectdata.inProgress.status === true ? (
-                            <p className="flex gap-3">
-                              <strong>Marked as In Progress</strong>
-                              <span className="text-gray-500 ml-4">
-                                {timeElapsedinProgress}
-                              </span>
-                            </p>
-                          ) : null,
+                        children: (
+                          <p className="flex gap-3">
+                            <strong>Marked as In Progress</strong>
+                            <span className="text-gray-500 ml-4">
+                              {timeElapsedinProgress}
+                            </span>
+                          </p>
+                        ),
                       },
-                      {
+                      projectdata.completed.status === true && {
                         color: "gray",
-                        children:
-                          projectdata.completed.status === true ? (
-                            <p className="flex gap-3">
-                              <strong>Marked as Completed</strong>
-                              <span className="text-gray-500 ml-4">
-                                {timeElapsedcompleted}
-                              </span>
-                            </p>
-                          ) : null,
+                        children: (
+                          <p className="flex gap-3">
+                            <strong>Marked as Completed</strong>
+                            <span className="text-gray-500 ml-4">
+                              {timeElapsedcompleted}
+                            </span>
+                          </p>
+                        ),
                       },
-                    ]}
+                    ].filter(Boolean)}
                   />
                 </div>
               )}
@@ -603,8 +606,8 @@ const ProjectDetails = () => {
                 );
               })}
               <Divider />
-              <div className="flex items-center p-2 gap-2">
-                <div className="w-full flex justify-between items-center gap-2 flex-wrap">
+              <div className="flex items-center flex-wrap md:flex-nowrap p-2 gap-2">
+                <div className="w-full flex justify-between items-center gap-2 flex-wrap md:border-r md:border-r-gray-200 md:pr-2">
                   <PageHeading
                     heading="Priority"
                     subHeading="Set task priority"
@@ -627,30 +630,18 @@ const ProjectDetails = () => {
                     ))}
                   </div>
                 </div>
-                <Divider type="vertical" className="h-[50px]" />
+
                 <div className="flex justify-between w-full items-center gap-2 flex-wrap">
                   <div>
                     <PageHeading heading="Due By" subHeading="Set due date" />
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 flex-wrap">
                     <DatePicker
-                      defaultValue={dayjs(projectdata?.dueDate, "YYYY-MM-DD")}
-                      renderExtraFooter={() => (
-                        <div className="flex justify-center items-center m-2 gap-3">
-                          <button
-                            className="rounded-md border  px-9"
-                            onClick={() => console.log("Cancelled")}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            className="mr-4 px-10 bg-yellow-400 hover:bg-yellow-500 rounded-md"
-                            onClick={handleDueDate}
-                          >
-                            Apply
-                          </button>
-                        </div>
-                      )}
+                      defaultValue={
+                        projectdata?.dueDate
+                          ? dayjs(projectdata?.dueDate, "YYYY-MM-DD")
+                          : null
+                      }
                       onChange={(date, dateString) =>
                         setSelectedDate(dateString)
                       }
@@ -659,12 +650,14 @@ const ProjectDetails = () => {
                       allowClear={false}
                       disabledDate={disabledDate}
                     />
-                    {new Date(projectdata?.dueDate) < new Date() && (
-                      <StatusIndicator
-                        text={"Overdue"}
-                        icon={"/images/overdue-icon.svg"}
-                      />
-                    )}
+                    <YellowButton text={"Apply"} onClick={handleDueDate} />
+                    {projectdata?.dueDate &&
+                      new Date(projectdata?.dueDate) < new Date() && (
+                        <StatusIndicator
+                          text={"Overdue"}
+                          icon={"/images/overdue-icon.svg"}
+                        />
+                      )}
                   </div>
                 </div>
               </div>
