@@ -7,6 +7,15 @@ const apiUrl = "http://localhost:8000/api/v1";
 
 axios.interceptors.response.use(
   (response) => {
+    console.log("repsonsee from api caller", response);
+    if (response?.status === 401) {
+      localStorage.removeItem("user");
+      navigate("/login");
+    } else {
+      return response;
+    }
+  },
+  ({ response }) => {
     if (response?.status === 401) {
       localStorage.removeItem("user");
       navigate("/login");
@@ -14,14 +23,6 @@ axios.interceptors.response.use(
       return response;
     }
   }
-  // ({ response }) => {
-  //   if (response?.status === 401) {
-  //     localStorage.removeItem("user");
-  //     navigate("/login");
-  //   } else {
-  //     return response;
-  //   }
-  // }
 );
 
 axios.interceptors.request.use(
@@ -50,7 +51,10 @@ export default class ApiCaller {
       });
       return response;
     } catch (e) {
-      console.log(e);
+      if (e?.response?.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       message.error(e?.response?.data?.message);
     }
   };
@@ -62,7 +66,10 @@ export default class ApiCaller {
       });
       return response;
     } catch (e) {
-      console.log(e);
+      if (e?.response?.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       message.error(e?.response?.data?.message);
     }
   };
@@ -73,7 +80,10 @@ export default class ApiCaller {
       });
       return response;
     } catch (e) {
-      console.log(e);
+      if (e?.response?.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       message.error(e?.response?.data?.message);
     }
   };
@@ -84,7 +94,10 @@ export default class ApiCaller {
       });
       return response;
     } catch (e) {
-      console.log(e);
+      if (e?.response?.status === 401) {
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
       message.error(e?.response?.data?.message);
     }
   };

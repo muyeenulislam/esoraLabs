@@ -75,7 +75,7 @@ const CreatePlan = () => {
         pricing: {
           pricingType: state?.pricingPlan,
           pricingCurrency: state?.currency,
-          pricingAmount: state?.price,
+          pricingAmount: Number(state?.price),
           pricingSubHeading: state?.subHeading,
         },
         whatsIncluded: filteredFeatures,
@@ -179,16 +179,16 @@ const CreatePlan = () => {
                 value={state?.pricingPlan}
               >
                 <Radio
-                  value={"yearly"}
-                  className="text-[16px] font-medium text-[#434A60]"
-                >
-                  Yearly
-                </Radio>
-                <Radio
                   value={"monthly"}
                   className="text-[16px] font-medium text-[#434A60]"
                 >
                   Monthly
+                </Radio>
+                <Radio
+                  value={"yearly"}
+                  className="text-[16px] font-medium text-[#434A60]"
+                >
+                  Yearly
                 </Radio>
               </Radio.Group>
             </div>
