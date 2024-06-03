@@ -2,8 +2,8 @@ import axios from "axios";
 import { message } from "antd";
 import { navigate } from "@/utils/navigate";
 
-// const apiUrl = "https://api.esoralabs.com/api/v1";
-const apiUrl = "http://localhost:8000/api/v1";
+const apiUrl = "https://api.esoralabs.com/api/v1";
+// const apiUrl = "http://localhost:8000/api/v1";
 
 axios.interceptors.response.use(
   (response) => {
