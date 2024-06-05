@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { message } from "antd";
 import moment from "moment";
 
 import ApiCaller from "@/config/apicaller";
@@ -88,7 +87,7 @@ const ProfileDetailsProjects = () => {
       render: (text, record) => (
         <>
           {record?.teams?.length === 0 ? (
-            "-"
+            "No assignees"
           ) : (
             <>
               {record?.teams?.map((item, index) => (
@@ -131,7 +130,11 @@ const ProfileDetailsProjects = () => {
       title: "Due By",
       dataIndex: "Due",
       width: 150,
-      render: (text, record) => <>{record?.whenProjectComplete}</>,
+      render: (text, record) => (
+        <>
+          {record?.dueDate ? moment(record?.dueDate).format("DD/MM/YYYY") : "-"}
+        </>
+      ),
     },
     {
       title: "Action",
@@ -139,9 +142,15 @@ const ProfileDetailsProjects = () => {
       width: 150,
       render: (text, record) => (
         <PrimaryButtonTable
-          text={"Start Briefing"}
+          text={
+            record?.status === "Under Review" ||
+            record?.status === "Not Started"
+              ? "Start Project"
+              : "Start Briefing"
+          }
           image={"/images/arrow-right-white.svg"}
           onClick={() => handleButtonClick(record._id)}
+          className="w-[200px]"
         />
       ),
     },

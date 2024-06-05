@@ -31,10 +31,10 @@ import TableWithoutCheckbox from "@/components/table/tablewithoutcheckbox";
 import PrimaryButton from "@/components/buttons/primarybutton";
 import StatusIndicator from "@/components/statusindicator/statusindicator";
 
-import ProfileDetailsMessages from "../messages";
-import ProfileDetailsProjects from "../projects";
 import WebsiteOverview from "./websiteoverview";
 import Requirements from "./requirements";
+import Messages from "./messages";
+import Files from "./files";
 
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -325,7 +325,7 @@ const ProjectDetails = () => {
     {
       key: "3",
       label: "Files",
-      children: <ProfileDetailsProjects companyData={companyData} />,
+      children: <Files companyData={companyData} />,
     },
     {
       key: "4",
@@ -337,7 +337,7 @@ const ProjectDetails = () => {
           </span>
         </div>
       ),
-      children: <ProfileDetailsMessages data={companyData} />,
+      children: <Messages data={companyData} />,
     },
   ];
 

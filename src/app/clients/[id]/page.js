@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Tabs } from "antd";
 import Image from "next/image";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -24,6 +24,7 @@ import ProfileDetailsProjects from "./projects";
 const ProfileDetails = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [data, setData] = useState({});
   const [activeKey, setActivekey] = useState(searchParams.get("tab") ?? "1");
@@ -95,6 +96,18 @@ const ProfileDetails = () => {
     else return;
   };
 
+  const handleDelete = async () => {
+    try {
+      const response = await ApiCaller.Delete(`/auth/company/${id}`);
+      console.log(response);
+      if (response.status === 200) {
+        router.push("/clients");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div>
       {isLoading ? (
@@ -134,9 +147,14 @@ const ProfileDetails = () => {
                 text={"Next"}
                 onClick={handleNextTab}
               />
-              <button className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow">
-                <FaRegTrashAlt />
-              </button>
+              {activeKey !== "3" && (
+                <button
+                  className="p-[14px] border border-gray300 rounded-[10px] text-[20px] text-[#52596D] shadow"
+                  onClick={handleDelete}
+                >
+                  <FaRegTrashAlt />
+                </button>
+              )}
             </div>
           </div>
           <Spacer height="32px" />

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Radio, Modal } from "antd";
+import { Radio, Modal, message } from "antd";
 
 import ApiCaller from "@/config/apicaller";
 
@@ -42,7 +42,7 @@ const CreatePlan = () => {
       state?.currency &&
       state?.currencySymbol &&
       state?.subHeading &&
-      state?.features?.length > 0 &&
+      state?.features?.length >= 3 &&
       state?.badge
     ) {
       setDisabled(false);
@@ -69,26 +69,31 @@ const CreatePlan = () => {
     try {
       const filteredFeatures = state?.features?.filter((item) => item !== "");
 
-      const body = {
-        name: state?.name,
-        subHeading: state?.subtitle,
-        pricing: {
-          pricingType: state?.pricingPlan,
-          pricingCurrency: state?.currency,
-          pricingAmount: Number(state?.price),
-          pricingSubHeading: state?.subHeading,
-        },
-        whatsIncluded: filteredFeatures,
-        badge: state?.badge,
-      };
-
-      const response = await ApiCaller.Post(`/plan`, body);
-      console.log(response);
-      if (response.status === 200) {
-        setId(response.data.createPlan._id);
-        setIsOpen(true);
+      if (filteredFeatures.length < 3) {
+        setDisabled(true);
       } else {
+        setDisabled(false);
+        const body = {
+          name: state?.name,
+          subHeading: state?.subtitle,
+          pricing: {
+            pricingType: state?.pricingPlan,
+            pricingCurrency: state?.currency,
+            pricingAmount: Number(state?.price),
+            pricingSubHeading: state?.subHeading,
+          },
+          whatsIncluded: filteredFeatures,
+          badge: state?.badge,
+        };
+
+        const response = await ApiCaller.Post(`/plan`, body);
         console.log(response);
+        if (response.status === 200) {
+          setId(response.data.createPlan._id);
+          setIsOpen(true);
+        } else {
+          console.log(response);
+        }
       }
     } catch (err) {
       console.log(err);

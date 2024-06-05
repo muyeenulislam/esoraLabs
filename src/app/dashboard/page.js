@@ -262,7 +262,17 @@ const Dashboard = () => {
                           </div>
                           <div>
                             <PrimaryButton
-                              text={"Start Briefing"}
+                              text={
+                                item?.status === "Not Started"
+                                  ? "Review Briefing"
+                                  : item?.status === "Under Review"
+                                  ? "Start Briefing"
+                                  : item?.status === "In Progress"
+                                  ? "See Briefing"
+                                  : item?.status === "Completed"
+                                  ? "View final deliverables"
+                                  : "Start Briefing"
+                              }
                               image={"/images/arrow-right-white.svg"}
                               onClick={() =>
                                 router.push(

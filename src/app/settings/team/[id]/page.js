@@ -28,24 +28,6 @@ const Team = () => {
   const id = pathname?.split("/")[3];
 
   useEffect(() => {
-    const fetchTeamData = async () => {
-      setLoading(true);
-      try {
-        const payload = {
-          teamId: id,
-        };
-        const response = await ApiCaller.Post("/admin/getteam", payload);
-        console.log(response);
-        if (response?.status === 200) {
-          setData(response.data.team);
-        }
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.error("Error fetching team data:", error);
-      }
-    };
-
     fetchTeamData();
   }, [id]);
 
@@ -105,7 +87,10 @@ const Team = () => {
       width: 250,
       render: (text, record) => (
         <div className="flex items-center justify-end gap-3">
-          <p className="m-0 text-subtitleText text-[14px] font-medium cursor-pointer">
+          <p
+            className="m-0 text-subtitleText text-[14px] font-medium cursor-pointer"
+            onClick={() => handleRemoveFromProject(record?.project?._id)}
+          >
             Delete
           </p>
           <WhiteButtonTable
@@ -120,11 +105,45 @@ const Team = () => {
       ),
     },
   ];
+
+  const fetchTeamData = async () => {
+    setLoading(true);
+    try {
+      const payload = {
+        teamId: id,
+      };
+      const response = await ApiCaller.Post("/admin/getteam", payload);
+      console.log(response);
+      if (response?.status === 200) {
+        setData(response.data.team);
+      }
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching team data:", error);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       const response = await ApiCaller.Put(`/admin/teamdelete/${id}`);
       if (response.status === 200) {
         router.push("/settings");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleRemoveFromProject = async (projectid) => {
+    try {
+      const data = {
+        teamId: id,
+        projectId: projectid,
+      };
+      const response = await ApiCaller.Put("/admin/removetoproject", data);
+      console.log("handle remove from project", response);
+      if (response.status === 200) {
+        fetchTeamData();
       }
     } catch (error) {
       console.log(error);
@@ -207,16 +226,15 @@ const Team = () => {
                 </div>
               </div>
             </div>
-            {data?.about && (
-              <div className="p-[24px]">
-                <div className="overflow-hidden  leading-6 truncate font-bold text-black font-sans text-xl">
-                  About
-                </div>
-                <div className="text-gray-700 mt-5 font-sans text-base font-normal leading-5">
-                  {data?.about}
-                </div>
+
+            <div className="p-[24px]">
+              <div className="overflow-hidden  leading-6 truncate font-bold text-black font-sans text-xl">
+                About
               </div>
-            )}
+              <div className="text-gray-700 mt-5 font-sans text-base font-normal leading-5">
+                {data?.about ?? "-"}
+              </div>
+            </div>
 
             <div className="flex p-[24px] bg-[#F9FAFB]  flex-col">
               <h2 className="headers mb-6 text-[#0B132B] text-[20px] font-bold m-0">

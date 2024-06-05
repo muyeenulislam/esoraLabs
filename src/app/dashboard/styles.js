@@ -35,14 +35,14 @@ const styles = {
   recentLeftSide: {
     display: "flex",
     flexDirection: "column",
-    width: "80%",
+    width: "75%",
   },
   recentRightSide: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    width: "20%",
+    width: "25%",
   },
   recentTitle: "text-[16px] headers",
   recentDescription: "text-[14px] text-subtitleText font-normal mb-4",
