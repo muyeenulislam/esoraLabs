@@ -62,6 +62,11 @@ input[type="number"] {
 }
 
 /* select */
+.ant-select-selector {
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0px !important;
+}
 .ant-select-single {
   height: 20px !important;
 }
